@@ -256,3 +256,44 @@ select option {
 .custom-dropdown-item.selected .check {
   opacity: 1;
 }
+
+/* Fix dropdown stacking context over .table-card & focus outline */
+.cw2-panel {
+  position: relative;
+  z-index: 80;
+  overflow: visible !important;
+}
+.toolbar-bento {
+  position: relative;
+  z-index: 70;
+  overflow: visible !important;
+}
+.table-card {
+  position: relative;
+  z-index: 10;
+}
+.custom-dropdown {
+  position: relative;
+  z-index: 80;
+}
+.custom-dropdown.open {
+  z-index: 9999 !important;
+}
+.custom-dropdown-trigger,
+.custom-dropdown-trigger:focus,
+.custom-dropdown-trigger:focus-visible,
+.custom-dropdown-trigger:active {
+  outline: none !important;
+}
+.custom-dropdown-menu {
+  z-index: 10000 !important;
+}
+.custom-dropdown-item .check {
+  opacity: 0;
+  color: #38bdf8;
+  font-weight: 800;
+  transition: opacity 0.14s ease;
+}
+.custom-dropdown-item.selected .check {
+  opacity: 1;
+}
