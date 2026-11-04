@@ -1,58 +1,43 @@
-// clan-analytics.js - Module Analytics (Worker #3)
-(function () {
-  'use strict';
+// clan-analytics.js - Clan Analytics Engine (Worker #3)
+'use strict';
 
-  var DEMO_MEMBERS = [
-    { name: 'Rồng Lửa', tag: '#2PP0YVQ8', role: 'leader', trophies: 6800, donationsGiven: 420, warFame: 1850, decksUsed: 16, lastSeenDays: 0 },
-    { name: 'Bão Tố', tag: '#8LQ2R9CV', role: 'coLeader', trophies: 6500, donationsGiven: 380, warFame: 1620, decksUsed: 16, lastSeenDays: 1 },
-    { name: 'Sấm Sét', tag: '#9YV3K2LP', role: 'elder', trophies: 6200, donationsGiven: 310, warFame: 1400, decksUsed: 14, lastSeenDays: 2 },
-    { name: 'Tia Chớp', tag: '#P0Q8R7ST', role: 'member', trophies: 5900, donationsGiven: 260, warFame: 1180, decksUsed: 12, lastSeenDays: 3 },
-    { name: 'Mặt Trăng', tag: '#L2M4N6P8', role: 'member', trophies: 5600, donationsGiven: 210, warFame: 950, decksUsed: 10, lastSeenDays: 5 },
-    { name: 'Ngôi Sao', tag: '#R3S5T7V9', role: 'elder', trophies: 5400, donationsGiven: 180, warFame: 820, decksUsed: 9, lastSeenDays: 4 },
-    { name: 'Hành Tinh', tag: '#W1X3Y5Z7', role: 'member', trophies: 5100, donationsGiven: 140, warFame: 640, decksUsed: 8, lastSeenDays: 7 },
-    { name: 'Vì Sao', tag: '#A2B4C6D8', role: 'member', trophies: 4800, donationsGiven: 95, warFame: 480, decksUsed: 6, lastSeenDays: 10 },
-    { name: 'Đại Dương', tag: '#E1F3G5H7', role: 'member', trophies: 4500, donationsGiven: 60, warFame: 320, decksUsed: 4, lastSeenDays: 14 },
-    { name: 'Núi Lửa', tag: '#J2K4L6M8', role: 'member', trophies: 4200, donationsGiven: 30, warFame: 180, decksUsed: 2, lastSeenDays: 21 },
-    { name: 'Sa Mạc', tag: '#N3P5Q7R9', role: 'member', trophies: 3900, donationsGiven: 10, warFame: 60, decksUsed: 1, lastSeenDays: 30 },
-    { name: 'Băng Giá', tag: '#S4T6U8V0', role: 'member', trophies: 3600, donationsGiven: 0, warFame: 0, decksUsed: 0, lastSeenDays: 45 }
-  ];
+const DEMO_MEMBERS = [
+  { name: 'DragonSlayer', tag: '#2PP0JCVQ', role: 'leader', level: 8500, donations: 1200, warFame: 3400, daysOffline: 0 },
+  { name: 'NightHawk', tag: '#8YQ2L0RG', role: 'coLeader', level: 7200, donations: 980, warFame: 2900, daysOffline: 1 },
+  { name: 'StormBreaker', tag: '#9RKL2P8V', role: 'elder', level: 6100, donations: 750, warFame: 2100, daysOffline: 2 },
+  { name: 'IceQueen', tag: '#P0Q8XZ2M', role: 'elder', level: 5800, donations: 620, warFame: 1850, daysOffline: 3 },
+  { name: 'FireMage', tag: '#L2M9N4K7', role: 'member', level: 4900, donations: 410, warFame: 1200, daysOffline: 5 },
+  { name: 'ShadowWolf', tag: '#R7T3V6B1', role: 'member', level: 4500, donations: 180, warFame: 600, daysOffline: 12 }
+];
 
-  window.ClanAnalytics = { DEMO_MEMBERS: DEMO_MEMBERS };
-})();
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
 
-  function evaluateMember(m) {
-    var warScore = Math.min(100, (m.warFame / 1850) * 100);
-    var donScore = Math.min(100, (m.donationsGiven / 420) * 100);
-    var base = warScore * 0.6 + donScore * 0.4;
-    var penalty = Math.min(40, m.lastSeenDays * 1.5);
-    var efficiency = Math.max(0, Math.min(100, Math.round(base - penalty)));
-    var status, recommendation;
-    if (efficiency >= 70) { status = 'Tích cực'; recommendation = 'Thăng chức'; }
-    else if (efficiency >= 40) { status = 'Cảnh báo'; recommendation = 'Nhắc nhở'; }
-    else { status = 'Cần lọc'; recommendation = 'Kick'; }
-    return {
-      name: m.name, tag: m.tag, role: m.role,
-      efficiency: efficiency, status: status, recommendation: recommendation
-    };
-  }
+function evaluateMember(m) {
+  if (!m || typeof m !== 'object') return 0;
+  const level = Number(m.level) || 0;
+  const donations = Number(m.donations) || 0;
+  const warFame = Number(m.warFame) || 0;
+  const daysOffline = Number(m.daysOffline) || 0;
 
-  function summarizeClan(members) {
-    var list = members || DEMO_MEMBERS;
-    var evaluated = list.map(evaluateMember);
-    var total = evaluated.length;
-    var avg = total ? Math.round(evaluated.reduce(function (s, e) { return s + e.efficiency; }, 0) / total) : 0;
-    var counts = { 'Tích cực': 0, 'Cảnh báo': 0, 'Cần lọc': 0 };
-    evaluated.forEach(function (e) { counts[e.status]++; });
-    var kickList = evaluated.filter(function (e) { return e.recommendation === 'Kick'; });
-    return {
-      totalMembers: total,
-      averageEfficiency: avg,
-      statusCounts: counts,
-      kickCandidates: kickList,
-      members: evaluated
-    };
-  }
+  const levelScore = clamp((level - 4500) / (8500 - 4500), 0, 1) * 40;
+  const donationScore = clamp(donations / 1200, 0, 1) * 25;
+  const warScore = clamp(warFame / 3400, 0, 1) * 25;
+  const activityScore = clamp(1 - daysOffline / 14, 0, 1) * 10;
 
-  window.ClanAnalytics.evaluateMember = evaluateMember;
-  window.ClanAnalytics.summarizeClan = summarizeClan;
-})();
+  const total = levelScore + donationScore + warScore + activityScore;
+  return clamp(Math.round(total), 0, 100);
+}
+
+function getClanInsights(rows) {
+  const list = Array.isArray(rows) && rows.length ? rows : DEMO_MEMBERS;
+  const scores = list.map(evaluateMember);
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const inactive = list.filter((m) => (Number(m.daysOffline) || 0) > 7).length;
+  const top = list[scores.indexOf(Math.max(...scores))];
+  const health = avg >= 75 ? 'XUAT SAC' : avg >= 50 ? 'TOT' : avg >= 30 ? 'TRUNG BINH' : 'YEU';
+  return `Clan Health: ${health} | Diem TB: ${avg}/100 | Thanh vien: ${list.length} | Khong hoat dong (>7 ngay): ${inactive} | MVP: ${top.name} (${Math.max(...scores)} diem)`;
+}
+
+module.exports = { DEMO_MEMBERS, evaluateMember, getClanInsights };
