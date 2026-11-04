@@ -35,6 +35,36 @@
     <article class="kpi-card kpi-warning"><span class="kpi-label">Cần nhắc nhở (Theo dõi)</span><strong id="kpi-warning">0</strong></article>
     <article class="kpi-card kpi-kick"><span class="kpi-label">Đề xuất lọc (Kick ngay)</span><strong id="kpi-kick">0</strong></article>
   </section>
+  <section id="cw2-history-panel" class="cw2-panel">
+    <div class="cw2-header">
+      <div id="cw2-player-meta"></div>
+      <div class="cw2-actions">
+        <select id="cw2-member-select" aria-label="Chọn thành viên xem CW2"></select>
+        <a id="cw2-royaleapi-link" class="btn btn-ghost" href="https://royaleapi.com/player/2LL9V9088" target="_blank" rel="noopener">Mở RoyaleAPI ↗</a>
+      </div>
+    </div>
+    <div id="cw2-breakdown" class="cw2-breakdown-grid"></div>
+    <div id="cw2-chart-box" class="cw2-chart-wrap"></div>
+    <div class="cw2-table-wrap">
+      <table class="cw2-table">
+        <thead>
+          <tr>
+            <th>S</th>
+            <th>📅 Ngày</th>
+            <th>R</th>
+            <th>L</th>
+            <th>C (Clan)</th>
+            <th>⭐ Decks</th>
+            <th>🏅 Fame</th>
+            <th>🔨 Repair</th>
+            <th>⚔️ Boat</th>
+            <th>✅ Cống hiến</th>
+          </tr>
+        </thead>
+        <tbody id="cw2-history-tbody"></tbody>
+      </table>
+    </div>
+  </section>
   <section class="toolbar-bento">
     <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag..." aria-label="Tìm thành viên">
     <select id="filter-status" aria-label="Lọc trạng thái">
@@ -58,9 +88,10 @@
           <th>Thành viên</th>
           <th>Chức vụ</th>
           <th>Cúp 🏆</th>
+          <th>War &amp; Fame TB (10 mùa)</th>
           <th>Donate Cho/Nhận</th>
-          <th>Điểm Hiệu Quả</th>
-          <th>Đánh giá &amp; Lý do</th>
+          <th>Điểm Cống Hiến</th>
+          <th>Đánh giá &amp; CW2</th>
         </tr>
       </thead>
       <tbody id="member-tbody"></tbody>
