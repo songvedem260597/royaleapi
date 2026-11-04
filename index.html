@@ -35,3 +35,40 @@
     <article class="kpi-card kpi-warning"><span class="kpi-label">Cần nhắc nhở (Theo dõi)</span><strong id="kpi-warning">0</strong></article>
     <article class="kpi-card kpi-kick"><span class="kpi-label">Đề xuất lọc (Kick ngay)</span><strong id="kpi-kick">0</strong></article>
   </section>
+  <section class="toolbar-bento">
+    <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag..." aria-label="Tìm thành viên">
+    <select id="filter-status" aria-label="Lọc trạng thái">
+      <option value="all">Tất cả trạng thái</option>
+      <option value="good">Giữ lại (Good)</option>
+      <option value="warning">Theo dõi (Warning)</option>
+      <option value="kick">Kick ngay (Kick)</option>
+    </select>
+    <select id="sort-by" aria-label="Sắp xếp">
+      <option value="score">Điểm hiệu quả</option>
+      <option value="trophies">Cúp 🏆</option>
+      <option value="donations">Donate</option>
+    </select>
+    <button id="btn-export-kick" class="btn btn-danger">Xuất danh sách lọc WinterTime</button>
+  </section>
+  <section class="table-card">
+    <table class="member-table">
+      <thead>
+        <tr>
+          <th>Hạng</th>
+          <th>Thành viên</th>
+          <th>Chức vụ</th>
+          <th>Cúp 🏆</th>
+          <th>Donate Cho/Nhận</th>
+          <th>Điểm Hiệu Quả</th>
+          <th>Đánh giá &amp; Lý do</th>
+        </tr>
+      </thead>
+      <tbody id="member-tbody"></tbody>
+    </table>
+  </section>
+  <pre id="kick-output" class="kick-output" hidden></pre>
+</main>
+<script src="clan-analytics.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
