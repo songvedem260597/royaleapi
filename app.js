@@ -333,3 +333,26 @@ function saveClanDatabase(clan) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
   return db;
 }
+
+function exportDataFile() {
+  const db = saveClanDatabase(currentClan);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json;charset=utf-8' }));
+  a.download = 'wintertime-data.json';
+  a.click();
+}
+
+async function syncWintertimeDataFile() {
+  try {
+    const f = await fetch('./wintertime-data.json');
+    if (f.ok) {
+      const fileData = await f.json();
+      currentClan = CA.analyzeClan(fileData);
+      saveClanDatabase(currentClan);
+      render();
+    }
+  } catch (e) {}
+}
+
+document.getElementById('btn-save-data')?.addEventListener('click', exportDataFile);
+syncWintertimeDataFile();
