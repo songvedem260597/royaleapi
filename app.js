@@ -474,3 +474,6 @@ render = function() {
   renderTop3Podium(currentClan);
 };
 render();
+
+const kpiKickLbl = document.querySelector('.kpi-kick .kpi-label');
+if (kpiKickLbl) kpiKickLbl.textContent = 'Cảnh Báo';
