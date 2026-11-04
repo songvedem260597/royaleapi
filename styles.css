@@ -65,3 +65,23 @@ body {
   .kpi-value { font-size: 1.7rem; }
   .member-table th, .member-table td, th, td { padding: 10px 12px; font-size: 0.85rem; }
 }
+
+/* ===== Clan WinterTime (#GYQJL9GV) — Bento UI completion ===== */
+.bento-main { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+.bento-nav { max-width: 1360px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand-sub { font-size: 0.76rem; color: var(--muted); letter-spacing: 0.12em; margin-top: 4px; font-weight: 600; }
+.nav-controls, .toolbar-bento { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.toolbar-bento input, .toolbar-bento select, .nav-controls input { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: rgba(2,6,23,0.65); color: var(--txt); font-family: inherit; }
+.toolbar-bento input { flex: 1; min-width: 220px; }
+.btn { padding: 10px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; border: 1px solid var(--line); transition: all .2s; font-family: inherit; }
+.btn-primary { background: linear-gradient(135deg, #0284c7, #38bdf8); color: #020617; border: none; box-shadow: 0 0 18px rgba(56,189,248,0.35); }
+.btn-ghost { background: rgba(56,189,248,0.1); color: var(--frost); border-color: rgba(56,189,248,0.35); }
+.btn-danger { background: rgba(239,68,68,0.15); color: var(--kick); border-color: rgba(239,68,68,0.45); margin-left: auto; }
+.bento-hero { padding: 22px 24px; }
+.kpi-card { display: flex; flex-direction: column; gap: 8px; }
+.kpi-card strong { font-size: 2.1rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.hero-stats { display: flex; gap: 28px; flex-wrap: wrap; margin: 14px 0; }
+.hero-stats strong { display: block; font-size: 1.35rem; color: var(--gold); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+.tag-mono { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--frost); font-style: normal; opacity: 0.9; }
+.role-badge { padding: 4px 10px; border-radius: 8px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.28); font-size: 0.75rem; font-weight: 600; color: var(--frost); }
+.kick-output { padding: 18px; border-radius: 14px; background: rgba(15,23,42,0.9); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; font-family: 'JetBrains Mono', monospace; white-space: pre-wrap; }
