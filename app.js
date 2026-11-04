@@ -441,3 +441,36 @@ function buildPodiumCard(m, cls, crest, crown) {
     '<div class="podium-fame-Main">💎 ' + tot.toLocaleString() + ' Fame</div>' +
     '<div class="podium-metrics"><span class="podium-metric-pill">⚡ ' + Math.round(m.score || 0) + '/100 đ</span><span class="podium-metric-pill">⚔️ ' + (m.warParticipation ?? 100) + '% War</span><span class="podium-metric-pill">🎁 ' + (m.donations || 0) + ' Donate</span></div></div>';
 }
+
+function renderTop3Podium(clan) {
+  if (!clan || !Array.isArray(clan.members) || clan.members.length < 3) return;
+  let sec = document.getElementById('top3-podium-section');
+  if (!sec) {
+    sec = document.createElement('section');
+    sec.id = 'top3-podium-section';
+    sec.className = 'podium-section';
+    const ref = document.getElementById('cw2-history-panel') || document.querySelector('.toolbar-bento');
+    if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref);
+  }
+  const top = clan.members.slice().sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((b.warFame || 0) - (a.warFame || 0)));
+  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME HALL OF FAME ★</span><h2 class="podium-title">Bảng Vinh Danh Top 3 Cống Hiến Xuất Sắc Nhất Clan</h2></div><div class="podium-stage">' +
+    buildPodiumCard(top[1], 'podium-2nd', '🥈 2ND · Á QUÂN', '') +
+    buildPodiumCard(top[0], 'podium-1st', '🏆 1ST · MVP CHỦ LỰC', '<span class="podium-crown">👑</span>') +
+    buildPodiumCard(top[2], 'podium-3rd', '🥉 3RD · HẠNG BA', '') + '</div>';
+  sec.querySelectorAll('.podium-card').forEach(c => c.addEventListener('click', () => {
+    selectedMemberTag = c.dataset.tag;
+    const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+    if (m) { renderCW2Panel(m); renderTable(currentClan); document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' }); }
+  }));
+}
+
+const _origRenderFn = render;
+render = function() {
+  const kpiGood = document.querySelector('.kpi-good .kpi-label');
+  if (kpiGood) kpiGood.textContent = 'Thành viên Ưu tú';
+  const optGood = document.querySelector('#filter-status option[value="good"]');
+  if (optGood) optGood.textContent = 'Ưu tú';
+  _origRenderFn();
+  renderTop3Podium(currentClan);
+};
+render();
