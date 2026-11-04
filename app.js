@@ -316,3 +316,20 @@ async function syncWintertimeDataFile() {
 
 document.getElementById('btn-save-data')?.addEventListener('click', exportDataFile);
 syncWintertimeDataFile();
+
+const STORAGE_KEY = 'wintertime_analytics_db';
+
+function saveClanDatabase(clan) {
+  let snapshots = [];
+  try {
+    const old = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (Array.isArray(old.snapshots)) snapshots = old.snapshots;
+  } catch (e) {}
+  const today = new Date().toISOString().slice(0, 10);
+  snapshots = snapshots.filter(s => s && s.date !== today);
+  snapshots.push({ date: today, season: '137-4', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
+  const db = { schemaVersion: '2.0', updatedAt: new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: 131349, clanWarTrophies: 2369, membersCount: clan.members.length }, warSeasonsMeta: CA.WAR_SEASONS_META || [], snapshots, members: clan.members };
+  window.__wintertimeDB = db;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
+  return db;
+}
