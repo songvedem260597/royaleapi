@@ -162,7 +162,7 @@ function renderCW2Chart(member) {
 function renderCW2History(member) {
   const tb = document.getElementById('cw2-history-tbody');
   if (!tb) return;
-  const hist = (member.cw2History || []).slice().reverse();
+  const hist = member.cw2History || [];
   tb.innerHTML = hist.map(h =>
     '<tr>' +
       '<td>' + (h.season || '') + '</td>' +
