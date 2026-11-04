@@ -298,29 +298,6 @@ function getCurrentClanTag() {
     return document.getElementById('clanTagInput').value.trim();
 }
 
-// Helper functions
-function showLoading(show) {
-    document.getElementById('loading').classList.toggle('hidden', !show);
-}
-
-function showError(message) {
-    const errorDiv = document.getElementById('errorMessage');
-    errorDiv.textContent = message;
-    errorDiv.classList.toggle('hidden', !message);
-    if (message) setTimeout(() => showError(''), 5000);
-}
-
-function showSuccess(message) {
-    const successDiv = document.getElementById('successMessage');
-    successDiv.textContent = message;
-    successDiv.classList.toggle('hidden', !message);
-    if (message) setTimeout(() => showSuccess(''), 3000);
-}
-
-function getCurrentClanTag() {
-    return document.getElementById('clanTagInput').value.trim();
-}
-
 // Initialize with sample data on page load
 window.addEventListener('load', () => {
     loadVietnameseClan();
