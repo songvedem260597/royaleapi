@@ -743,3 +743,23 @@ body::after {
   }
   .podium-1st { order: -1; }
 }
+
+/* Center .podium-crown on top of the avatar circle */
+.podium-1st .podium-avatar-wrap {
+  position: relative !important;
+  margin-top: 16px !important;
+  overflow: visible !important;
+}
+
+.podium-crown {
+  position: absolute !important;
+  top: -22px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  font-size: 1.45rem !important;
+  line-height: 1 !important;
+  z-index: 5 !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 4px 10px rgba(250, 204, 21, 0.75)) !important;
+}
