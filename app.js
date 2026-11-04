@@ -123,3 +123,31 @@
     const avg = total ? Math.round(rows.reduce((s, m) => s + scoreOf(m), 0) / total) : 0;
     return { total, good, warning, kick, avg };
   }
+
+  function renderHero(rows, stats) {
+    const hero = $('clan-summary');
+    if (!hero) return;
+    const mvp = rows.slice().sort((a, b) => (b.donations || 0) - (a.donations || 0))[0];
+    const pct = (n) => (stats.total ? Math.round((n / stats.total) * 100) : 0);
+    hero.innerHTML = `
+      <div class="hero-head"><h2>${CLAN_NAME} <span class="tag-mono">(${CLAN_TAG})</span></h2></div>
+      <div class="hero-stats">
+        <div><span class="kpi-label">Điểm hiệu quả TB</span><strong>${stats.avg}/100</strong></div>
+        <div><span class="kpi-label">MVP Donate</span><strong>${mvp ? mvp.name + ' (' + fmt(mvp.donations) + ')' : '-'}</strong></div>
+      </div>
+      <div class="progress-stack">
+        <div class="progress-row"><span>Tốt</span><div class="progress"><div style="width:${pct(stats.good)}%;background:#16a34a"></div></div><small>${pct(stats.good)}%</small></div>
+        <div class="progress-row"><span>Cảnh báo</span><div class="progress"><div style="width:${pct(stats.warning)}%;background:#f59e0b"></div></div><small>${pct(stats.warning)}%</small></div>
+        <div class="progress-row"><span>Lọc</span><div class="progress"><div style="width:${pct(stats.kick)}%;background:#dc2626"></div></div><small>${pct(stats.kick)}%</small></div>
+      </div>`;
+  }
+
+  function exportKick() {
+    const out = $('kick-output');
+    const kickList = members.filter((m) => scoreOf(m) < 40);
+    const text = kickList.length
+      ? 'Danh sách cần lọc - ' + CLAN_NAME + ' (' + CLAN_TAG + '):\n' + kickList.map((m) => `- ${m.name} (${m.tag}) | Điểm: ${scoreOf(m)} | Donate: ${fmt(m.donations)} | Offline: ${m.daysOffline != null ? m.daysOffline + 'd' : '-'}`).join('\n')
+      : 'Không có thành viên nào cần lọc trong ' + CLAN_NAME + ' (' + CLAN_TAG + ').';
+    if (out) { out.textContent = text; out.style.display = 'block'; }
+    notify('Đã xuất danh sách cần lọc (' + kickList.length + ' thành viên)', 'success');
+  }
