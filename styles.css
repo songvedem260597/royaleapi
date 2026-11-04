@@ -480,3 +480,59 @@ body::after {
     rgba(4, 7, 15, 0.9) 100%
   );
 }
+
+/* ===== Top 3 Clan Leaderboard Podium (2ND · 1ST · 3RD) ===== */
+.podium-section {
+  background: rgba(11, 16, 30, 0.78) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(56, 189, 248, 0.24) !important;
+  border-radius: 22px !important;
+  padding: 26px 24px 28px !important;
+  margin-bottom: 24px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.podium-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.podium-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.podium-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.podium-stage {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  gap: 20px;
+  align-items: end;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+@media (max-width: 760px) {
+  .podium-stage {
+    grid-template-columns: 1fr;
+  }
+}
