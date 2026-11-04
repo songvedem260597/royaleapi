@@ -77,3 +77,40 @@ function computeContribution(src, cw2History) {
   const totalDecks10Wars = cw2History.reduce((s, h) => s + h.decks, 0);
   return { fameScore, deckScore, donateScore, score, movingAvgFame, totalFame10Wars, totalDecks10Wars };
 }
+
+function analyzeMember(m) {
+  const src = m && typeof m === 'object' ? m : {};
+  const tag = src.tag || '';
+  const name = src.name || 'Không tên';
+  const role = src.role || 'member';
+  const roleLabel = src.roleLabel || ROLE_LABELS[role] || 'Thành viên';
+  const trophies = Number(src.trophies) || 0;
+  const donations = Number(src.donations) || 0;
+  const donationsReceived = Number(src.donationsReceived) || 0;
+  const warFame = Number(src.warFame) || 0;
+  const daysOffline = Number(src.daysOffline) || 0;
+  const trackerStatus = src.trackerStatus || null;
+  const warParticipation = src.warParticipation != null ? Number(src.warParticipation) : null;
+
+  let cw2History;
+  if (tag === ROYALE_TAG && !(Array.isArray(src.cw2History) && src.cw2History.length)) {
+    cw2History = buildCw2History(ROYALE_DECKS, ROYALE_FAME);
+  } else {
+    cw2History = buildCw2FromMember(src);
+  }
+
+  const contribution = computeContribution(src, cw2History);
+  const score = contribution.score;
+  let status, statusLabel, reason;
+  if (trackerStatus === 'Bỏ war' || (warParticipation != null && warParticipation <= 25)) {
+    status = 'kick'; statusLabel = 'Bỏ War · Lọc';
+  } else if (trackerStatus === 'Đáng tin' || score >= 70) {
+    status = 'good'; statusLabel = 'Đáng tin · Giữ';
+  } else {
+    status = 'warning';
+    statusLabel = trackerStatus === 'Mới vào' ? 'Mới vào · Theo dõi' : 'Cần theo dõi';
+  }
+  reason = 'War: ' + (warParticipation != null ? warParticipation : 0) + '% (' + warFame + ' đ/war) · Fame10: ' + contribution.totalFame10Wars + ' · Offline: ' + daysOffline + 'd';
+
+  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, trackerStatus, cw2History, contribution, score, status, statusLabel, reason };
+}
