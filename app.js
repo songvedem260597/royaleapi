@@ -89,3 +89,48 @@
     updateKPI(filtered);
     renderInsights(filtered);
   }
+
+  function exportKickList() {
+    const kick = filtered.filter((m) => (m.efficiency != null ? m.efficiency : CA.evaluateMember(m)) < 40);
+    const text = kick.map((m) => `${m.name}\t${m.tag}\t${m.efficiency != null ? m.efficiency : CA.evaluateMember(m)}`).join('\n');
+    const blob = new Blob([text || 'Không có thành viên cần kick'], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kick-list.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function copyTags() {
+    const tags = filtered.map((m) => m.tag).filter(Boolean).join(', ');
+    if (navigator.clipboard) navigator.clipboard.writeText(tags);
+  }
+
+  function bindEvents() {
+    ['statusFilter', 'searchInput', 'sortBy'].forEach((id) => {
+      const el = $(id);
+      if (el) el.addEventListener('input', applyFilters);
+      if (el) el.addEventListener('change', applyFilters);
+    });
+    if ($('btnExportKick')) $('btnExportKick').addEventListener('click', exportKickList);
+    if ($('btnCopyTags')) $('btnCopyTags').addEventListener('click', copyTags);
+    const tbody = $('memberTableBody');
+    if (tbody) tbody.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-kick');
+      if (!btn) return;
+      const tag = btn.getAttribute('data-tag');
+      members = members.filter((m) => m.tag !== tag);
+      applyFilters();
+    });
+  }
+
+  function init() {
+    const demo = window.DEMO_MEMBERS || (CA.DEMO_MEMBERS) || [];
+    members = demo.map((m) => Object.assign({}, m, { efficiency: CA.evaluateMember(m) }));
+    bindEvents();
+    applyFilters();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
