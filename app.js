@@ -1,24 +1,35 @@
 // Sample Vietnamese Clan Data
 const sampleClanData = [
-    { name: "Player1", role: "Leader", trophies: 4500, donationsGiven: 120, donationsReceived: 45, warFame: 2500, decks: 8, lastSeen: 0, tag: "#PLAYER1" },
-    { name: "Player2", role: "Co-leader", trophies: 4200, donationsGiven: 95, donationsReceived: 38, warFame: 2200, decks: 7, lastSeen: 1, tag: "#PLAYER2" },
-    { name: "Player3", role: "Elder", trophies: 3800, donationsGiven: 80, donationsReceived: 32, warFame: 1800, decks: 6, lastSeen: 2, tag: "#PLAYER3" },
-    { name: "Player4", role: "Member", trophies: 3500, donationsGiven: 65, donationsReceived: 28, warFame: 1500, decks: 5, lastSeen: 3, tag: "#PLAYER4" },
-    { name: "Player5", role: "Member", trophies: 3200, donationsGiven: 50, donationsReceived: 25, warFame: 1200, decks: 4, lastSeen: 4, tag: "#PLAYER5" },
-    { name: "Player6", role: "Member", trophies: 2800, donationsGiven: 40, donationsReceived: 22, warFame: 800, decks: 3, lastSeen: 5, tag: "#PLAYER6" },
-    { name: "Player7", role: "Member", trophies: 2500, donationsGiven: 35, donationsReceived: 20, warFame: 600, decks: 3, lastSeen: 6, tag: "#PLAYER7" },
-    { name: "Player8", role: "Member", trophies: 2200, donationsGiven: 30, donationsReceived: 18, warFame: 400, decks: 2, lastSeen: 7, tag: "#PLAYER8" },
-    { name: "Player9", role: "Member", trophies: 2000, donationsGiven: 25, donationsReceived: 15, warFame: 300, decks: 2, lastSeen: 8, tag: "#PLAYER9" },
-    { name: "Player10", role: "Member", trophies: 1800, donationsGiven: 20, donationsReceived: 12, warFame: 200, decks: 1, lastSeen: 9, tag: "#PLAYER10" },
-    { name: "Player11", role: "Member", trophies: 1600, donationsGiven: 18, donationsReceived: 10, warFame: 150, decks: 1, lastSeen: 10, tag: "#PLAYER11" },
-    { name: "Player12", role: "Member", trophies: 1400, donationsGiven: 15, donationsReceived: 8, warFame: 100, decks: 1, lastSeen: 11, tag: "#PLAYER12" },
-    { name: "Player13", role: "Member", trophies: 1200, donationsGiven: 12, donationsReceived: 7, warFame: 80, decks: 1, lastSeen: 12, tag: "#PLAYER13" },
-    { name: "Player14", role: "Member", trophies: 1000, donationsGiven: 10, donationsReceived: 6, warFame: 60, decks: 1, lastSeen: 13, tag: "#PLAYER14" },
-    { name: "Player15", role: "Member", trophies: 800, donationsGiven: 8, donationsReceived: 5, warFame: 40, decks: 1, lastSeen: 14, tag: "#PLAYER15" }
+    { name: "Rồng Lửa VN", role: "Leader", trophies: 8950, donationsGiven: 840, donationsReceived: 320, warFame: 3200, decks: 16, lastSeen: 0, tag: "#9UL82PV" },
+    { name: "Sát Thủ Đêm", role: "Co-leader", trophies: 8620, donationsGiven: 710, donationsReceived: 290, warFame: 2950, decks: 16, lastSeen: 0, tag: "#28J9Q0L" },
+    { name: "Hoàng Tử Bang", role: "Co-leader", trophies: 8410, donationsGiven: 620, donationsReceived: 250, warFame: 2800, decks: 15, lastSeen: 1, tag: "#8V2KP9R" },
+    { name: "Pháp Sư Tối Thượng", role: "Elder", trophies: 8100, donationsGiven: 540, donationsReceived: 310, warFame: 2450, decks: 14, lastSeen: 1, tag: "#LQ902RC" },
+    { name: "Chiến Binh Thép", role: "Elder", trophies: 7850, donationsGiven: 460, donationsReceived: 280, warFame: 2200, decks: 13, lastSeen: 1, tag: "#3X7K9M2" },
+    { name: "Ninja Ánh Sáng", role: "Member", trophies: 7600, donationsGiven: 380, donationsReceived: 240, warFame: 2000, decks: 12, lastSeen: 2, tag: "#5N4R8T1" },
+    { name: "Vua Săn Mồi", role: "Member", trophies: 7350, donationsGiven: 320, donationsReceived: 200, warFame: 1800, decks: 12, lastSeen: 2, tag: "#7P9Q2W5" },
+    { name: "Hiệp Sĩ Bóng Đêm", role: "Member", trophies: 7100, donationsGiven: 290, donationsReceived: 180, warFame: 1650, decks: 11, lastSeen: 3, tag: "#9B6D4F3" },
+    { name: "Thợ Săn Quái Vật", role: "Member", trophies: 6850, donationsGiven: 250, donationsReceived: 170, warFame: 1500, decks: 11, lastSeen: 3, tag: "#2H8J6K7" },
+    { name: "Cung Thủ Tinh Anh", role: "Member", trophies: 6600, donationsGiven: 220, donationsReceived: 150, warFame: 1350, decks: 10, lastSeen: 4, tag: "#4L3M9N8" },
+    { name: "Tàn Quân", role: "Member", trophies: 6350, donationsGiven: 190, donationsReceived: 130, warFame: 1200, decks: 10, lastSeen: 4, tag: "#6O5P1Q9" },
+    { name: "Sát Thủ Im Lặng", role: "Member", trophies: 6100, donationsGiven: 170, donationsReceived: 120, warFame: 1100, decks: 9, lastSeen: 5, tag: "#8R2S3T6" },
+    { name: "Vệ Thần", role: "Member", trophies: 5850, donationsGiven: 150, donationsReceived: 110, warFame: 1000, decks: 9, lastSeen: 5, tag: "#1U4V7W9" },
+    { name: "Hủy Diệt", role: "Member", trophies: 5600, donationsGiven: 130, donationsReceived: 100, warFame: 900, decks: 8, lastSeen: 6, tag: "#3X5Y7Z0" },
+    { name: "Bão Tố", role: "Member", trophies: 5350, donationsGiven: 110, donationsReceived: 90, warFame: 800, decks: 8, lastSeen: 6, tag: "#5A8B2C4" }
 ];
 
 let currentData = [];
 let sortDirection = { column: null, ascending: true };
+
+// Load Vietnamese sample data
+function loadVietnameseClan() {
+    currentData = sampleClanData.map(member => ({
+        ...member,
+        effectiveness: calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen),
+        status: determineStatus(calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen), member.lastSeen, member.warFame)
+    }));
+    updateUI();
+    showSuccess("Đã tải dữ liệu mẫu VN thành công!");
+}
 
 // Calculate effectiveness score
 function calculateEffectiveness(warFame, donationsGiven, donationsReceived, lastSeen) {
@@ -77,17 +88,6 @@ async function loadClanData() {
     
     showLoading(false);
     updateUI();
-}
-
-// Load Vietnamese sample data
-function loadVietnameseClan() {
-    currentData = sampleClanData.map(member => ({
-        ...member,
-        effectiveness: calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen),
-        status: determineStatus(calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen), member.lastSeen, member.warFame)
-    }));
-    updateUI();
-    showSuccess("Đã tải dữ liệu mẫu VN thành công!");
 }
 
 // Update UI with current data
@@ -302,3 +302,35 @@ function getCurrentClanTag() {
 window.addEventListener('load', () => {
     loadVietnameseClan();
 });
+
+// Export kick list
+function exportKickList() {
+    const kickList = currentData.filter(m => m.status === 'Cần Kick' || m.status === 'Cảnh Báo');
+    const csvContent = 'name,tag,role,trophies,donationsGiven,donationsReceived,warFame,lastSeen,status,effectiveness\n' +
+        kickList.map(m => `${m.name},${m.tag},${m.role},${m.trophies},${m.donationsGiven},${m.donationsReceived},${m.warFame},${m.lastSeen},${m.status},${m.effectiveness}`).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kick-list.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    showSuccess("Đã xuất danh sách kick thành công!");
+}
+
+// Export kick list
+function exportKickList() {
+    const kickList = currentData.filter(m => m.status === 'Cần Kick' || m.status === 'Cảnh Báo');
+    const csvContent = 'name,tag,role,trophies,donationsGiven,donationsReceived,warFame,lastSeen,status,effectiveness\n' +
+        kickList.map(m => `${m.name},${m.tag},${m.role},${m.trophies},${m.donationsGiven},${m.donationsReceived},${m.warFame},${m.lastSeen},${m.status},${m.effectiveness}`).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kick-list.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    showSuccess("Đã xuất danh sách kick thành công!");
+}
