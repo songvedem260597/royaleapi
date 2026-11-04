@@ -536,3 +536,54 @@ body::after {
     grid-template-columns: 1fr;
   }
 }
+
+.podium-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 26px 18px 22px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.podium-card:hover {
+  transform: translateY(-6px);
+}
+
+.podium-1st {
+  min-height: 325px;
+  background: linear-gradient(180deg, rgba(250, 204, 21, 0.28) 0%, rgba(234, 179, 8, 0.08) 48%, rgba(15, 23, 42, 0.94) 100%);
+  border: 1px solid rgba(250, 204, 21, 0.55);
+  box-shadow: 0 18px 45px rgba(250, 204, 21, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.podium-2nd {
+  min-height: 290px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.26) 0%, rgba(100, 116, 139, 0.08) 48%, rgba(15, 23, 42, 0.94) 100%);
+  border: 1px solid rgba(203, 213, 225, 0.42);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.podium-3rd {
+  min-height: 275px;
+  background: linear-gradient(180deg, rgba(249, 115, 22, 0.26) 0%, rgba(234, 88, 12, 0.08) 48%, rgba(15, 23, 42, 0.94) 100%);
+  border: 1px solid rgba(251, 146, 60, 0.45);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.podium-rank-crest {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+}
