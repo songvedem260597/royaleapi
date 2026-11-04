@@ -114,3 +114,22 @@ function analyzeMember(m) {
 
   return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, trackerStatus, cw2History, contribution, score, status, statusLabel, reason };
 }
+
+function analyzeClan(clanData) {
+  const src = clanData && typeof clanData === 'object' ? clanData : {};
+  const name = src.name || DEFAULT_CLAN_NAME;
+  const tag = src.tag || DEFAULT_CLAN_TAG;
+  const rawMembers = Array.isArray(src.members) && src.members.length ? src.members : generateDemoClan().members;
+  const members = rawMembers.map(analyzeMember);
+  const counts = { total: members.length, good: 0, warning: 0, kick: 0 };
+  let sum = 0;
+  let mvp = members[0];
+  members.forEach((mm) => {
+    counts[mm.status] = (counts[mm.status] || 0) + 1;
+    sum += mm.score;
+    if (!mvp || mm.score > mvp.score) mvp = mm;
+  });
+  const avgScore = members.length ? Math.round(sum / members.length) : 0;
+  const clanScore = clamp(Math.round(avgScore * 0.7 + clamp(counts.good / Math.max(1, members.length), 0, 1) * 30), 0, 100);
+  return { name, tag, clanScore, membersCount: members.length, avgScore, mvpName: mvp ? mvp.name : '', counts, members, warSeasons: WAR_SEASONS_META };
+}
