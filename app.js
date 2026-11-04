@@ -191,7 +191,7 @@ function renderTable(clan) {
   rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
   tbody.innerHTML = rows.map((m, i) => {
     const pct = Math.round(m.score || 0);
-    const decks = (m.recentDecks || []).slice(0, 4).map(d => '<span class="deck-pill">' + d + '</span>').join('');
+    const decks = (m.cw2History || []).slice(0, 6).map(h => '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '">' + h.decks + '</span>').join('');
     return '<tr class="member-row-clickable" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
