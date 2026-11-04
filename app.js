@@ -1,4 +1,4 @@
-/* app.js - Controller: kết nối index.html với window.ClanAnalytics */
+/* app.js - Bento Dashboard Controller cho Clash Royale Clan Manager */
 (function () {
   'use strict';
   const CA = window.ClanAnalytics;
@@ -6,131 +6,74 @@
 
   let members = [];
   let filtered = [];
-
   const $ = (id) => document.getElementById(id);
   const fmt = (n) => (n == null ? '-' : Number(n).toLocaleString('vi-VN'));
+  const scoreOf = (m) => (m.efficiency != null ? m.efficiency : CA.evaluateMember(m));
 
-  function badgeClass(score) {
-    if (score >= 70) return 'badge-active';
-    if (score >= 40) return 'badge-warning';
-    return 'badge-kick';
-  }
-  function badgeText(score) {
-    if (score >= 70) return 'Hoạt động';
-    if (score >= 40) return 'Cảnh báo';
-    return 'Kick';
+  function statusOf(score) {
+    if (score >= 70) return { cls: 'badge-good', key: 'good', label: 'Tốt', reason: 'Đóng góp tốt, duy trì phong độ' };
+    if (score >= 40) return { cls: 'badge-warning', key: 'warning', label: 'Cảnh báo', reason: 'Cần cải thiện donate/war fame' };
+    return { cls: 'badge-kick', key: 'kick', label: 'Lọc', reason: 'Hiệu suất thấp, ít hoạt động' };
   }
 
   function renderTable(rows) {
-    const tbody = $('memberTableBody');
+    const tbody = $('member-tbody') || $('memberTableBody');
     if (!tbody) return;
-    tbody.innerHTML = rows.map((m) => {
-      const score = m.efficiency != null ? m.efficiency : CA.evaluateMember(m);
-      const cls = badgeClass(score);
-      return `<tr data-tag="${m.tag}">
-        <td>${m.name || '-'}</td>
-        <td>${m.tag || '-'}</td>
-        <td>${m.role || '-'}</td>
-        <td>${m.level != null ? m.level : '-'}</td>
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#94a3b8">Không có thành viên phù hợp</td></tr>'; return; }
+    tbody.innerHTML = rows.map((m, i) => {
+      const score = scoreOf(m);
+      const st = statusOf(score);
+      const rank = i + 1;
+      const rankCls = rank <= 3 ? 'rank-top' : '';
+      const barColor = score >= 70 ? '#16a34a' : score >= 40 ? '#f59e0b' : '#dc2626';
+      return `<tr data-tag="${m.tag || ''}">
+        <td class="rank ${rankCls}">#${rank}</td>
+        <td><strong>${m.name || '-'}</strong><br><em class="tag-mono">${m.tag || '-'}</em></td>
+        <td><span class="role-badge">${m.role || '-'}</span></td>
+        <td>🏆 ${fmt(m.level)}</td>
         <td>${fmt(m.donations)}</td>
         <td>${fmt(m.warFame)}</td>
-        <td>${m.daysOffline != null ? m.daysOffline : '-'}</td>
-        <td>${score}</td>
-        <td><span class="badge ${cls}">${badgeText(score)}</span></td>
-        <td><button class="btn-kick" data-tag="${m.tag}">Kick</button></td>
+        <td>${m.daysOffline != null ? m.daysOffline + 'd' : '-'}</td>
+        <td><div class="score-bar"><div class="score-fill" style="width:${score}%;background:${barColor}"></div></div><small>${score}/100</small></td>
+        <td><span class="badge ${st.cls}">${st.label}</span><br><small class="reason">${st.reason}</small></td>
+        <td><button class="btn-kick" data-tag="${m.tag || ''}">Kick</button></td>
       </tr>`;
     }).join('');
   }
 
   function updateKPI(rows) {
     const total = rows.length;
-    const avgEff = total ? Math.round(rows.reduce((s, m) => s + (m.efficiency != null ? m.efficiency : CA.evaluateMember(m)), 0) / total) : 0;
-    const totalFame = rows.reduce((s, m) => s + (Number(m.warFame) || 0), 0);
-    const kickRisk = rows.filter((m) => (m.efficiency != null ? m.efficiency : CA.evaluateMember(m)) < 40).length;
+    const good = rows.filter((m) => scoreOf(m) >= 70).length;
+    const warning = rows.filter((m) => { const s = scoreOf(m); return s >= 40 && s < 70; }).length;
+    const kick = rows.filter((m) => scoreOf(m) < 40).length;
+    if ($('kpi-members')) $('kpi-members').textContent = fmt(total);
+    if ($('kpi-good')) $('kpi-good').textContent = fmt(good);
+    if ($('kpi-warning')) $('kpi-warning').textContent = fmt(warning);
+    if ($('kpi-kick')) $('kpi-kick').textContent = fmt(kick);
     if ($('totalMembers')) $('totalMembers').textContent = fmt(total);
-    if ($('avgEfficiency')) $('avgEfficiency').textContent = avgEff + '%';
-    if ($('totalWarFame')) $('totalWarFame').textContent = fmt(totalFame);
-    if ($('kickRiskCount')) $('kickRiskCount').textContent = fmt(kickRisk);
+    if ($('kickRiskCount')) $('kickRiskCount').textContent = fmt(kick);
+    const avg = total ? Math.round(rows.reduce((s, m) => s + scoreOf(m), 0) / total) : 0;
+    if ($('avgEfficiency')) $('avgEfficiency').textContent = avg + '%';
+    if ($('totalWarFame')) $('totalWarFame').textContent = fmt(rows.reduce((s, m) => s + (Number(m.warFame) || 0), 0));
+    return { total, good, warning, kick, avg };
   }
 
-  function renderInsights(rows) {
-    const panel = $('clanInsightsPanel');
-    if (!panel) return;
-    if (CA.getClanInsights) {
-      const ins = CA.getClanInsights(rows);
-      panel.innerHTML = typeof ins === 'string' ? ins : (ins && ins.html) || '';
-    } else {
-      panel.textContent = `Tổng ${rows.length} thành viên được phân tích.`;
-    }
+  function renderHero(rows, stats) {
+    const hero = $('clan-summary');
+    if (!hero) return;
+    const mvp = rows.slice().sort((a, b) => scoreOf(b) - scoreOf(a))[0];
+    const clanName = (window.CLAN_NAME) || 'Royale Clan';
+    const clanTag = (window.CLAN_TAG) || '#2PP0JCVQ';
+    const pct = (n) => (stats.total ? Math.round((n / stats.total) * 100) : 0);
+    hero.innerHTML = `
+      <div class="hero-head"><h2>${clanName}</h2><span class="tag-mono">${clanTag}</span></div>
+      <div class="hero-stats">
+        <div><span class="kpi-label">Điểm TB Clan</span><strong>${stats.avg}/100</strong></div>
+        <div><span class="kpi-label">MVP</span><strong>${mvp ? mvp.name + ' (' + scoreOf(mvp) + ')' : '-'}</strong></div>
+      </div>
+      <div class="progress-stack">
+        <div class="progress-row"><span>Tốt</span><div class="progress"><div style="width:${pct(stats.good)}%;background:#16a34a"></div></div><small>${pct(stats.good)}%</small></div>
+        <div class="progress-row"><span>Cảnh báo</span><div class="progress"><div style="width:${pct(stats.warning)}%;background:#f59e0b"></div></div><small>${pct(stats.warning)}%</small></div>
+        <div class="progress-row"><span>Lọc</span><div class="progress"><div style="width:${pct(stats.kick)}%;background:#dc2626"></div></div><small>${pct(stats.kick)}%</small></div>
+      </div>`;
   }
-
-  function applyFilters() {
-    const status = ($('statusFilter') && $('statusFilter').value) || 'all';
-    const q = (($('searchInput') && $('searchInput').value) || '').trim().toLowerCase();
-    const sortBy = ($('sortBy') && $('sortBy').value) || 'efficiency';
-    filtered = members.filter((m) => {
-      const score = m.efficiency != null ? m.efficiency : CA.evaluateMember(m);
-      if (status === 'active' && score < 70) return false;
-      if (status === 'warning' && (score < 40 || score >= 70)) return false;
-      if (status === 'kick' && score >= 40) return false;
-      if (q && !((m.name || '').toLowerCase().includes(q) || (m.tag || '').toLowerCase().includes(q))) return false;
-      return true;
-    });
-    filtered.sort((a, b) => {
-      const sa = a.efficiency != null ? a.efficiency : CA.evaluateMember(a);
-      const sb = b.efficiency != null ? b.efficiency : CA.evaluateMember(b);
-      if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '');
-      if (sortBy === 'donations') return (Number(b.donations) || 0) - (Number(a.donations) || 0);
-      if (sortBy === 'warFame') return (Number(b.warFame) || 0) - (Number(a.warFame) || 0);
-      if (sortBy === 'daysOffline') return (Number(b.daysOffline) || 0) - (Number(a.daysOffline) || 0);
-      return sb - sa;
-    });
-    renderTable(filtered);
-    updateKPI(filtered);
-    renderInsights(filtered);
-  }
-
-  function exportKickList() {
-    const kick = filtered.filter((m) => (m.efficiency != null ? m.efficiency : CA.evaluateMember(m)) < 40);
-    const text = kick.map((m) => `${m.name}\t${m.tag}\t${m.efficiency != null ? m.efficiency : CA.evaluateMember(m)}`).join('\n');
-    const blob = new Blob([text || 'Không có thành viên cần kick'], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'kick-list.txt';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function copyTags() {
-    const tags = filtered.map((m) => m.tag).filter(Boolean).join(', ');
-    if (navigator.clipboard) navigator.clipboard.writeText(tags);
-  }
-
-  function bindEvents() {
-    ['statusFilter', 'searchInput', 'sortBy'].forEach((id) => {
-      const el = $(id);
-      if (el) el.addEventListener('input', applyFilters);
-      if (el) el.addEventListener('change', applyFilters);
-    });
-    if ($('btnExportKick')) $('btnExportKick').addEventListener('click', exportKickList);
-    if ($('btnCopyTags')) $('btnCopyTags').addEventListener('click', copyTags);
-    const tbody = $('memberTableBody');
-    if (tbody) tbody.addEventListener('click', (e) => {
-      const btn = e.target.closest('.btn-kick');
-      if (!btn) return;
-      const tag = btn.getAttribute('data-tag');
-      members = members.filter((m) => m.tag !== tag);
-      applyFilters();
-    });
-  }
-
-  function init() {
-    const demo = window.DEMO_MEMBERS || (CA.DEMO_MEMBERS) || [];
-    members = demo.map((m) => Object.assign({}, m, { efficiency: CA.evaluateMember(m) }));
-    bindEvents();
-    applyFilters();
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
-})();
