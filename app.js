@@ -244,7 +244,7 @@ async function kickMember(index) {
         // Remove from local data
         currentData.splice(index, 1);
         updateUI();
-        showSuccess(`Đã kick ${member.name} (chỉ xóa khỏi danh sách local)");
+        showSuccess(`Đã kick ${member.name} (chỉ xóa khỏi danh sách local)`);
     }
 }
 
