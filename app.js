@@ -338,3 +338,31 @@ syncWintertimeDataFile();
     actions.appendChild(a);
   }
 })();
+
+function renderTable(clan) {
+  const tbody = document.getElementById('member-tbody');
+  if (!tbody) return;
+  const { q, status, sortBy } = getFilters();
+  let rows = clan.members.filter(m => {
+    if (status !== 'all' && m.status !== status) return false;
+    if (q && !(m.name.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  tbody.innerHTML = rows.map((m, i) => {
+    const pct = Math.round(m.score || 0);
+    const totalFame = m.contribution?.totalFame10Wars || ((m.warFame || 0) * 10);
+    const decks = (m.cw2History || []).slice(0, 8).map(h =>
+      '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '" title="' + h.season + ': ' + h.decks + ' deck · ' + h.fame + ' Fame">' + h.decks + '</span>'
+    ).join('');
+    return '<tr class="member-row-clickable' + (m.tag === selectedMemberTag ? ' member-row-active' : '') + '" data-tag="' + m.tag + '">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
+      '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
+      '<td>🏆 ' + m.trophies + '</td>' +
+      '<td><strong>' + totalFame.toLocaleString() + ' Fame</strong> <small>(' + (m.warFame || 0) + '/tuần · ' + (m.warParticipation ?? 0) + '%)</small><div class="deck-mini-list">' + decks + '</div></td>' +
+      '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
+      '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
+      '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
+      '</tr>';
+  }).join('');
