@@ -12,8 +12,70 @@ const ROLE_LABELS = {
   member: 'Thành viên'
 };
 
+const WAR_SEASONS_META = [
+  { season: '137-4', date: '2026-11-02', rank: 1 },
+  { season: '137-3', date: '2026-10-26', rank: 1 },
+  { season: '137-2', date: '2026-10-19', rank: 1 },
+  { season: '137-1', date: '2026-10-12', rank: 1 },
+  { season: '136-4', date: '2026-10-05', rank: 1 },
+  { season: '136-3', date: '2026-09-28', rank: 2 },
+  { season: '136-2', date: '2026-09-21', rank: 1 },
+  { season: '136-1', date: '2026-09-14', rank: 1 },
+  { season: '135-5', date: '2026-09-07', rank: 2 },
+  { season: '135-4', date: '2026-08-31', rank: 2 }
+];
+
+const ROYALE_TAG = '#2LL9V9088';
+const ROYALE_DECKS = [8, 4, 12, 4, 4, 4, 0, 0, 2, 4];
+const ROYALE_FAME = [1200, 700, 2600, 600, 500, 550, 0, 0, 350, 750];
+
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
+}
+
+function buildCw2History(decks, fame) {
+  return WAR_SEASONS_META.map((meta, i) => {
+    const d = Number(decks[i]) || 0;
+    const f = Number(fame[i]) || 0;
+    return { season: meta.season, date: meta.date, rank: meta.rank, clan: DEFAULT_CLAN_NAME, decks: d, fame: f, repair: 0, boatAttacks: 0, total: f, movingAvg: 0 };
+  });
+}
+
+function buildCw2FromMember(src) {
+  if (Array.isArray(src.cw2History) && src.cw2History.length) {
+    return src.cw2History.map((h, i) => {
+      const meta = WAR_SEASONS_META[i] || WAR_SEASONS_META[WAR_SEASONS_META.length - 1];
+      const f = Number(h.fame) || 0;
+      return { season: h.season || meta.season, date: h.date || meta.date, rank: h.rank || meta.rank, clan: h.clan || DEFAULT_CLAN_NAME, decks: Number(h.decks) || 0, fame: f, repair: Number(h.repair) || 0, boatAttacks: Number(h.boatAttacks) || 0, total: Number(h.total) || f, movingAvg: Number(h.movingAvg) || 0 };
+    });
+  }
+  const part = Number(src.warParticipation) || 0;
+  const fame = Number(src.warFame) || 0;
+  const decksPerWar = Math.round(clamp(part / 100, 0, 1) * 16);
+  const decks = [];
+  const fames = [];
+  for (let i = 0; i < WAR_SEASONS_META.length; i++) {
+    const decay = 1 - i * 0.03;
+    decks.push(Math.round(clamp(decksPerWar * decay, 0, 16)));
+    fames.push(Math.round(fame * decay));
+  }
+  return buildCw2History(decks, fames);
+}
+
+function computeContribution(src, cw2History) {
+  const warFame = Number(src.warFame) || 0;
+  const warParticipation = Number(src.warParticipation) || 0;
+  const donations = Number(src.donations) || 0;
+  const daysOffline = Number(src.daysOffline) || 0;
+  const fameScore = Math.round(clamp(warFame / 2600, 0, 1) * 45);
+  const deckScore = Math.round(clamp(warParticipation / 100, 0, 1) * 35);
+  const donateScore = Math.round(clamp(donations / 300, 0, 1) * 20);
+  const score = clamp(fameScore + deckScore + donateScore - daysOffline * 3, 0, 100);
+  const recent = cw2History.slice(0, 4);
+  const movingAvgFame = recent.length ? Math.round(recent.reduce((s, h) => s + h.fame, 0) / recent.length) : 0;
+  const totalFame10Wars = cw2History.reduce((s, h) => s + h.fame, 0);
+  const totalDecks10Wars = cw2History.reduce((s, h) => s + h.decks, 0);
+  return { fameScore, deckScore, donateScore, score, movingAvgFame, totalFame10Wars, totalDecks10Wars };
 }
 
 function analyzeMember(m) {
@@ -30,27 +92,27 @@ function analyzeMember(m) {
   const trackerStatus = src.trackerStatus || null;
   const warParticipation = src.warParticipation != null ? Number(src.warParticipation) : null;
 
-  let score, status, statusLabel, reason;
-  if (warParticipation != null || trackerStatus) {
-    const warPct = warParticipation != null ? warParticipation : 0;
-    score = clamp(Math.round(clamp(warPct / 100, 0, 1) * 60 + clamp(warFame / 3000, 0, 1) * 20 + clamp(donations / 200, 0, 1) * 20), 0, 100);
-    if (trackerStatus === 'Bỏ war' || (warParticipation != null && warParticipation <= 25)) {
-      status = 'kick'; statusLabel = 'Bỏ War · Lọc';
-    } else if (trackerStatus === 'Đáng tin' || score >= 70) {
-      status = 'good'; statusLabel = 'Đáng tin · Giữ';
-    } else {
-      status = 'warning';
-      statusLabel = trackerStatus === 'Mới vào' ? 'Mới vào · Theo dõi' : 'Cần theo dõi';
-    }
-    reason = 'War: ' + (warParticipation != null ? warParticipation : 0) + '% (' + warFame + ' đ/war) · Offline: ' + daysOffline + 'd';
+  let cw2History;
+  if (tag === ROYALE_TAG && !(Array.isArray(src.cw2History) && src.cw2History.length)) {
+    cw2History = buildCw2History(ROYALE_DECKS, ROYALE_FAME);
   } else {
-    score = clamp(Math.round(clamp(donations / 200, 0, 1) * 45 + clamp(trophies / 7000, 0, 1) * 25 + clamp(warFame / 3000, 0, 1) * 30), 0, 100);
-    status = score >= 70 ? 'good' : score >= 40 ? 'warning' : 'kick';
-    statusLabel = status === 'good' ? 'Đáng tin · Giữ' : status === 'warning' ? 'Cần theo dõi' : 'Đề xuất lọc';
-    reason = 'Donate: ' + donations + ' · Cúp: ' + trophies + ' · War: ' + warFame;
+    cw2History = buildCw2FromMember(src);
   }
 
-  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, trackerStatus, score, status, statusLabel, reason };
+  const contribution = computeContribution(src, cw2History);
+  const score = contribution.score;
+  let status, statusLabel, reason;
+  if (trackerStatus === 'Bỏ war' || (warParticipation != null && warParticipation <= 25)) {
+    status = 'kick'; statusLabel = 'Bỏ War · Lọc';
+  } else if (trackerStatus === 'Đáng tin' || score >= 70) {
+    status = 'good'; statusLabel = 'Đáng tin · Giữ';
+  } else {
+    status = 'warning';
+    statusLabel = trackerStatus === 'Mới vào' ? 'Mới vào · Theo dõi' : 'Cần theo dõi';
+  }
+  reason = 'War: ' + (warParticipation != null ? warParticipation : 0) + '% (' + warFame + ' đ/war) · Fame10: ' + contribution.totalFame10Wars + ' · Offline: ' + daysOffline + 'd';
+
+  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, trackerStatus, cw2History, contribution, score, status, statusLabel, reason };
 }
 
 function analyzeClan(clanData) {
@@ -69,7 +131,7 @@ function analyzeClan(clanData) {
   });
   const avgScore = members.length ? Math.round(sum / members.length) : 0;
   const clanScore = clamp(Math.round(avgScore * 0.7 + clamp(counts.good / Math.max(1, members.length), 0, 1) * 30), 0, 100);
-  return { name, tag, clanScore, membersCount: members.length, avgScore, mvpName: mvp ? mvp.name : '', counts, members };
+  return { name, tag, clanScore, membersCount: members.length, avgScore, mvpName: mvp ? mvp.name : '', counts, members, warSeasons: WAR_SEASONS_META };
 }
 
 function generateDemoClan() {
@@ -83,15 +145,8 @@ function generateDemoClan() {
     { name: 'toiladem', tag: '#V2PCPL2C2', role: 'member', roleLabel: 'Thành viên', trophies: 7016, donations: 400, donationsReceived: 240, warParticipation: 79, warFame: 1950, trackerStatus: 'Đáng tin' },
     { name: 'prince2k1', tag: '#2GLQRJ0U9', role: 'member', roleLabel: 'Thành viên', trophies: 13384, donations: 191, donationsReceived: 280, warParticipation: 0, warFame: 0, trackerStatus: 'Bỏ war' },
     { name: 'Hung', tag: '#9V8LUVJ0', role: 'member', roleLabel: 'Thành viên', trophies: 12671, donations: 48, donationsReceived: 80, warParticipation: 0, warFame: 0, trackerStatus: 'Bỏ war' },
-    { name: 'muronggg', tag: '#VCGVJLGPY', role: 'member', roleLabel: 'Thành viên', trophies: 9672, donations: 0, donationsReceived: 0, warParticipation: 8, warFame: 171, trackerStatus: 'Bỏ war' }
+    { name: 'muronggg', tag: '#VCGVJLGPY', role: 'member', roleLabel: 'Thành viên', trophies: 9672, donations: 0, donationsReceived: 0, warParticipation: 8, warFame: 171, trackerStatus: 'Bỏ war' },
+    { name: 'Độc♥cô♦cầu♥bại', tag: '#2LL9V9088', role: 'member', roleLabel: 'Thành viên', trophies: 9000, donations: 150, donationsReceived: 120, warParticipation: 62, warFame: 1600, trackerStatus: 'Đáng tin' }
   ];
   return { name: DEFAULT_CLAN_NAME, tag: DEFAULT_CLAN_TAG, region: 'Vietnam', membersCount: 47, clanScore: 131349, warTrophies: 2369, members };
 }
-
-window.ClanAnalytics = {
-  DEFAULT_CLAN_TAG,
-  DEFAULT_CLAN_NAME,
-  analyzeMember,
-  analyzeClan,
-  generateDemoClan
-};
