@@ -3,112 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROYALE PRO · Clan Analytics</title>
+<title>WinterTime #GYQJL9GV · Clan Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bento-body">
-<nav class="bento-nav">
-  <div class="nav-brand">
-    <span class="crown-logo">♛</span>
-    <div class="brand-text">
-      <span class="brand-title">ROYALE PRO</span>
-      <span class="brand-sub">· CLAN ANALYTICS</span>
-    </div>
-    <span class="live-badge"><span class="live-dot"></span>LIVE ESPORTS ENGINE</span>
+<body>
+<header class="bento-nav">
+  <div class="brand-block">
+    <h1 class="brand-title">❄️ WINTERTIME · #GYQJL9GV</h1>
+    <p class="brand-sub">CLASH ROYALE CLAN COMMAND CENTER · VIETNAM</p>
   </div>
   <div class="nav-controls">
-    <input id="clan-tag-input" type="text" placeholder="#ClanTag" />
-    <input id="api-token-input" type="text" placeholder="API Token" />
-    <button id="btn-fetch" class="btn-primary">Quét Clan</button>
-    <button id="btn-demo" class="btn-ghost">Clan Mẫu Pro</button>
+    <input id="clan-tag-input" type="text" value="#GYQJL9GV" readonly aria-label="Clan Tag">
+    <input id="api-token-input" type="password" placeholder="RoyaleAPI Token (tùy chọn)" aria-label="API Token">
+    <button id="btn-fetch" class="btn btn-primary">Đồng bộ Live #GYQJL9GV</button>
+    <button id="btn-demo" class="btn btn-ghost">Nạp Roster WinterTime</button>
   </div>
-</nav>
-
-<section class="bento-hero">
-  <div id="clan-summary" class="clan-summary">
-    <div class="clan-title-row">
-      <h1 class="clan-name">Chưa tải dữ liệu</h1>
-      <span class="clan-tag">#--------</span>
+</header>
+<main class="bento-main">
+  <section class="bento-hero">
+    <div id="clan-summary" class="clan-summary">
+      <p class="hero-hint">Nhấn “Nạp Roster WinterTime” hoặc “Đồng bộ Live” để khởi tạo bảng điều khiển Clan WinterTime #GYQJL9GV.</p>
     </div>
-    <div class="health-bar-wrap">
-      <div class="health-bar"><div class="health-fill" style="width:0%"></div></div>
-      <span class="health-label">Sức khỏe Clan: —</span>
-    </div>
-  </div>
-  <div id="error-box" class="error-box" hidden></div>
-</section>
-
-<section class="kpi-grid">
-  <div class="kpi-card kpi-members">
-    <span class="kpi-icon">👥</span>
-    <span class="kpi-label">Thành viên</span>
-    <span id="kpi-members" class="kpi-value">0</span>
-    <span class="kpi-foot">Tổng số trong clan</span>
-  </div>
-  <div class="kpi-card kpi-good">
-    <span class="kpi-icon">💎</span>
-    <span class="kpi-label">Đóng góp tốt</span>
-    <span id="kpi-good" class="kpi-value">0</span>
-    <span class="kpi-foot">Emerald · giữ lại</span>
-  </div>
-  <div class="kpi-card kpi-warning">
-    <span class="kpi-icon">⚠️</span>
-    <span class="kpi-label">Cần theo dõi</span>
-    <span id="kpi-warning" class="kpi-value">0</span>
-    <span class="kpi-foot">Amber · cảnh báo</span>
-  </div>
-  <div class="kpi-card kpi-kick">
-    <span class="kpi-icon">🩸</span>
-    <span class="kpi-label">Đề xuất lọc</span>
-    <span id="kpi-kick" class="kpi-value">0</span>
-    <span class="kpi-foot">Crimson · kick</span>
-  </div>
-</section>
-
-<section class="toolbar-bento">
-  <input id="search-member" type="text" placeholder="Tìm tên hoặc #tag..." />
-  <select id="filter-status">
-    <option value="all">Tất cả trạng thái</option>
-    <option value="good">Đóng góp tốt</option>
-    <option value="warning">Cần theo dõi</option>
-    <option value="kick">Đề xuất lọc</option>
-  </select>
-  <select id="sort-by">
-    <option value="score">Sắp xếp: Điểm hiệu quả</option>
-    <option value="trophies">Sắp xếp: Cúp</option>
-    <option value="donations">Sắp xếp: Donate</option>
-  </select>
-  <button id="btn-export-kick" class="btn-danger">Xuất danh sách lọc (Kick)</button>
-</section>
-
-<section class="table-card">
-  <div class="table-head">
-    <h2>Bảng Xếp Hạng &amp; Đánh Giá Thành Viên</h2>
-    <span class="table-sub">Điểm hiệu quả 0–100 · cập nhật realtime</span>
-  </div>
-  <div class="table-scroll">
+    <div id="error-box" class="error-box" hidden></div>
+  </section>
+  <section class="kpi-grid">
+    <article class="kpi-card"><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members">0/50</strong></article>
+    <article class="kpi-card kpi-good"><span class="kpi-label">Đóng góp tốt (Giữ lại)</span><strong id="kpi-good">0</strong></article>
+    <article class="kpi-card kpi-warning"><span class="kpi-label">Cần nhắc nhở (Theo dõi)</span><strong id="kpi-warning">0</strong></article>
+    <article class="kpi-card kpi-kick"><span class="kpi-label">Đề xuất lọc (Kick ngay)</span><strong id="kpi-kick">0</strong></article>
+  </section>
+  <section class="toolbar-bento">
+    <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag..." aria-label="Tìm thành viên">
+    <select id="filter-status" aria-label="Lọc trạng thái">
+      <option value="all">Tất cả trạng thái</option>
+      <option value="good">Giữ lại (Good)</option>
+      <option value="warning">Theo dõi (Warning)</option>
+      <option value="kick">Kick ngay (Kick)</option>
+    </select>
+    <select id="sort-by" aria-label="Sắp xếp">
+      <option value="score">Điểm hiệu quả</option>
+      <option value="trophies">Cúp 🏆</option>
+      <option value="donations">Donate</option>
+    </select>
+    <button id="btn-export-kick" class="btn btn-danger">Xuất danh sách lọc WinterTime</button>
+  </section>
+  <section class="table-card">
     <table class="member-table">
       <thead>
         <tr>
           <th>Hạng</th>
           <th>Thành viên</th>
-          <th>Vai trò</th>
-          <th>Cúp</th>
-          <th>Donate Nhận/Cho</th>
+          <th>Chức vụ</th>
+          <th>Cúp 🏆</th>
+          <th>Donate Cho/Nhận</th>
           <th>Điểm Hiệu Quả</th>
-          <th>Trạng thái &amp; Lý do lọc</th>
+          <th>Đánh giá &amp; Lý do</th>
         </tr>
       </thead>
       <tbody id="member-tbody"></tbody>
     </table>
-  </div>
-</section>
-
-<pre id="kick-output" class="kick-output" hidden></pre>
-
+  </section>
+  <pre id="kick-output" class="kick-output" hidden></pre>
+</main>
 <script src="clan-analytics.js"></script>
 <script src="app.js"></script>
 </body>
