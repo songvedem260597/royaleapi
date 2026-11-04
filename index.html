@@ -1,111 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoyaleAPI Clan Manager</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoyaleAPI Clan Manager</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-top">
-                <div class="logo">🏰 RoyaleAPI Clan Manager</div>
-                <div class="search-section">
-                    <input type="text" class="clan-tag-input" id="clanTagInput" placeholder="Nhập Clan Tag #XXXX">
-                    <input type="password" class="api-token-input" id="apiTokenInput" placeholder="Nhập API Token">
-                    <button class="btn" onclick="loadClanData()">Tải Dữ Liệu Clan</button>
-                    <button class="btn" onclick="loadVietnameseClan()">Dùng Dữ Liệu Mẫu VN</button>
-                </div>
-            </div>
-            <div class="kpi-section" id="kpiSection">
-                <div class="kpi-card">
-                    <div class="kpi-label">Tổng Thành Viên</div>
-                    <div class="kpi-value" id="totalMembers">0</div>
-                    <div class="kpi-change positive" id="totalMembersChange">+0%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Điểm TB Cá Nhân</div>
-                    <div class="kpi-value" id="avgTrophies">0</div>
-                    <div class="kpi-change positive" id="avgTrophiesChange">+0%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Tăng Donate Tuần</div>
-                    <div class="kpi-value" id="weeklyDonations">0</div>
-                    <div class="kpi-change positive" id="weeklyDonationsChange">+0%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Cần Cảnh Báo/Kick</div>
-                    <div class="kpi-value" id="warningCount">0</div>
-                    <div class="kpi-change negative" id="warningCountChange">+0</div>
-                </div>
-            </div>
-        </header>
+<header class="app-header">
+  <h1>RoyaleAPI Clan Manager</h1>
+  <div class="header-controls">
+    <input id="clanTagInput" type="text" placeholder="#ClanTag" />
+    <input id="apiTokenInput" type="text" placeholder="API Token" />
+    <button id="btnLoadApi">Tải từ API</button>
+    <button id="btnLoadDemo">Dữ liệu Demo</button>
+  </div>
+</header>
 
-        <div class="filter-section">
-            <h2 class="section-title">🔍 Bộ Lọc & Tìm Kiếm</h2>
-            <div class="filter-controls">
-                <div class="filter-group">
-                    <label>Trạng Thái:</label>
-                    <select class="filter-select" id="statusFilter">
-                        <option value="all">Tất Cả</option>
-                        <option value="Tốt">Tốt</option>
-                        <option value="Cảnh Báo">Cảnh Báo</option>
-                        <option value="Cần Kick">Cần Kick</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Sắp Xếp:</label>
-                    <select class="filter-select" id="sortBy">
-                        <option value="trophies">Sắp Xếp Theo Điểm</option>
-                        <option value="donations">Sắp Xếp Theo Donate</option>
-                        <option value="warFame">Sắp Xếp Theo War Fame</option>
-                        <option value="lastSeen">Sắp Xếp Theo Ngày Online</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Giá Trị Tối Thiểu:</label>
-                    <input type="number" class="filter-select" id="minTrophies" placeholder="Điểm TB" value="0">
-                </div>
-                <button class="btn" onclick="applyFilters()">Áp Dụng Lọc</button>
-                <button class="btn" onclick="exportKickList()">Xuất Danh Sách Cần Kick</button>
-                <button class="btn" onclick="copyClanTags()">Copy Danh Sách Tag</button>
-            </div>
-        </div>
+<section class="kpi-grid">
+  <div class="kpi-card"><span class="kpi-label">Tổng thành viên</span><span id="totalMembers" class="kpi-value">0</span></div>
+  <div class="kpi-card"><span class="kpi-label">Hiệu suất TB</span><span id="avgEfficiency" class="kpi-value">0%</span></div>
+  <div class="kpi-card"><span class="kpi-label">Tổng War Fame</span><span id="totalWarFame" class="kpi-value">0</span></div>
+  <div class="kpi-card"><span class="kpi-label">Nguy cơ bị kick</span><span id="kickRiskCount" class="kpi-value">0</span></div>
+</section>
 
-        <div class="main-content">
-            <div class="member-list-section">
-                <h2 class="section-title">👥 Danh Sách Thành Viên</h2>
-                <div id="loading" class="loading hidden">
-                    <div class="spinner"></div>
-                    <p>Đang tải dữ liệu...</p>
-                </div>
-                <div id="errorMessage" class="error-message hidden"></div>
-                <div id="successMessage" class="success-message hidden"></div>
-                <table class="member-table">
-                    <thead>
-                        <tr>
-                            <th class="sortable" onclick="sortTable('name')">Tên <span class="sort-icon">↕</span></th>
-                            <th>Role</th>
-                            <th class="sortable" onclick="sortTable('trophies')">Điểm <span class="sort-icon">↕</span></th>
-                            <th class="sortable" onclick="sortTable('donationsGiven')">Donate Cấp <span class="sort-icon">↕</span></th>
-                            <th class="sortable" onclick="sortTable('donationsReceived')">Donate Nhận <span class="sort-icon">↕</span></th>
-                            <th>War Fame</th>
-                            <th>Decks</th>
-                            <th>Offline</th>
-                            <th>Trạng Thái</th>
-                            <th>Điểm Hiệu Quả</th>
-                            <th>Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody id="memberTableBody">
-                        <!-- Dữ liệu sẽ được điền bằng JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<section id="clanInsightsPanel" class="insights-panel"></section>
 
-    <script src="app.js"></script>
+<section class="filter-bar">
+  <select id="statusFilter">
+    <option value="all">Tất cả</option>
+    <option value="active">Tích cực</option>
+    <option value="warning">Cảnh báo</option>
+    <option value="kick">Cần lọc</option>
+  </select>
+  <input id="searchInput" type="text" placeholder="Tìm tên / tag..." />
+  <select id="sortBy">
+    <option value="efficiency">Hiệu suất</option>
+    <option value="fame">War Fame</option>
+    <option value="donations">Donations</option>
+    <option value="name">Tên</option>
+  </select>
+  <button id="btnExportKick">Xuất danh sách Kick</button>
+  <button id="btnCopyTags">Copy Tags</button>
+</section>
+
+<section class="table-wrap">
+  <table class="member-table">
+    <thead><tr><th>#</th><th>Tên</th><th>Tag</th><th>Vai trò</th><th>Hiệu suất</th><th>War Fame</th><th>Donations</th><th>Trạng thái</th></tr></thead>
+    <tbody id="memberTableBody"></tbody>
+  </table>
+</section>
+
+<script src="clan-analytics.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
