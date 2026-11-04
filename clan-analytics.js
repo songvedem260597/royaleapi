@@ -40,4 +40,4 @@ function getClanInsights(rows) {
   return `Clan Health: ${health} | Diem TB: ${avg}/100 | Thanh vien: ${list.length} | Khong hoat dong (>7 ngay): ${inactive} | MVP: ${top.name} (${Math.max(...scores)} diem)`;
 }
 
-module.exports = { DEMO_MEMBERS, evaluateMember, getClanInsights };
+window.ClanAnalytics = { DEMO_MEMBERS, evaluateMember, getClanInsights };
