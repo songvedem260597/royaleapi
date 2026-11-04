@@ -85,3 +85,54 @@ body {
 .tag-mono { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--frost); font-style: normal; opacity: 0.9; }
 .role-badge { padding: 4px 10px; border-radius: 8px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.28); font-size: 0.75rem; font-weight: 600; color: var(--frost); }
 .kick-output { padding: 18px; border-radius: 14px; background: rgba(15,23,42,0.9); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; font-family: 'JetBrains Mono', monospace; white-space: pre-wrap; }
+
+/* ===== Esports Dark Glassmorphism Dropdowns ===== */
+:root { color-scheme: dark; }
+
+select,
+#filter-status,
+#sort-by {
+  color-scheme: dark;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  min-width: 190px;
+  padding: 10px 40px 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #f8fafc;
+  cursor: pointer;
+  background-color: rgba(15, 23, 42, 0.88);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2338BDF8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  background-size: 16px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+}
+
+select:hover,
+#filter-status:hover,
+#sort-by:hover {
+  border-color: rgba(56, 189, 248, 0.65);
+  background-color: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.22);
+  transform: translateY(-1px);
+}
+
+select:focus,
+#filter-status:focus,
+#sort-by:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2), 0 0 20px rgba(56, 189, 248, 0.25);
+  outline: none;
+}
+
+select option {
+  background-color: #0b1120;
+  color: #e2e8f0;
+  padding: 10px 14px;
+  font-weight: 600;
+}
