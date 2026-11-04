@@ -57,3 +57,25 @@ function analyzeClan(clanData) {
     counts: { total, good, warning, kick }, mvpMember, members
   };
 }
+
+function generateDemoClan() {
+  const memberList = [
+    { name: 'VN_DragonLord', tag: '#2PP99PRO', role: 'leader', expLevel: 15, trophies: 8200, donations: 480, donationsReceived: 120 },
+    { name: 'MinhKhoi', tag: '#8YQ2L0RG', role: 'coLeader', expLevel: 14, trophies: 7800, donations: 420, donationsReceived: 150 },
+    { name: 'HaiDang', tag: '#9RKL2P8V', role: 'coLeader', expLevel: 14, trophies: 7600, donations: 390, donationsReceived: 180 },
+    { name: 'TuanAnh', tag: '#P0Q8XZ2M', role: 'elder', expLevel: 13, trophies: 7200, donations: 310, donationsReceived: 200 },
+    { name: 'QuocBao', tag: '#L2M9N4K7', role: 'elder', expLevel: 13, trophies: 6900, donations: 280, donationsReceived: 210 },
+    { name: 'VanNam', tag: '#R7T3V6B1', role: 'member', expLevel: 12, trophies: 6500, donations: 220, donationsReceived: 190 },
+    { name: 'DucHuy', tag: '#K4W8N2Q9', role: 'member', expLevel: 12, trophies: 6100, donations: 150, donationsReceived: 220 },
+    { name: 'ThanhTung', tag: '#M6B3X7L1', role: 'member', expLevel: 11, trophies: 5800, donations: 90, donationsReceived: 260 },
+    { name: 'HoangLong', tag: '#T9V5C2R8', role: 'member', expLevel: 11, trophies: 5400, donations: 40, donationsReceived: 300 },
+    { name: 'GiaBao', tag: '#W2N7K4P6', role: 'member', expLevel: 10, trophies: 4900, donations: 0, donationsReceived: 180 },
+    { name: 'AnhTuan', tag: '#Z8L1M5Q3', role: 'member', expLevel: 10, trophies: 4600, donations: 0, donationsReceived: 250 },
+    { name: 'LeVan', tag: '#C3R9T6B2', role: 'member', expLevel: 9, trophies: 4200, donations: 0, donationsReceived: 0 }
+  ];
+  return { name: 'VN Esports Legends', tag: '#2PP99PRO', badgeId: 16000000, clanScore: 42000, memberList };
+}
+
+const ClanAnalytics = { analyzeMember, analyzeClan, generateDemoClan };
+if (typeof window !== 'undefined') window.ClanAnalytics = ClanAnalytics;
+if (typeof module !== 'undefined' && module.exports) module.exports = ClanAnalytics;
