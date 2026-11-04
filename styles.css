@@ -333,3 +333,42 @@ section.kpi-grid,
   background: #10b981;
   box-shadow: 0 0 10px #10b981;
 }
+
+/* Remove default browser white focus outline on search input and all controls */
+*,
+*::before,
+*::after,
+input,
+input:focus,
+input:focus-visible,
+input:active,
+#search-member,
+#search-member:focus,
+#search-member:focus-visible,
+button,
+button:focus,
+button:focus-visible,
+select,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-color: transparent !important;
+}
+
+#search-member {
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
+  color: #f8fafc !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+#search-member:hover,
+#search-member:focus,
+#search-member:focus-visible {
+  border-color: rgba(56, 189, 248, 0.65) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
+  outline: none !important;
+}
