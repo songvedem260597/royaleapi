@@ -20,6 +20,17 @@ const sampleClanData = [
 let currentData = [];
 let sortDirection = { column: null, ascending: true };
 
+// Load Vietnamese sample data
+function loadVietnameseClan() {
+    currentData = sampleClanData.map(member => ({
+        ...member,
+        effectiveness: calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen),
+        status: determineStatus(calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen), member.lastSeen, member.warFame)
+    }));
+    updateUI();
+    showSuccess("Đã tải dữ liệu mẫu VN thành công!");
+}
+
 // Calculate effectiveness score
 function calculateEffectiveness(warFame, donationsGiven, donationsReceived, lastSeen) {
     const baseScore = warFame * 0.3 + donationsGiven * 0.4 + donationsReceived * 0.2;
