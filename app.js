@@ -512,3 +512,16 @@ upgradeCustomSelects = function() {
   bindDropdownSearchInput(sw.querySelector('input'), menu, empty);
 };
 upgradeCustomSelects();
+
+const _prevTop3 = renderTop3Podium;
+renderTop3Podium = function(clan) {
+  _prevTop3(clan);
+  const t = document.querySelector('#top3-podium-section .podium-title');
+  if (t) t.textContent = 'Top 3 C?ng Hi?n Xu?t S?c Nh?t Clan';
+};
+document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-trigger')?.addEventListener('click', () => {
+  const inp = document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-search');
+  if (inp) { inp.value = ''; inp.dispatchEvent(new Event('input')); setTimeout(() => inp.focus(), 20); }
+});
+currentClan = CA.analyzeClan(currentClan);
+render();
