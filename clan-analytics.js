@@ -119,7 +119,7 @@ function analyzeMember(m) {
   const contribution = computeContribution(src, cw2History);
   const score = contribution.score;
   let status, statusLabel, reason;
-  if (trackerStatus === 'Bỏ war' || (warParticipation != null && warParticipation <= 25)) {
+  if (warFame <= 400) {
     status = 'kick'; statusLabel = 'Cảnh báo';
   } else if (trackerStatus === 'Đáng tin' || score >= 70) {
     status = 'good'; statusLabel = 'Ưu tú';
