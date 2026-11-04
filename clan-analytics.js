@@ -19,3 +19,40 @@
 
   window.ClanAnalytics = { DEMO_MEMBERS: DEMO_MEMBERS };
 })();
+
+  function evaluateMember(m) {
+    var warScore = Math.min(100, (m.warFame / 1850) * 100);
+    var donScore = Math.min(100, (m.donationsGiven / 420) * 100);
+    var base = warScore * 0.6 + donScore * 0.4;
+    var penalty = Math.min(40, m.lastSeenDays * 1.5);
+    var efficiency = Math.max(0, Math.min(100, Math.round(base - penalty)));
+    var status, recommendation;
+    if (efficiency >= 70) { status = 'Tích cực'; recommendation = 'Thăng chức'; }
+    else if (efficiency >= 40) { status = 'Cảnh báo'; recommendation = 'Nhắc nhở'; }
+    else { status = 'Cần lọc'; recommendation = 'Kick'; }
+    return {
+      name: m.name, tag: m.tag, role: m.role,
+      efficiency: efficiency, status: status, recommendation: recommendation
+    };
+  }
+
+  function summarizeClan(members) {
+    var list = members || DEMO_MEMBERS;
+    var evaluated = list.map(evaluateMember);
+    var total = evaluated.length;
+    var avg = total ? Math.round(evaluated.reduce(function (s, e) { return s + e.efficiency; }, 0) / total) : 0;
+    var counts = { 'Tích cực': 0, 'Cảnh báo': 0, 'Cần lọc': 0 };
+    evaluated.forEach(function (e) { counts[e.status]++; });
+    var kickList = evaluated.filter(function (e) { return e.recommendation === 'Kick'; });
+    return {
+      totalMembers: total,
+      averageEfficiency: avg,
+      statusCounts: counts,
+      kickCandidates: kickList,
+      members: evaluated
+    };
+  }
+
+  window.ClanAnalytics.evaluateMember = evaluateMember;
+  window.ClanAnalytics.summarizeClan = summarizeClan;
+})();
