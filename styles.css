@@ -775,3 +775,15 @@ body::after {
 .custom-dropdown-menu::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.45); border-radius: 99px; }
 .custom-dropdown-menu::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.42); border-radius: 99px; }
 .custom-dropdown-menu::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.72); }
+
+.clan-info-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 16px; margin-bottom: 18px; }
+.info-card { background: linear-gradient(155deg, rgba(15, 23, 42, 0.86), rgba(9, 14, 28, 0.94)); border: 1px solid rgba(56, 189, 248, 0.22); border-radius: 18px; padding: 18px 20px; box-shadow: 0 12px 30px rgba(2, 6, 23, 0.5); backdrop-filter: blur(16px); display: flex; flex-direction: column; gap: 12px; }
+.rules-card { border-color: rgba(250, 204, 21, 0.28); }
+.info-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid rgba(148, 163, 184, 0.14); padding-bottom: 10px; }
+.info-card-title { font-size: 0.98rem; font-weight: 800; color: #f8fafc; letter-spacing: -0.01em; }
+.info-badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 999px; background: rgba(56, 189, 248, 0.14); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.info-badge-gold { background: rgba(250, 204, 21, 0.14); color: #fde047; border-color: rgba(250, 204, 21, 0.35); }
+.notice-empty { flex: 1; min-height: 110px; display: flex; align-items: center; justify-content: center; border: 1px dashed rgba(148, 163, 184, 0.24); border-radius: 12px; color: #64748b; font-size: 0.86rem; font-style: italic; background: rgba(2, 6, 23, 0.35); padding: 16px; text-align: center; }
+.clan-rules-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; }
+.clan-rules-list strong { color: #f8fafc; }
+@media (max-width: 900px) { .clan-info-grid { grid-template-columns: 1fr; } }
