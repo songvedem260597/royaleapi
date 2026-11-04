@@ -443,3 +443,40 @@ h1, h2, h3,
   font-family: var(--font-mono) !important;
   letter-spacing: 0 !important;
 }
+
+/* ===== 4K Clash Royale Blurred Wallpaper Background ===== */
+body {
+  position: relative;
+  background: #060913 !important;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -32px;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    url("https://supercell.com/images/c96611b5b4ccd331e2b4dcb797811894/hero_bg_clashroyale.612fcf42.webp"),
+    url("https://supercell.com/images/ec0b5871a0476c6ff55c0719fda231d9/bg_intro_clashroyale.ebe0a281.webp");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: blur(18px) saturate(1.25) brightness(0.46);
+  transform: scale(1.06);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 18%,
+    rgba(15, 23, 42, 0.32) 0%,
+    rgba(7, 11, 22, 0.78) 72%,
+    rgba(4, 7, 15, 0.9) 100%
+  );
+}
