@@ -477,3 +477,19 @@ render();
 
 const kpiKickLbl = document.querySelector('.kpi-kick .kpi-label');
 if (kpiKickLbl) kpiKickLbl.textContent = 'Cảnh Báo';
+
+javascript
+
+function bindDropdownSearchInput(inp, menu, empty) {
+  ['click', 'keydown'].forEach(ev => inp.addEventListener(ev, e => e.stopPropagation()));
+  inp.addEventListener('input', () => {
+    const q = inp.value.toLowerCase().trim();
+    let vis = 0;
+    menu.querySelectorAll('.custom-dropdown-item').forEach(it => {
+      const ok = !q || it.textContent.toLowerCase().includes(q);
+      it.style.display = ok ? '' : 'none';
+      if (ok) vis++;
+    });
+    empty.hidden = vis > 0;
+  });
+}
