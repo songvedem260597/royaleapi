@@ -42,7 +42,6 @@
     try {
       const demo = CA.generateDemoClan ? CA.generateDemoClan() : null;
       members = normalize(demo);
-      if (!members.length) members = normalize({ items: [] });
       notify('Đang dùng dữ liệu chuẩn WinterTime' + (reason ? ' (' + reason + ')' : ''), 'info');
     } catch (e) { console.error(e); members = []; }
     applyFilters();
