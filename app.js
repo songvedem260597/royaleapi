@@ -93,3 +93,37 @@ function statusBadge(s) {
   const [cls, label] = map[s] || ['badge-warning', s];
   return '<span class="badge ' + cls + '">' + label + '</span>';
 }
+
+function renderCW2Panel(member) {
+  if (!member) return;
+  const sel = document.getElementById('cw2-member-select');
+  if (sel) {
+    sel.innerHTML = currentClan.members.map(m =>
+      '<option value="' + m.tag + '">' + m.name + ' (' + m.tag + ') — ' + Math.round(m.score || 0) + ' đ</option>'
+    ).join('');
+    sel.value = member.tag;
+    upgradeCustomSelects();
+  }
+  const meta = document.getElementById('cw2-player-meta');
+  if (meta) {
+    meta.innerHTML = '<strong>' + member.name + '</strong> <span class="tag-mono">' + member.tag + '</span> ' +
+      '<span class="role-badge">' + member.roleLabel + '</span> ' + statusBadge(member.status);
+  }
+  const link = document.getElementById('cw2-royaleapi-link');
+  if (link) link.href = 'https://royaleapi.com/player/' + member.tag.replace('#', '');
+  const bd = document.getElementById('cw2-breakdown');
+  if (bd) {
+    const c = member.contribution || {};
+    const cards = [
+      ['Điểm Cống Hiến Cá Nhân', Math.round(member.score || 0) + '/100', 'Hạng đánh giá: ' + (member.statusLabel || member.status)],
+      ['Điểm War Fame (Chuẩn 1,600+)', (member.warFame || 0) + ' Fame/tuần', 'Fame Score: ' + (c.fameScore || 0) + '/45'],
+      ['Chuyên Cần Sử Dụng Deck', (member.warParticipation ?? 0) + '% (' + (c.totalDecks10Wars || 0) + ' deck/10 mùa)', 'Deck Score: ' + (c.deckScore || 0) + '/35'],
+      ['Moving Avg (4 mùa gần nhất) & Donate', (c.movingAvgFame || member.warFame || 0) + ' Fame · Tặng ' + (member.donations || 0), 'Donate Score: ' + (c.donateScore || 0) + '/20']
+    ];
+    bd.innerHTML = cards.map(x =>
+      '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
+    ).join('');
+  }
+  renderCW2Chart(member);
+  renderCW2History(member);
+}
