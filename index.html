@@ -40,3 +40,46 @@
   </div>
   <div id="error-box" class="error-box" hidden></div>
 </section>
+
+<section class="kpi-grid">
+  <div class="kpi-card kpi-members">
+    <span class="kpi-icon">👥</span>
+    <span class="kpi-label">Thành viên</span>
+    <span id="kpi-members" class="kpi-value">0</span>
+    <span class="kpi-foot">Tổng số trong clan</span>
+  </div>
+  <div class="kpi-card kpi-good">
+    <span class="kpi-icon">💎</span>
+    <span class="kpi-label">Đóng góp tốt</span>
+    <span id="kpi-good" class="kpi-value">0</span>
+    <span class="kpi-foot">Emerald · giữ lại</span>
+  </div>
+  <div class="kpi-card kpi-warning">
+    <span class="kpi-icon">⚠️</span>
+    <span class="kpi-label">Cần theo dõi</span>
+    <span id="kpi-warning" class="kpi-value">0</span>
+    <span class="kpi-foot">Amber · cảnh báo</span>
+  </div>
+  <div class="kpi-card kpi-kick">
+    <span class="kpi-icon">🩸</span>
+    <span class="kpi-label">Đề xuất lọc</span>
+    <span id="kpi-kick" class="kpi-value">0</span>
+    <span class="kpi-foot">Crimson · kick</span>
+  </div>
+</section>
+
+<section class="toolbar-bento">
+  <input id="search-member" type="text" placeholder="Tìm tên hoặc #tag..." />
+  <select id="filter-status">
+    <option value="all">Tất cả trạng thái</option>
+    <option value="good">Đóng góp tốt</option>
+    <option value="warning">Cần theo dõi</option>
+    <option value="kick">Đề xuất lọc</option>
+  </select>
+  <select id="sort-by">
+    <option value="score">Sắp xếp: Điểm hiệu quả</option>
+    <option value="trophies">Sắp xếp: Cúp</option>
+    <option value="donations">Sắp xếp: Donate</option>
+  </select>
+  <button id="btn-export-kick" class="btn-danger">Xuất danh sách lọc (Kick)</button>
+</section>
