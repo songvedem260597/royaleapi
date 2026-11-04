@@ -318,3 +318,19 @@ function exportKickList() {
     window.URL.revokeObjectURL(url);
     showSuccess("Đã xuất danh sách kick thành công!");
 }
+
+// Export kick list
+function exportKickList() {
+    const kickList = currentData.filter(m => m.status === 'Cần Kick' || m.status === 'Cảnh Báo');
+    const csvContent = 'name,tag,role,trophies,donationsGiven,donationsReceived,warFame,lastSeen,status,effectiveness\n' +
+        kickList.map(m => `${m.name},${m.tag},${m.role},${m.trophies},${m.donationsGiven},${m.donationsReceived},${m.warFame},${m.lastSeen},${m.status},${m.effectiveness}`).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kick-list.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    showSuccess("Đã xuất danh sách kick thành công!");
+}
