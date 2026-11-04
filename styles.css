@@ -787,3 +787,16 @@ body::after {
 .clan-rules-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; }
 .clan-rules-list strong { color: #f8fafc; }
 @media (max-width: 900px) { .clan-info-grid { grid-template-columns: 1fr; } }
+
+body::before {
+  background-image: url("https://n.uguu.se/PEGGaNsN.jpg") !important;
+  background-position: center 28% !important;
+  background-size: cover !important;
+  filter: blur(18px) saturate(1.25) brightness(0.46) !important;
+}
+.podium-section {
+  background: linear-gradient(180deg, rgba(8, 12, 26, 0.56) 0%, rgba(11, 16, 33, 0.76) 65%, rgba(9, 14, 28, 0.9) 100%), url("https://d.uguu.se/NMcZVtst.jpg") center 30% / cover no-repeat !important;
+  border: 1px solid rgba(192, 132, 252, 0.38) !important;
+  box-shadow: 0 22px 55px rgba(2, 6, 23, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+.podium-card { backdrop-filter: blur(12px) saturate(1.2) !important; }
