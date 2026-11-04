@@ -68,3 +68,29 @@ function analyzeClan(clanData) {
   const clanScore = clamp(Math.round(avgScore * 0.7 + clamp(counts.good / Math.max(1, members.length), 0, 1) * 30), 0, 100);
   return { name, tag, clanScore, membersCount: members.length, avgScore, mvpName: mvp ? mvp.name : '', counts, members };
 }
+
+function generateDemoClan() {
+  const members = [
+    { name: 'WinterKing', tag: '#GYQJL9GV', role: 'leader', trophies: 7200, donations: 480, donationsReceived: 120, warFame: 3200 },
+    { name: 'SnowStorm', tag: '#2PP0JCVQ', role: 'coLeader', trophies: 6800, donations: 420, donationsReceived: 150, warFame: 2900 },
+    { name: 'FrostBlade', tag: '#8YQ2L0RG', role: 'coLeader', trophies: 6500, donations: 380, donationsReceived: 160, warFame: 2700 },
+    { name: 'IceArrow', tag: '#9RKL2P8V', role: 'elder', trophies: 6100, donations: 300, donationsReceived: 180, warFame: 2200 },
+    { name: 'GlacierX', tag: '#P0Q8XZ2M', role: 'elder', trophies: 5800, donations: 260, donationsReceived: 200, warFame: 1900 },
+    { name: 'PolarWolf', tag: '#L2M9N4K7', role: 'elder', trophies: 5400, donations: 220, donationsReceived: 210, warFame: 1600 },
+    { name: 'SnowFang', tag: '#R7T3V6B1', role: 'member', trophies: 5000, donations: 150, donationsReceived: 220, warFame: 1100 },
+    { name: 'WinterFox', tag: '#K4N8M2Q9', role: 'member', trophies: 4600, donations: 90, donationsReceived: 240, warFame: 700 },
+    { name: 'ColdWind', tag: '#V5B1C7X3', role: 'member', trophies: 4200, donations: 40, donationsReceived: 260, warFame: 400 },
+    { name: 'FrostKid', tag: '#M3Q9L6T2', role: 'member', trophies: 3800, donations: 20, donationsReceived: 300, warFame: 200 },
+    { name: 'IceNewbie', tag: '#Z8W4R1P5', role: 'member', trophies: 3200, donations: 0, donationsReceived: 320, warFame: 0 },
+    { name: 'SnowGhost', tag: '#T6Y2K8N4', role: 'member', trophies: 2800, donations: 0, donationsReceived: 280, warFame: 0 }
+  ];
+  return { name: DEFAULT_CLAN_NAME, tag: DEFAULT_CLAN_TAG, region: 'Vietnam', members };
+}
+
+window.ClanAnalytics = {
+  DEFAULT_CLAN_TAG,
+  DEFAULT_CLAN_NAME,
+  analyzeMember,
+  analyzeClan,
+  generateDemoClan
+};
