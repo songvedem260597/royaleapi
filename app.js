@@ -366,3 +366,14 @@ function renderTable(clan) {
       '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
       '</tr>';
   }).join('');
+  tbody.querySelectorAll('.member-row-clickable').forEach(tr => {
+    tr.addEventListener('click', () => {
+      selectedMemberTag = tr.dataset.tag;
+      const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+      renderCW2Panel(m);
+      renderTable(currentClan);
+      document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
+renderTable(currentClan);
