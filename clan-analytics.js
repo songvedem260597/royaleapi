@@ -34,11 +34,17 @@ function clamp(n, min, max) {
 }
 
 function buildCw2History(decks, fame) {
-  return WAR_SEASONS_META.map((meta, i) => {
+  const list = WAR_SEASONS_META.map((meta, i) => {
     const d = Number(decks[i]) || 0;
     const f = Number(fame[i]) || 0;
     return { season: meta.season, date: meta.date, rank: meta.rank, clan: DEFAULT_CLAN_NAME, decks: d, fame: f, repair: 0, boatAttacks: 0, total: f, movingAvg: 0 };
   });
+  const chrono = list.slice().reverse();
+  chrono.forEach((entry, idx) => {
+    const win = chrono.slice(Math.max(0, idx - 3), idx + 1);
+    entry.movingAvg = Math.round(win.reduce((s, x) => s + x.fame, 0) / win.length);
+  });
+  return list;
 }
 
 function buildCw2FromMember(src) {
@@ -52,6 +58,17 @@ function buildCw2FromMember(src) {
   const part = Number(src.warParticipation) || 0;
   const fame = Number(src.warFame) || 0;
   const decksPerWar = Math.round(clamp(part / 100, 0, 1) * 16);
+  if (Array.isArray(src.recentWars) && src.recentWars.length) {
+    const rDecks = [];
+    const rFames = [];
+    for (let i = 0; i < WAR_SEASONS_META.length; i++) {
+      const raw = src.recentWars[i];
+      const d = raw != null ? (parseInt(String(raw).split('/')[0], 10) || 0) : 0;
+      rDecks.push(d);
+      rFames.push(d === 0 ? 0 : Math.round((d * ((Number(src.warFame) || 1600) / Math.max(1, decksPerWar))) / 25) * 25);
+    }
+    return buildCw2History(rDecks, rFames);
+  }
   const decks = [];
   const fames = [];
   for (let i = 0; i < WAR_SEASONS_META.length; i++) {
