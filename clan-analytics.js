@@ -1,43 +1,40 @@
-// clan-analytics.js - Clan Analytics Engine (Worker #3)
+// clan-analytics.js - Esports Analytics Engine for Clash Royale Clan Manager
 'use strict';
 
-const DEMO_MEMBERS = [
-  { name: 'DragonSlayer', tag: '#2PP0JCVQ', role: 'leader', level: 8500, donations: 1200, warFame: 3400, daysOffline: 0 },
-  { name: 'NightHawk', tag: '#8YQ2L0RG', role: 'coLeader', level: 7200, donations: 980, warFame: 2900, daysOffline: 1 },
-  { name: 'StormBreaker', tag: '#9RKL2P8V', role: 'elder', level: 6100, donations: 750, warFame: 2100, daysOffline: 2 },
-  { name: 'IceQueen', tag: '#P0Q8XZ2M', role: 'elder', level: 5800, donations: 620, warFame: 1850, daysOffline: 3 },
-  { name: 'FireMage', tag: '#L2M9N4K7', role: 'member', level: 4900, donations: 410, warFame: 1200, daysOffline: 5 },
-  { name: 'ShadowWolf', tag: '#R7T3V6B1', role: 'member', level: 4500, donations: 180, warFame: 600, daysOffline: 12 }
-];
+const ROLE_LABELS = { leader: 'Leader', coLeader: 'Co-Leader', elder: 'Elder', member: 'Member' };
 
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
+function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
-function evaluateMember(m) {
-  if (!m || typeof m !== 'object') return 0;
-  const level = Number(m.level) || 0;
+function analyzeMember(member) {
+  const m = member || {};
   const donations = Number(m.donations) || 0;
-  const warFame = Number(m.warFame) || 0;
-  const daysOffline = Number(m.daysOffline) || 0;
+  const received = Number(m.donationsReceived) || 0;
+  const trophies = Number(m.trophies) || 0;
+  const role = m.role || 'member';
 
-  const levelScore = clamp((level - 4500) / (8500 - 4500), 0, 1) * 40;
-  const donationScore = clamp(donations / 1200, 0, 1) * 25;
-  const warScore = clamp(warFame / 3400, 0, 1) * 25;
-  const activityScore = clamp(1 - daysOffline / 14, 0, 1) * 10;
+  const donateScore = clamp(donations / 200, 0, 1) * 45;
+  const ratio = received > 0 ? donations / received : (donations > 0 ? 2 : 0);
+  const ratioScore = clamp(ratio / 1.5, 0, 1) * 15;
+  const trophyScore = clamp(trophies / 7500, 0, 1) * 25;
+  const roleScore = role === 'leader' ? 15 : role === 'coLeader' ? 12 : role === 'elder' ? 9 : 6;
 
-  const total = levelScore + donationScore + warScore + activityScore;
-  return clamp(Math.round(total), 0, 100);
+  const score = clamp(Math.round(donateScore + ratioScore + trophyScore + roleScore), 0, 100);
+  const status = score >= 65 ? 'good' : score >= 40 ? 'warning' : 'kick';
+  const statusLabel = status === 'good' ? 'Đóng góp tốt' : status === 'warning' ? 'Cần theo dõi' : 'Đề xuất lọc';
+
+  let reason;
+  if (score >= 90) reason = 'MVP Donate & Cúp cao';
+  else if (donations < 50 && received > 100) reason = 'Nhận quân nhiều nhưng donate thấp';
+  else if (donations === 0 && received > 0) reason = 'Nhận quân nhiều nhưng 0 donate';
+  else if (donations < 50) reason = 'Donate thấp (<50)';
+  else if (trophies < 5000) reason = 'Cúp thấp (<5000)';
+  else if (ratio < 0.5) reason = 'Tỷ lệ donate/nhận kém';
+  else if (score >= 65) reason = 'Đóng góp ổn định';
+  else reason = 'Cần cải thiện hoạt động';
+
+  return {
+    tag: m.tag || '', name: m.name || 'Unknown', role, roleLabel: ROLE_LABELS[role] || 'Member',
+    expLevel: Number(m.expLevel) || 0, trophies, donations, donationsReceived: received,
+    donationRatio: Math.round(ratio * 100) / 100, score, status, statusLabel, reason
+  };
 }
-
-function getClanInsights(rows) {
-  const list = Array.isArray(rows) && rows.length ? rows : DEMO_MEMBERS;
-  const scores = list.map(evaluateMember);
-  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-  const inactive = list.filter((m) => (Number(m.daysOffline) || 0) > 7).length;
-  const top = list[scores.indexOf(Math.max(...scores))];
-  const health = avg >= 75 ? 'XUAT SAC' : avg >= 50 ? 'TOT' : avg >= 30 ? 'TRUNG BINH' : 'YEU';
-  return `Clan Health: ${health} | Diem TB: ${avg}/100 | Thanh vien: ${list.length} | Khong hoat dong (>7 ngay): ${inactive} | MVP: ${top.name} (${Math.max(...scores)} diem)`;
-}
-
-window.ClanAnalytics = { DEMO_MEMBERS, evaluateMember, getClanInsights };
