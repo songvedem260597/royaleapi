@@ -64,3 +64,215 @@ function upgradeCustomSelects() {
 document.addEventListener('click', () => {
   document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
 });
+
+function renderSummary(clan) {
+  const el = document.getElementById('clan-summary');
+  if (!el) return;
+  const avg = Math.round(clan.avgScore || 0);
+  el.innerHTML =
+    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
+    '<div class="hero-stats">' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+      '<div><span class="kpi-label">Chủ lực MVP</span><strong>' + (clan.mvpName || '—') + '</strong></div>' +
+    '</div>' +
+    '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
+}
+
+function renderKPIs(clan) {
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  set('kpi-members', (clan.members.length) + '/50');
+  set('kpi-good', clan.counts.good);
+  set('kpi-warning', clan.counts.warning);
+  set('kpi-kick', clan.counts.kick);
+}
+
+function statusBadge(s) {
+  const map = { good: ['badge-good', 'Tốt'], warning: ['badge-warning', 'Cảnh báo'], kick: ['badge-kick', 'Kick'] };
+  const [cls, label] = map[s] || ['badge-warning', s];
+  return '<span class="badge ' + cls + '">' + label + '</span>';
+}
+
+function renderCW2Panel(member) {
+  if (!member) return;
+  const sel = document.getElementById('cw2-member-select');
+  if (sel) {
+    sel.innerHTML = currentClan.members.map(m =>
+      '<option value="' + m.tag + '">' + m.name + ' (' + m.tag + ') — ' + Math.round(m.score || 0) + ' đ</option>'
+    ).join('');
+    sel.value = member.tag;
+    upgradeCustomSelects();
+  }
+  const meta = document.getElementById('cw2-player-meta');
+  if (meta) {
+    meta.innerHTML = '<strong>' + member.name + '</strong> <span class="tag-mono">' + member.tag + '</span> ' +
+      '<span class="role-badge">' + member.roleLabel + '</span> ' + statusBadge(member.status);
+  }
+  const link = document.getElementById('cw2-royaleapi-link');
+  if (link) link.href = 'https://royaleapi.com/player/' + member.tag.replace('#', '');
+  const bd = document.getElementById('cw2-breakdown');
+  if (bd) {
+    const c = member.contribution || {};
+    const cards = [
+      ['Điểm Cống Hiến Cá Nhân', Math.round(member.score || 0) + '/100', 'Hạng đánh giá: ' + (member.statusLabel || member.status)],
+      ['Điểm War Fame (Chuẩn 1,600+)', (member.warFame || 0) + ' Fame/tuần', 'Fame Score: ' + (c.fameScore || 0) + '/45'],
+      ['Chuyên Cần Sử Dụng Deck', (member.warParticipation ?? 0) + '% (' + (c.totalDecks10Wars || 0) + ' deck/10 mùa)', 'Deck Score: ' + (c.deckScore || 0) + '/35'],
+      ['Moving Avg (4 mùa gần nhất) & Donate', (c.movingAvgFame || member.warFame || 0) + ' Fame · Tặng ' + (member.donations || 0), 'Donate Score: ' + (c.donateScore || 0) + '/20']
+    ];
+    bd.innerHTML = cards.map(x =>
+      '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
+    ).join('');
+  }
+  renderCW2Chart(member);
+  renderCW2History(member);
+}
+
+function renderCW2Chart(member) {
+  const box = document.getElementById('cw2-chart-box');
+  if (!box) return;
+  const hist = (member.cw2History || []).slice().reverse();
+  const W = 760, H = 230, padL = 40, padR = 20, padT = 30, padB = 40;
+  const chartW = W - padL - padR, chartH = H - padT - padB;
+  const maxFame = 3600;
+  const y = f => padT + chartH - (Math.min(f, maxFame) / maxFame) * chartH;
+  const n = hist.length || 1;
+  const bw = chartW / n;
+  let bars = '', labels = '', pts = [];
+  hist.forEach((h, i) => {
+    const x = padL + i * bw + bw * 0.15;
+    const w = bw * 0.7;
+    const fame = h.fame || 0;
+    const top = y(fame);
+    const color = fame < 1600 ? '#f472b6' : '#38bdf8';
+    bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' + (padT + chartH - top) + '" fill="' + color + '" rx="3"/>';
+    bars += '<text x="' + (x + w / 2) + '" y="' + (top - 5) + '" fill="#e2e8f0" font-size="10" text-anchor="middle">' + fame + '</text>';
+    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+    const ma = h.movingAvg || fame;
+    pts.push((x + w / 2) + ',' + y(ma));
+  });
+  const warnTop = y(1600);
+  const warn = '<rect x="' + padL + '" y="' + warnTop + '" width="' + chartW + '" height="' + (padT + chartH - warnTop) + '" fill="#f472b6" opacity="0.08"/>';
+  const ref1 = '<line x1="' + padL + '" y1="' + y(1600) + '" x2="' + (W - padR) + '" y2="' + y(1600) + '" stroke="#f472b6" stroke-dasharray="4 4" stroke-width="1"/>';
+  const ref2 = '<line x1="' + padL + '" y1="' + y(2600) + '" x2="' + (W - padR) + '" y2="' + y(2600) + '" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="1"/>';
+  const poly = pts.length ? '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3b82f6" stroke-width="2"/>' : '';
+  box.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + warn + ref1 + ref2 + bars + poly + labels + '</svg>';
+}
+
+function renderCW2History(member) {
+  const tb = document.getElementById('cw2-history-tbody');
+  if (!tb) return;
+  const hist = member.cw2History || [];
+  tb.innerHTML = hist.map(h =>
+    '<tr>' +
+      '<td>' + (h.season || '') + '</td>' +
+      '<td>' + (h.date || '') + '</td>' +
+      '<td>' + (h.rank || '') + '</td>' +
+      '<td>🏆 Gold</td>' +
+      '<td>WinterTime</td>' +
+      '<td>' + (h.decks || 0) + '</td>' +
+      '<td>' + (h.fame || 0) + '</td>' +
+      '<td>' + (h.repair || 0) + '</td>' +
+      '<td>' + (h.boatAttacks || 0) + '</td>' +
+      '<td>' + (h.total || 0) + '</td>' +
+    '</tr>'
+  ).join('');
+}
+
+function renderTable(clan) {
+  const tbody = document.getElementById('member-tbody');
+  if (!tbody) return;
+  const { q, status, sortBy } = getFilters();
+  let rows = clan.members.filter(m => {
+    if (status !== 'all' && m.status !== status) return false;
+    if (q && !(m.name.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  tbody.innerHTML = rows.map((m, i) => {
+    const pct = Math.round(m.score || 0);
+    const decks = (m.cw2History || []).slice(0, 6).map(h => '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '">' + h.decks + '</span>').join('');
+    return '<tr class="member-row-clickable" data-tag="' + m.tag + '">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
+      '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
+      '<td>🏆 ' + m.trophies + '</td>' +
+      '<td>' + (m.warParticipation ?? 0) + '% · ' + (m.warFame || 0) + ' Fame<div class="deck-mini-list">' + decks + '</div></td>' +
+      '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
+      '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
+      '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
+      '</tr>';
+  }).join('');
+  tbody.querySelectorAll('.member-row-clickable').forEach(tr => {
+    tr.addEventListener('click', () => {
+      selectedMemberTag = tr.dataset.tag;
+      const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+      renderCW2Panel(m);
+      document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
+
+function render() {
+  renderKPIs(currentClan);
+  renderSummary(currentClan);
+  renderTable(currentClan);
+  const m = currentClan.members.find(x => x.tag === selectedMemberTag) || currentClan.members[0];
+  if (m) {
+    selectedMemberTag = m.tag;
+    renderCW2Panel(m);
+  }
+  upgradeCustomSelects();
+}
+
+function showKickList() {
+  const out = document.getElementById('kick-output');
+  if (!out) return;
+  const kicks = currentClan.members.filter(m => m.status === 'kick');
+  out.innerHTML = kicks.length
+    ? '<ul>' + kicks.map(m => '<li><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span> — ' + (m.reason || '') + '</li>').join('') + '</ul>'
+    : '<p>Không có thành viên nào cần kick.</p>';
+  out.removeAttribute('hidden');
+}
+
+async function fetchClan() {
+  try {
+    const res = await fetch('/api/royale-proxy/clans/%23GYQJL9GV');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const raw = await res.json();
+    currentClan = CA.analyzeClan(raw);
+  } catch (e) {
+    currentClan = CA.analyzeClan(CA.generateDemoClan());
+  }
+  render();
+}
+
+function bindEvents() {
+  document.getElementById('btn-demo')?.addEventListener('click', fetchClan);
+  document.getElementById('btn-fetch')?.addEventListener('click', fetchClan);
+  document.getElementById('btn-export-kick')?.addEventListener('click', showKickList);
+  ['search-member', 'filter-status', 'sort-by'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => { renderTable(currentClan); });
+    el.addEventListener('change', () => { renderTable(currentClan); });
+  });
+  document.getElementById('cw2-member-select')?.addEventListener('change', e => {
+    selectedMemberTag = e.target.value;
+    const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+    if (m) renderCW2Panel(m);
+  });
+}
+
+function init() {
+  bindEvents();
+  upgradeCustomSelects();
+  render();
+  fetchClan();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
