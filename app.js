@@ -162,7 +162,7 @@ function renderCW2Chart(member) {
 function renderCW2History(member) {
   const tb = document.getElementById('cw2-history-tbody');
   if (!tb) return;
-  const hist = (member.cw2History || []).slice().reverse();
+  const hist = member.cw2History || [];
   tb.innerHTML = hist.map(h =>
     '<tr>' +
       '<td>' + (h.season || '') + '</td>' +
@@ -191,14 +191,14 @@ function renderTable(clan) {
   rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
   tbody.innerHTML = rows.map((m, i) => {
     const pct = Math.round(m.score || 0);
-    const decks = (m.recentDecks || []).slice(0, 4).map(d => '<span class="deck-pill">' + d + '</span>').join('');
+    const decks = (m.cw2History || []).slice(0, 6).map(h => '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '">' + h.decks + '</span>').join('');
     return '<tr class="member-row-clickable" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
       '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
       '<td>' + (m.warParticipation ?? 0) + '% · ' + (m.warFame || 0) + ' Fame<div class="deck-mini-list">' + decks + '</div></td>' +
-      '<td>' + m.donations + '</td>' +
+      '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
       '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
       '</tr>';
@@ -211,4 +211,68 @@ function renderTable(clan) {
       document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' });
     });
   });
+}
+
+function render() {
+  renderKPIs(currentClan);
+  renderSummary(currentClan);
+  renderTable(currentClan);
+  const m = currentClan.members.find(x => x.tag === selectedMemberTag) || currentClan.members[0];
+  if (m) {
+    selectedMemberTag = m.tag;
+    renderCW2Panel(m);
+  }
+  upgradeCustomSelects();
+}
+
+function showKickList() {
+  const out = document.getElementById('kick-output');
+  if (!out) return;
+  const kicks = currentClan.members.filter(m => m.status === 'kick');
+  out.innerHTML = kicks.length
+    ? '<ul>' + kicks.map(m => '<li><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span> — ' + (m.reason || '') + '</li>').join('') + '</ul>'
+    : '<p>Không có thành viên nào cần kick.</p>';
+  out.removeAttribute('hidden');
+}
+
+async function fetchClan() {
+  try {
+    const res = await fetch('/api/royale-proxy/clans/%23GYQJL9GV');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const raw = await res.json();
+    currentClan = CA.analyzeClan(raw);
+  } catch (e) {
+    currentClan = CA.analyzeClan(CA.generateDemoClan());
+  }
+  render();
+}
+
+function bindEvents() {
+  document.getElementById('btn-demo')?.addEventListener('click', fetchClan);
+  document.getElementById('btn-fetch')?.addEventListener('click', fetchClan);
+  document.getElementById('btn-export-kick')?.addEventListener('click', showKickList);
+  ['search-member', 'filter-status', 'sort-by'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => { renderTable(currentClan); });
+    el.addEventListener('change', () => { renderTable(currentClan); });
+  });
+  document.getElementById('cw2-member-select')?.addEventListener('change', e => {
+    selectedMemberTag = e.target.value;
+    const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+    if (m) renderCW2Panel(m);
+  });
+}
+
+function init() {
+  bindEvents();
+  upgradeCustomSelects();
+  render();
+  fetchClan();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
