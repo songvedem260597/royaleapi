@@ -40,3 +40,40 @@
       </tr>`;
     }).join('');
   }
+
+  function updateKPI(rows) {
+    const total = rows.length;
+    const good = rows.filter((m) => scoreOf(m) >= 70).length;
+    const warning = rows.filter((m) => { const s = scoreOf(m); return s >= 40 && s < 70; }).length;
+    const kick = rows.filter((m) => scoreOf(m) < 40).length;
+    if ($('kpi-members')) $('kpi-members').textContent = fmt(total);
+    if ($('kpi-good')) $('kpi-good').textContent = fmt(good);
+    if ($('kpi-warning')) $('kpi-warning').textContent = fmt(warning);
+    if ($('kpi-kick')) $('kpi-kick').textContent = fmt(kick);
+    if ($('totalMembers')) $('totalMembers').textContent = fmt(total);
+    if ($('kickRiskCount')) $('kickRiskCount').textContent = fmt(kick);
+    const avg = total ? Math.round(rows.reduce((s, m) => s + scoreOf(m), 0) / total) : 0;
+    if ($('avgEfficiency')) $('avgEfficiency').textContent = avg + '%';
+    if ($('totalWarFame')) $('totalWarFame').textContent = fmt(rows.reduce((s, m) => s + (Number(m.warFame) || 0), 0));
+    return { total, good, warning, kick, avg };
+  }
+
+  function renderHero(rows, stats) {
+    const hero = $('clan-summary');
+    if (!hero) return;
+    const mvp = rows.slice().sort((a, b) => scoreOf(b) - scoreOf(a))[0];
+    const clanName = (window.CLAN_NAME) || 'Royale Clan';
+    const clanTag = (window.CLAN_TAG) || '#2PP0JCVQ';
+    const pct = (n) => (stats.total ? Math.round((n / stats.total) * 100) : 0);
+    hero.innerHTML = `
+      <div class="hero-head"><h2>${clanName}</h2><span class="tag-mono">${clanTag}</span></div>
+      <div class="hero-stats">
+        <div><span class="kpi-label">Điểm TB Clan</span><strong>${stats.avg}/100</strong></div>
+        <div><span class="kpi-label">MVP</span><strong>${mvp ? mvp.name + ' (' + scoreOf(mvp) + ')' : '-'}</strong></div>
+      </div>
+      <div class="progress-stack">
+        <div class="progress-row"><span>Tốt</span><div class="progress"><div style="width:${pct(stats.good)}%;background:#16a34a"></div></div><small>${pct(stats.good)}%</small></div>
+        <div class="progress-row"><span>Cảnh báo</span><div class="progress"><div style="width:${pct(stats.warning)}%;background:#f59e0b"></div></div><small>${pct(stats.warning)}%</small></div>
+        <div class="progress-row"><span>Lọc</span><div class="progress"><div style="width:${pct(stats.kick)}%;background:#dc2626"></div></div><small>${pct(stats.kick)}%</small></div>
+      </div>`;
+  }
