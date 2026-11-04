@@ -34,11 +34,17 @@ function clamp(n, min, max) {
 }
 
 function buildCw2History(decks, fame) {
-  return WAR_SEASONS_META.map((meta, i) => {
+  const list = WAR_SEASONS_META.map((meta, i) => {
     const d = Number(decks[i]) || 0;
     const f = Number(fame[i]) || 0;
     return { season: meta.season, date: meta.date, rank: meta.rank, clan: DEFAULT_CLAN_NAME, decks: d, fame: f, repair: 0, boatAttacks: 0, total: f, movingAvg: 0 };
   });
+  const chrono = list.slice().reverse();
+  chrono.forEach((entry, idx) => {
+    const win = chrono.slice(Math.max(0, idx - 3), idx + 1);
+    entry.movingAvg = Math.round(win.reduce((s, x) => s + x.fame, 0) / win.length);
+  });
+  return list;
 }
 
 function buildCw2FromMember(src) {
