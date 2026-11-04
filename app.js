@@ -46,3 +46,42 @@
     } catch (e) { console.error(e); members = []; }
     applyFilters();
   }
+
+  async function fetchClan() {
+    const tokenEl = $('api-token-input');
+    const token = tokenEl ? tokenEl.value.trim() : '';
+    if (!token) { loadDemo('chưa có token'); return; }
+    try {
+      const res = await fetch(API_BASE, { headers: { 'x-royale-token': token, 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      members = normalize(data);
+      if (!members.length) throw new Error('empty');
+      notify('Đã tải dữ liệu WinterTime từ API', 'success');
+      applyFilters();
+    } catch (e) {
+      console.warn('Fetch lỗi:', e);
+      loadDemo('lỗi mạng/API');
+    }
+  }
+
+  function applyFilters() {
+    const q = ($('search-member') ? $('search-member').value : '').trim().toLowerCase();
+    const status = $('filter-status') ? $('filter-status').value : 'all';
+    const sortBy = $('sort-by') ? $('sort-by').value : 'score';
+    filtered = members.filter((m) => {
+      const s = scoreOf(m);
+      const st = statusOf(s).key;
+      if (status !== 'all' && st !== status) return false;
+      if (!q) return true;
+      return (m.name || '').toLowerCase().includes(q) || (m.tag || '').toLowerCase().includes(q);
+    });
+    filtered.sort((a, b) => {
+      if (sortBy === 'trophies') return (b.trophies || 0) - (a.trophies || 0);
+      if (sortBy === 'donations') return (b.donations || 0) - (a.donations || 0);
+      return scoreOf(b) - scoreOf(a);
+    });
+    const stats = updateKPI(filtered);
+    renderHero(filtered, stats);
+    renderTable(filtered);
+  }
