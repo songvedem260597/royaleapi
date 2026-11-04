@@ -187,3 +187,16 @@ select option {
   padding: 10px 14px;
   font-weight: 600;
 }
+
+/* ===== Custom Inner Dropdown Menu ===== */
+.custom-dropdown { position: relative; display: inline-block; min-width: 215px; user-select: none; z-index: 40; }
+.custom-dropdown.open { z-index: 999; }
+.custom-dropdown-trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; color: #f8fafc; background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(56, 189, 248, 0.32); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06); cursor: pointer; transition: all 0.2s ease; }
+.custom-dropdown-trigger:hover, .custom-dropdown.open .custom-dropdown-trigger { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18), 0 8px 24px rgba(0, 0, 0, 0.45); }
+.custom-dropdown-arrow { width: 16px; height: 16px; color: #38bdf8; transition: transform 0.22s ease; flex-shrink: 0; }
+.custom-dropdown.open .custom-dropdown-arrow { transform: rotate(180deg); }
+.custom-dropdown-menu { position: absolute; top: calc(100% + 8px); left: 0; right: 0; min-width: 100%; max-height: 280px; overflow-y: auto; background: rgba(11, 17, 32, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 14px; padding: 6px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.78), 0 0 24px rgba(56, 189, 248, 0.16); opacity: 0; transform: translateY(-6px) scale(0.98); pointer-events: none; transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1); }
+.custom-dropdown.open .custom-dropdown-menu { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.custom-dropdown-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 9px; font-size: 0.86rem; font-weight: 600; color: #cbd5e1; cursor: pointer; transition: all 0.14s ease; }
+.custom-dropdown-item:hover { background: rgba(56, 189, 248, 0.14); color: #f8fafc; transform: translateX(2px); }
+.custom-dropdown-item.selected { background: linear-gradient(90deg, rgba(56, 189, 248, 0.22), rgba(56, 189, 248, 0.06)); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
