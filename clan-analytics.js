@@ -38,3 +38,22 @@ function analyzeMember(member) {
     donationRatio: Math.round(ratio * 100) / 100, score, status, statusLabel, reason
   };
 }
+
+function analyzeClan(clanData) {
+  const clan = clanData || {};
+  const rawMembers = Array.isArray(clan.memberList) ? clan.memberList : (Array.isArray(clan.members) ? clan.members : []);
+  const members = rawMembers.map(analyzeMember);
+  const total = members.length;
+  const good = members.filter((m) => m.status === 'good').length;
+  const warning = members.filter((m) => m.status === 'warning').length;
+  const kick = members.filter((m) => m.status === 'kick').length;
+  const avgScore = total ? Math.round(members.reduce((s, m) => s + m.score, 0) / total) : 0;
+  const healthPercent = total ? Math.round(((good + warning * 0.5) / total) * 100) : 0;
+  const mvpMember = members.slice().sort((a, b) => b.score - a.score)[0] || null;
+
+  return {
+    name: clan.name || 'Unknown Clan', tag: clan.tag || '', badgeId: clan.badgeId || 0,
+    clanScore: Number(clan.clanScore) || 0, membersCount: total, avgScore, healthPercent,
+    counts: { total, good, warning, kick }, mvpMember, members
+  };
+}
