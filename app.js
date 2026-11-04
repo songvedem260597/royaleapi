@@ -212,3 +212,67 @@ function renderTable(clan) {
     });
   });
 }
+
+function render() {
+  renderKPIs(currentClan);
+  renderSummary(currentClan);
+  renderTable(currentClan);
+  const m = currentClan.members.find(x => x.tag === selectedMemberTag) || currentClan.members[0];
+  if (m) {
+    selectedMemberTag = m.tag;
+    renderCW2Panel(m);
+  }
+  upgradeCustomSelects();
+}
+
+function showKickList() {
+  const out = document.getElementById('kick-output');
+  if (!out) return;
+  const kicks = currentClan.members.filter(m => m.status === 'kick');
+  out.innerHTML = kicks.length
+    ? '<ul>' + kicks.map(m => '<li><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span> — ' + (m.reason || '') + '</li>').join('') + '</ul>'
+    : '<p>Không có thành viên nào cần kick.</p>';
+  out.removeAttribute('hidden');
+}
+
+async function fetchClan() {
+  try {
+    const res = await fetch('/api/royale-proxy/clans/%23GYQJL9GV');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const raw = await res.json();
+    currentClan = CA.analyzeClan(raw);
+  } catch (e) {
+    currentClan = CA.analyzeClan(CA.generateDemoClan());
+  }
+  render();
+}
+
+function bindEvents() {
+  document.getElementById('btn-demo')?.addEventListener('click', fetchClan);
+  document.getElementById('btn-fetch')?.addEventListener('click', fetchClan);
+  document.getElementById('btn-export-kick')?.addEventListener('click', showKickList);
+  ['search-member', 'filter-status', 'sort-by'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => { renderTable(currentClan); });
+    el.addEventListener('change', () => { renderTable(currentClan); });
+  });
+  document.getElementById('cw2-member-select')?.addEventListener('change', e => {
+    selectedMemberTag = e.target.value;
+    const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+    if (m) renderCW2Panel(m);
+  });
+}
+
+function init() {
+  bindEvents();
+  upgradeCustomSelects();
+  render();
+  fetchClan();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
