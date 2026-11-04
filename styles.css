@@ -372,3 +372,74 @@ select:focus-visible {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
   outline: none !important;
 }
+
+/* ===== Vietnamese Luxury Typography Upgrade (Be Vietnam Pro + Inter) ===== */
+:root {
+  --font-vi: 'Be Vietnam Pro', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-num: 'Inter', 'Be Vietnam Pro', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-vi) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  line-height: 1.55 !important;
+  letter-spacing: -0.005em;
+}
+
+.brand-title,
+h1, h2, h3,
+.summary-title strong {
+  font-family: var(--font-vi) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.35 !important;
+}
+
+.kpi-label,
+.member-table th,
+.cw2-table th,
+.cw2-stat-title {
+  font-family: var(--font-vi) !important;
+  font-weight: 600 !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.03em !important;
+  line-height: 1.45 !important;
+  color: #94a3b8 !important;
+}
+
+.kpi-card strong,
+.hero-stats strong,
+.cw2-stat-value {
+  font-family: var(--font-num) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.025em !important;
+}
+
+.member-table td,
+.cw2-table td {
+  font-family: var(--font-vi) !important;
+  font-size: 0.91rem !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.member-table td strong {
+  font-weight: 600 !important;
+  color: #f8fafc !important;
+  letter-spacing: -0.01em;
+}
+
+.tag-mono,
+.deck-pill {
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0 !important;
+}
