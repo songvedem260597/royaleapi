@@ -158,3 +158,57 @@ function renderCW2Chart(member) {
   const poly = pts.length ? '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3b82f6" stroke-width="2"/>' : '';
   box.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + warn + ref1 + ref2 + bars + poly + labels + '</svg>';
 }
+
+function renderCW2History(member) {
+  const tb = document.getElementById('cw2-history-tbody');
+  if (!tb) return;
+  const hist = (member.cw2History || []).slice().reverse();
+  tb.innerHTML = hist.map(h =>
+    '<tr>' +
+      '<td>' + (h.season || '') + '</td>' +
+      '<td>' + (h.date || '') + '</td>' +
+      '<td>' + (h.rank || '') + '</td>' +
+      '<td>🏆 Gold</td>' +
+      '<td>WinterTime</td>' +
+      '<td>' + (h.decks || 0) + '</td>' +
+      '<td>' + (h.fame || 0) + '</td>' +
+      '<td>' + (h.repair || 0) + '</td>' +
+      '<td>' + (h.boatAttacks || 0) + '</td>' +
+      '<td>' + (h.total || 0) + '</td>' +
+    '</tr>'
+  ).join('');
+}
+
+function renderTable(clan) {
+  const tbody = document.getElementById('member-tbody');
+  if (!tbody) return;
+  const { q, status, sortBy } = getFilters();
+  let rows = clan.members.filter(m => {
+    if (status !== 'all' && m.status !== status) return false;
+    if (q && !(m.name.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  tbody.innerHTML = rows.map((m, i) => {
+    const pct = Math.round(m.score || 0);
+    const decks = (m.recentDecks || []).slice(0, 4).map(d => '<span class="deck-pill">' + d + '</span>').join('');
+    return '<tr class="member-row-clickable" data-tag="' + m.tag + '">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
+      '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
+      '<td>🏆 ' + m.trophies + '</td>' +
+      '<td>' + (m.warParticipation ?? 0) + '% · ' + (m.warFame || 0) + ' Fame<div class="deck-mini-list">' + decks + '</div></td>' +
+      '<td>' + m.donations + '</td>' +
+      '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
+      '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
+      '</tr>';
+  }).join('');
+  tbody.querySelectorAll('.member-row-clickable').forEach(tr => {
+    tr.addEventListener('click', () => {
+      selectedMemberTag = tr.dataset.tag;
+      const m = currentClan.members.find(x => x.tag === selectedMemberTag);
+      renderCW2Panel(m);
+      document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
