@@ -284,14 +284,14 @@ function showError(message) {
     const errorDiv = document.getElementById('errorMessage');
     errorDiv.textContent = message;
     errorDiv.classList.toggle('hidden', !message);
-    setTimeout(() => showError(''), 5000);
+    if (message) setTimeout(() => showError(''), 5000);
 }
 
 function showSuccess(message) {
     const successDiv = document.getElementById('successMessage');
     successDiv.textContent = message;
     successDiv.classList.toggle('hidden', !message);
-    setTimeout(() => showSuccess(''), 3000);
+    if (message) setTimeout(() => showSuccess(''), 3000);
 }
 
 function getCurrentClanTag() {
