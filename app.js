@@ -408,3 +408,18 @@ function statusBadge(s) {
     render();
   }
 })();
+
+(function enableFullAutoSync() {
+  document.querySelectorAll('.nav-controls').forEach(el => el.remove());
+  const updateSyncBadge = () => {
+    const el = document.getElementById('auto-sync-text');
+    if (el) {
+      const now = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      el.textContent = 'Tự động đồng bộ & lưu dữ liệu · Cập nhật ' + now;
+    }
+  };
+  updateSyncBadge();
+  setInterval(() => {
+    fetchClan().then(updateSyncBadge).catch(() => {});
+  }, 60000);
+})();
