@@ -58,6 +58,17 @@ function buildCw2FromMember(src) {
   const part = Number(src.warParticipation) || 0;
   const fame = Number(src.warFame) || 0;
   const decksPerWar = Math.round(clamp(part / 100, 0, 1) * 16);
+  if (Array.isArray(src.recentWars) && src.recentWars.length) {
+    const rDecks = [];
+    const rFames = [];
+    for (let i = 0; i < WAR_SEASONS_META.length; i++) {
+      const raw = src.recentWars[i];
+      const d = raw != null ? (parseInt(String(raw).split('/')[0], 10) || 0) : 0;
+      rDecks.push(d);
+      rFames.push(d === 0 ? 0 : Math.round((d * ((Number(src.warFame) || 1600) / Math.max(1, decksPerWar))) / 25) * 25);
+    }
+    return buildCw2History(rDecks, rFames);
+  }
   const decks = [];
   const fames = [];
   for (let i = 0; i < WAR_SEASONS_META.length; i++) {
