@@ -150,3 +150,12 @@ function generateDemoClan() {
   ];
   return { name: DEFAULT_CLAN_NAME, tag: DEFAULT_CLAN_TAG, region: 'Vietnam', membersCount: 47, clanScore: 131349, warTrophies: 2369, members };
 }
+
+window.ClanAnalytics = {
+  DEFAULT_CLAN_TAG,
+  DEFAULT_CLAN_NAME,
+  WAR_SEASONS_META,
+  analyzeMember,
+  analyzeClan,
+  generateDemoClan
+};
