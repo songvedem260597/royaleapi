@@ -377,3 +377,34 @@ function renderTable(clan) {
   });
 }
 renderTable(currentClan);
+
+function statusBadge(s) {
+  const map = {
+    good: ['badge-good', 'Tốt'],
+    warning: ['badge-warning', 'Trung bình'],
+    kick: ['badge-kick', 'Cảnh báo']
+  };
+  const [cls, label] = map[s] || ['badge-warning', s];
+  return '<span class="badge ' + cls + '">' + label + '</span>';
+}
+
+(function updateStatusLabels() {
+  const filterSel = document.getElementById('filter-status');
+  if (filterSel) {
+    const optGood = filterSel.querySelector('option[value="good"]');
+    const optWarn = filterSel.querySelector('option[value="warning"]');
+    const optKick = filterSel.querySelector('option[value="kick"]');
+    if (optGood) optGood.textContent = 'Tốt';
+    if (optWarn) optWarn.textContent = 'Trung bình';
+    if (optKick) optKick.textContent = 'Cảnh báo';
+    upgradeCustomSelects();
+  }
+  if (currentClan && Array.isArray(currentClan.members)) {
+    currentClan.members.forEach(m => {
+      if (m.status === 'warning') m.statusLabel = 'Trung bình';
+      else if (m.status === 'kick') m.statusLabel = 'Cảnh báo';
+      else if (m.status === 'good') m.statusLabel = 'Tốt';
+    });
+    render();
+  }
+})();
