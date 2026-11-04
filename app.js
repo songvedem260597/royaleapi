@@ -90,17 +90,6 @@ async function loadClanData() {
     updateUI();
 }
 
-// Load Vietnamese sample data
-function loadVietnameseClan() {
-    currentData = sampleClanData.map(member => ({
-        ...member,
-        effectiveness: calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen),
-        status: determineStatus(calculateEffectiveness(member.warFame, member.donationsGiven, member.donationsReceived, member.lastSeen), member.lastSeen, member.warFame)
-    }));
-    updateUI();
-    showSuccess("Đã tải dữ liệu mẫu VN thành công!");
-}
-
 // Update UI with current data
 function updateUI() {
     updateKPI();
