@@ -423,3 +423,21 @@ function statusBadge(s) {
     fetchClan().then(updateSyncBadge).catch(() => {});
   }, 60000);
 })();
+
+function statusBadge(s) {
+  const map = { good: ['badge-good', 'Ưu tú'], warning: ['badge-warning', 'Trung bình'], kick: ['badge-kick', 'Cảnh báo'] };
+  const [cls, label] = map[s] || ['badge-warning', s];
+  return '<span class="badge ' + cls + '">' + label + '</span>';
+}
+
+function buildPodiumCard(m, cls, crest, crown) {
+  if (!m) return '';
+  const tot = m.contribution?.totalFame10Wars || ((m.warFame || 0) * 10);
+  return '<div class="podium-card ' + cls + '" data-tag="' + m.tag + '">' +
+    '<div class="podium-rank-crest">' + crest + '</div>' +
+    '<div class="podium-avatar-wrap">' + crown + '<span>' + (m.name || 'W').slice(0, 2).toUpperCase() + '</span></div>' +
+    '<div class="podium-name">' + m.name + '</div>' +
+    '<div class="podium-meta">' + m.roleLabel + ' · <span class="tag-mono">' + m.tag + '</span></div>' +
+    '<div class="podium-fame-Main">💎 ' + tot.toLocaleString() + ' Fame</div>' +
+    '<div class="podium-metrics"><span class="podium-metric-pill">⚡ ' + Math.round(m.score || 0) + '/100 đ</span><span class="podium-metric-pill">⚔️ ' + (m.warParticipation ?? 100) + '% War</span><span class="podium-metric-pill">🎁 ' + (m.donations || 0) + ' Donate</span></div></div>';
+}
