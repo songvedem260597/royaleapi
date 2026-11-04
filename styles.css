@@ -709,3 +709,37 @@ body::after {
   text-transform: uppercase;
   color: #64748b;
 }
+
+.podium-1st::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160%;
+  height: 80%;
+  background: radial-gradient(ellipse at center, rgba(250, 204, 21, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.podium-crown {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6));
+}
+
+.podium-card:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .podium-1st,
+  .podium-2nd,
+  .podium-3rd {
+    min-height: auto;
+  }
+  .podium-1st { order: -1; }
+}
