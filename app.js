@@ -198,7 +198,7 @@ function renderTable(clan) {
       '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
       '<td>' + (m.warParticipation ?? 0) + '% · ' + (m.warFame || 0) + ' Fame<div class="deck-mini-list">' + decks + '</div></td>' +
-      '<td>' + m.donations + '</td>' +
+      '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
       '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
       '</tr>';
