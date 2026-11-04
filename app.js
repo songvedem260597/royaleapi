@@ -127,3 +127,34 @@ function renderCW2Panel(member) {
   renderCW2Chart(member);
   renderCW2History(member);
 }
+
+function renderCW2Chart(member) {
+  const box = document.getElementById('cw2-chart-box');
+  if (!box) return;
+  const hist = (member.cw2History || []).slice().reverse();
+  const W = 760, H = 230, padL = 40, padR = 20, padT = 30, padB = 40;
+  const chartW = W - padL - padR, chartH = H - padT - padB;
+  const maxFame = 3600;
+  const y = f => padT + chartH - (Math.min(f, maxFame) / maxFame) * chartH;
+  const n = hist.length || 1;
+  const bw = chartW / n;
+  let bars = '', labels = '', pts = [];
+  hist.forEach((h, i) => {
+    const x = padL + i * bw + bw * 0.15;
+    const w = bw * 0.7;
+    const fame = h.fame || 0;
+    const top = y(fame);
+    const color = fame < 1600 ? '#f472b6' : '#38bdf8';
+    bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' + (padT + chartH - top) + '" fill="' + color + '" rx="3"/>';
+    bars += '<text x="' + (x + w / 2) + '" y="' + (top - 5) + '" fill="#e2e8f0" font-size="10" text-anchor="middle">' + fame + '</text>';
+    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+    const ma = h.movingAvg || fame;
+    pts.push((x + w / 2) + ',' + y(ma));
+  });
+  const warnTop = y(1600);
+  const warn = '<rect x="' + padL + '" y="' + warnTop + '" width="' + chartW + '" height="' + (padT + chartH - warnTop) + '" fill="#f472b6" opacity="0.08"/>';
+  const ref1 = '<line x1="' + padL + '" y1="' + y(1600) + '" x2="' + (W - padR) + '" y2="' + y(1600) + '" stroke="#f472b6" stroke-dasharray="4 4" stroke-width="1"/>';
+  const ref2 = '<line x1="' + padL + '" y1="' + y(2600) + '" x2="' + (W - padR) + '" y2="' + y(2600) + '" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="1"/>';
+  const poly = pts.length ? '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3b82f6" stroke-width="2"/>' : '';
+  box.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + warn + ref1 + ref2 + bars + poly + labels + '</svg>';
+}
