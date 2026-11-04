@@ -276,3 +276,83 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+
+const STORAGE_KEY = 'wintertime_analytics_db';
+
+function saveClanDatabase(clan) {
+  let snapshots = [];
+  try {
+    const old = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (Array.isArray(old.snapshots)) snapshots = old.snapshots;
+  } catch (e) {}
+  const today = new Date().toISOString().slice(0, 10);
+  snapshots = snapshots.filter(s => s && s.date !== today);
+  snapshots.push({ date: today, season: '137-4', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
+  const db = { schemaVersion: '2.0', updatedAt: new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: 131349, clanWarTrophies: 2369, membersCount: clan.members.length }, warSeasonsMeta: CA.WAR_SEASONS_META || [], snapshots, members: clan.members };
+  window.__wintertimeDB = db;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
+  return db;
+}
+
+function exportDataFile() {
+  const db = saveClanDatabase(currentClan);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json;charset=utf-8' }));
+  a.download = 'wintertime-data.json';
+  a.click();
+}
+
+async function syncWintertimeDataFile() {
+  try {
+    const f = await fetch('./wintertime-data.json');
+    if (f.ok) {
+      const fileData = await f.json();
+      currentClan = CA.analyzeClan(fileData);
+      saveClanDatabase(currentClan);
+      render();
+    }
+  } catch (e) {}
+}
+
+document.getElementById('btn-save-data')?.addEventListener('click', exportDataFile);
+syncWintertimeDataFile();
+
+const STORAGE_KEY = 'wintertime_analytics_db';
+
+function saveClanDatabase(clan) {
+  let snapshots = [];
+  try {
+    const old = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (Array.isArray(old.snapshots)) snapshots = old.snapshots;
+  } catch (e) {}
+  const today = new Date().toISOString().slice(0, 10);
+  snapshots = snapshots.filter(s => s && s.date !== today);
+  snapshots.push({ date: today, season: '137-4', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
+  const db = { schemaVersion: '2.0', updatedAt: new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: 131349, clanWarTrophies: 2369, membersCount: clan.members.length }, warSeasonsMeta: CA.WAR_SEASONS_META || [], snapshots, members: clan.members };
+  window.__wintertimeDB = db;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
+  return db;
+}
+
+function exportDataFile() {
+  const db = saveClanDatabase(currentClan);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json;charset=utf-8' }));
+  a.download = 'wintertime-data.json';
+  a.click();
+}
+
+async function syncWintertimeDataFile() {
+  try {
+    const f = await fetch('./wintertime-data.json');
+    if (f.ok) {
+      const fileData = await f.json();
+      currentClan = CA.analyzeClan(fileData);
+      saveClanDatabase(currentClan);
+      render();
+    }
+  } catch (e) {}
+}
+
+document.getElementById('btn-save-data')?.addEventListener('click', exportDataFile);
+syncWintertimeDataFile();
