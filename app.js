@@ -493,3 +493,22 @@ function bindDropdownSearchInput(inp, menu, empty) {
     empty.hidden = vis > 0;
   });
 }
+
+const _baseUpgradeSelects = upgradeCustomSelects;
+upgradeCustomSelects = function() {
+  _baseUpgradeSelects();
+  const wrap = document.getElementById('cw2-member-select')?.closest('.custom-dropdown');
+  const menu = wrap?.querySelector('.custom-dropdown-menu');
+  if (!menu || menu.querySelector('.custom-dropdown-search')) return;
+  const sw = document.createElement('div');
+  sw.className = 'custom-dropdown-search-wrap';
+  sw.innerHTML = '<input type="text" class="custom-dropdown-search" placeholder="🔍 Tìm thành viên hoặc #tag..." autocomplete="off">';
+  const empty = document.createElement('div');
+  empty.className = 'custom-dropdown-empty';
+  empty.hidden = true;
+  empty.textContent = 'Không tìm thấy thành viên';
+  menu.prepend(empty);
+  menu.prepend(sw);
+  bindDropdownSearchInput(sw.querySelector('input'), menu, empty);
+};
+upgradeCustomSelects();
