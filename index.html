@@ -83,3 +83,33 @@
   </select>
   <button id="btn-export-kick" class="btn-danger">Xuất danh sách lọc (Kick)</button>
 </section>
+
+<section class="table-card">
+  <div class="table-head">
+    <h2>Bảng Xếp Hạng &amp; Đánh Giá Thành Viên</h2>
+    <span class="table-sub">Điểm hiệu quả 0–100 · cập nhật realtime</span>
+  </div>
+  <div class="table-scroll">
+    <table class="member-table">
+      <thead>
+        <tr>
+          <th>Hạng</th>
+          <th>Thành viên</th>
+          <th>Vai trò</th>
+          <th>Cúp</th>
+          <th>Donate Nhận/Cho</th>
+          <th>Điểm Hiệu Quả</th>
+          <th>Trạng thái &amp; Lý do lọc</th>
+        </tr>
+      </thead>
+      <tbody id="member-tbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<pre id="kick-output" class="kick-output" hidden></pre>
+
+<script src="clan-analytics.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
