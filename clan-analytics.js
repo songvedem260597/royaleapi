@@ -120,12 +120,11 @@ function analyzeMember(m) {
   const score = contribution.score;
   let status, statusLabel, reason;
   if (trackerStatus === 'Bỏ war' || (warParticipation != null && warParticipation <= 25)) {
-    status = 'kick'; statusLabel = 'Bỏ War · Lọc';
+    status = 'kick'; statusLabel = 'Cảnh báo';
   } else if (trackerStatus === 'Đáng tin' || score >= 70) {
-    status = 'good'; statusLabel = 'Đáng tin · Giữ';
+    status = 'good'; statusLabel = 'Ưu tú';
   } else {
-    status = 'warning';
-    statusLabel = trackerStatus === 'Mới vào' ? 'Mới vào · Theo dõi' : 'Cần theo dõi';
+    status = 'warning'; statusLabel = 'Trung bình';
   }
   reason = 'War: ' + (warParticipation != null ? warParticipation : 0) + '% (' + warFame + ' đ/war) · Fame10: ' + contribution.totalFame10Wars + ' · Offline: ' + daysOffline + 'd';
 
