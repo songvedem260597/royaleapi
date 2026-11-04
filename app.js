@@ -316,3 +316,25 @@ async function syncWintertimeDataFile() {
 
 document.getElementById('btn-save-data')?.addEventListener('click', exportDataFile);
 syncWintertimeDataFile();
+
+(function enhanceAllTimeWarAnalytics() {
+  const sortSel = document.getElementById('sort-by');
+  if (sortSel && !sortSel.querySelector('option[value="warFame"]')) {
+    const opt = document.createElement('option');
+    opt.value = 'warFame';
+    opt.textContent = 'Điểm War ⚔️ (Toàn TG & Gần nhất)';
+    sortSel.appendChild(opt);
+    upgradeCustomSelects();
+  }
+  const actions = document.querySelector('.cw2-actions');
+  if (actions && !document.getElementById('cw2-clan-analytics-link')) {
+    const a = document.createElement('a');
+    a.id = 'cw2-clan-analytics-link';
+    a.className = 'btn btn-ghost';
+    a.href = 'https://royaleapi.com/clan/GYQJL9GV/war/analytics';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'War Analytics Toàn Clan ↗';
+    actions.appendChild(a);
+  }
+})();
