@@ -15,9 +15,13 @@ function renderSummary(clan) {
   if (!el) return;
   const avg = Math.round(clan.avgScore || 0);
   el.innerHTML =
-    '<div class="summary-title">Tên Clan: <strong>❄️ WinterTime (#GYQJL9GV)</strong></div>' +
-    '<div>Điểm Clan TB: <strong>' + avg + '/100</strong></div>' +
-    '<div>Chủ lực MVP: <strong>' + (clan.mvpName || '—') + '</strong></div>' +
+    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
+    '<div class="hero-stats">' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+      '<div><span class="kpi-label">Chủ lực MVP</span><strong>' + (clan.mvpName || '—') + '</strong></div>' +
+    '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 }
 
@@ -54,7 +58,7 @@ function renderTable(clan) {
       '<td>🏆 ' + m.trophies + '</td>' +
       '<td>' + m.donations + ' / ' + m.donationsReceived + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
-      '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small></td>' +
+      '<td><span class="badge badge-' + m.status + '">' + (m.statusLabel || m.status) + '</span> <small>' + (m.reason || '') + '</small></td>' +
       '</tr>';
   }).join('');
 }
@@ -88,10 +92,7 @@ async function fetchClan() {
 }
 
 function bindEvents() {
-  document.getElementById('btn-demo')?.addEventListener('click', () => {
-    currentClan = CA.analyzeClan(CA.generateDemoClan());
-    render();
-  });
+  document.getElementById('btn-demo')?.addEventListener('click', fetchClan);
   document.getElementById('btn-fetch')?.addEventListener('click', fetchClan);
   document.getElementById('btn-export-kick')?.addEventListener('click', showKickList);
   ['search-member', 'filter-status', 'sort-by'].forEach(id => {
@@ -105,6 +106,7 @@ function bindEvents() {
 function init() {
   bindEvents();
   render();
+  fetchClan();
 }
 
 if (document.readyState === 'loading') {
