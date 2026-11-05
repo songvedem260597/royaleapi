@@ -739,3 +739,91 @@ fetchClan = async function() {
   render();
 };
 fetchClan();
+
+/* ===== Mobile 60fps performance optimizer ===== */
+(function optimizeMobilePerformance() {
+  'use strict';
+  var isMobile = false;
+  try {
+    isMobile = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+  } catch (e) { isMobile = false; }
+
+  // (1) Remove snow layer on mobile to free GPU
+  function removeSnowLayer() {
+    if (!isMobile) return;
+    var snow = document.getElementById('wt-snow-layer');
+    if (snow && snow.parentNode) snow.parentNode.removeChild(snow);
+  }
+
+  // (2) Lazy-load + async decode all images
+  function optimizeImages(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    var imgs = scope.querySelectorAll('img');
+    for (var i = 0; i < imgs.length; i++) {
+      var img = imgs[i];
+      if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+      if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+    }
+  }
+
+  // (3) Passive listeners for smooth scrolling on iOS/Android
+  function addPassiveListeners() {
+    var opts = { passive: true, capture: false };
+    try {
+      window.addEventListener('touchstart', function () {}, opts);
+      window.addEventListener('touchmove', function () {}, opts);
+      window.addEventListener('scroll', function () {}, opts);
+      document.addEventListener('touchstart', function () {}, opts);
+      document.addEventListener('scroll', function () {}, opts);
+    } catch (e) {
+      window.addEventListener('touchstart', function () {}, false);
+      window.addEventListener('scroll', function () {}, false);
+    }
+  }
+
+  function init() {
+    removeSnowLayer();
+    optimizeImages(document);
+    addPassiveListeners();
+
+    // Lightweight MutationObserver to catch re-rendered images
+    if (typeof MutationObserver !== 'undefined') {
+      var pending = false;
+      var observer = new MutationObserver(function (mutations) {
+        if (pending) return;
+        pending = true;
+        (window.requestAnimationFrame || function (cb) { setTimeout(cb, 16); })(function () {
+          pending = false;
+          for (var i = 0; i < mutations.length; i++) {
+            var m = mutations[i];
+            if (m.addedNodes && m.addedNodes.length) {
+              for (var j = 0; j < m.addedNodes.length; j++) {
+                var node = m.addedNodes[j];
+                if (node.nodeType === 1) {
+                  if (node.tagName === 'IMG') {
+                    if (!node.hasAttribute('loading')) node.setAttribute('loading', 'lazy');
+                    if (!node.hasAttribute('decoding')) node.setAttribute('decoding', 'async');
+                  }
+                  if (node.querySelectorAll) optimizeImages(node);
+                }
+              }
+            }
+          }
+        });
+      });
+      observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+    }
+
+    // Re-run after full load in case of late renders
+    window.addEventListener('load', function () {
+      removeSnowLayer();
+      optimizeImages(document);
+    }, { passive: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
