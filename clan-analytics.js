@@ -119,8 +119,9 @@ function analyzeMember(m) {
   const contribution = computeContribution(src, cw2History);
   const score = contribution.score;
   let status, statusLabel, reason;
+  const kick2Zero = cw2History.some((h, i) => i < cw2History.length - 1 && (Number(h.fame) || 0) === 0 && (Number(cw2History[i + 1].fame) || 0) === 0);
   if (warFame <= 400) {
-    status = 'kick'; statusLabel = 'Cảnh báo';
+    status = 'kick'; statusLabel = kick2Zero ? '🥾 Kick' : 'Cảnh báo';
   } else if (trackerStatus === 'Đáng tin' || score >= 70) {
     status = 'good'; statusLabel = 'Ưu tú';
   } else {
