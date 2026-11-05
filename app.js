@@ -453,7 +453,7 @@ function renderTop3Podium(clan) {
     if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref);
   }
   const top = clan.members.slice().sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((b.warFame || 0) - (a.warFame || 0)));
-  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME HALL OF FAME ★</span><h2 class="podium-title">Bảng Vinh Danh Top 3 Cống Hiến Xuất Sắc Nhất Clan</h2></div><div class="podium-stage">' +
+  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME HALL OF FAME ★</span><h2 class="podium-title">Top 3 Cống Hiến Xuất Sắc Nhất Clan</h2></div><div class="podium-stage">' +
     buildPodiumCard(top[1], 'podium-2nd', '🥈 2ND · Á QUÂN', '') +
     buildPodiumCard(top[0], 'podium-1st', '🏆 1ST · MVP CHỦ LỰC', '<span class="podium-crown">👑</span>') +
     buildPodiumCard(top[2], 'podium-3rd', '🥉 3RD · HẠNG BA', '') + '</div>';
