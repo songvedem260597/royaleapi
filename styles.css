@@ -820,3 +820,23 @@ body::before {
 .meta-card-slot { background: rgba(2, 6, 23, 0.55); border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 8px; padding: 3px; display: flex; align-items: center; justify-content: center; }
 .meta-card-slot img { width: 100%; height: auto; max-width: 50px; display: block; }
 @media (max-width: 960px) { .meta-decks-grid { grid-template-columns: 1fr; } }
+section.clan-info-grid, #clan-info-grid { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+#cw2-royaleapi-link, #cw2-clan-analytics-link { display: none !important; }
+@media (max-width: 1024px) {
+  .podium-stage { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .podium-1st { order: -1; transform: none !important; }
+  .cw2-breakdown-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .toolbar-bento { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 768px) {
+  .bento-nav { flex-direction: column; align-items: flex-start !important; gap: 10px; padding: 14px 16px !important; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .cw2-header { flex-direction: column; align-items: stretch !important; gap: 12px; }
+  .cw2-actions, .cw2-actions .custom-dropdown, .cw2-actions .custom-dropdown-menu { width: 100% !important; min-width: 0 !important; }
+  .cw2-breakdown-grid, .toolbar-bento { grid-template-columns: 1fr !important; }
+  .table-card, .cw2-table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 520px) {
+  .meta-cards-row { grid-template-columns: repeat(4, 1fr) !important; }
+  .podium-section, .cw2-panel, .meta-decks-section { padding: 14px !important; }
+}
