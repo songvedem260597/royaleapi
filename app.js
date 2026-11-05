@@ -558,3 +558,24 @@ renderMetaDecks = function() {
       d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="' + cdn + c + '.png" alt="' + c + '" loading="lazy"></div>').join('') + '</div></div>').join('') + '</div>';
 };
 renderMetaDecks();
+function isKick2WeeksZero(m) {
+  const h = m?.cw2History || [];
+  return m?.status === 'kick' && h.some((x, i) => i < h.length - 1 && (Number(x.fame) || 0) === 0 && (Number(h[i + 1].fame) || 0) === 0);
+}
+const _prevRenderTable = renderTable;
+renderTable = function(clan) {
+  (clan?.members || []).forEach(m => { if (isKick2WeeksZero(m)) m.statusLabel = '🥾 Kick'; });
+  _prevRenderTable(clan);
+  document.querySelectorAll('#member-tbody tr[data-tag]').forEach(tr => {
+    const m = clan?.members?.find(x => x.tag === tr.dataset.tag);
+    const b = tr.querySelector('.badge-kick');
+    if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">🥾</span> Kick'; }
+  });
+};
+const _prevRenderCW2 = renderCW2Panel;
+renderCW2Panel = function(m) {
+  if (isKick2WeeksZero(m)) m.statusLabel = '🥾 Kick';
+  _prevRenderCW2(m);
+  const b = document.querySelector('#cw2-player-meta .badge-kick');
+  if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">🥾</span> Kick'; }
+};
