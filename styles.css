@@ -941,3 +941,21 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   font-size: 0.85rem;
   line-height: 1.5;
 }
+/* Reset Clan Notice to Plain Rules Style */
+#clan-notice-box {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 0 0 18px !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  color: #cbd5e1 !important;
+  font-size: 0.85rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
