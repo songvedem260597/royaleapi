@@ -637,7 +637,7 @@ render();
   if (!main) return;
   const items = [
     '❄️ Đại gia đình WinterTime: <span class="wt-marquee-grad">Chúc anh em chơi game vui vẻ, leo rank vù vù, mở rương toàn thẻ ngon!</span>',
-    '⚔️ Nhắc nhẹ mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 từ Thủ lĩnh nha anh em!</span>',
+    '⚔️ Nhắc nhở mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 từ Thủ lĩnh nha anh em!</span>',
     '👑 Tinh thần BiG Familie: <span class="wt-marquee-grad">Thắng không kiêu, bại không cay, thả emote HEHEHEHA văn minh lịch sự!</span>',
     '🎁 Góc đồng đội: <span class="wt-marquee-grad">Chăm chỉ xin thẻ và Donate đều tay để cả Clan cùng max bài lấy Top 1 War!</span>'
   ];
@@ -654,7 +654,7 @@ render();
   if (!main) return;
   const items = [
     '❄️ Đại gia đình WinterTime: <span class="wt-marquee-grad">Chúc anh em chơi game vui vẻ, leo rank vù vù, mở rương toàn thẻ ngon!</span>',
-    '⚔️ Nhắc nhẹ mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 từ Thủ lĩnh nha anh em!</span>',
+    '⚔️ Nhắc nhở mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 từ Thủ lĩnh nha anh em!</span>',
     '👑 Tinh thần BiG Familie: <span class="wt-marquee-grad">Thắng không kiêu, bại không cay, thả emote HEHEHEHA văn minh lịch sự!</span>',
     '🎁 Góc đồng đội: <span class="wt-marquee-grad">Chăm chỉ xin thẻ và Donate đều tay để cả Clan cùng max bài lấy Top 1 War!</span>'
   ];
@@ -670,7 +670,7 @@ render();
   if (!track) return;
   const items = [
     '❄️ Đại gia đình WinterTime: <span class="wt-marquee-grad">Chúc anh em chơi game vui vẻ, leo rank vù vù, mở rương toàn thẻ ngon!</span>',
-    '⚔️ Nhắc nhẹ mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 nhé anh em</span>',
+    '⚔️ Nhắc nhở mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 nhé anh em</span>',
     '👑 Tinh thần BiG Familie: <span class="wt-marquee-grad">Thắng không kiêu, bại không cay, thả emote HEHEHEHA văn minh lịch sự!</span>',
     '🎁 Góc đồng đội: <span class="wt-marquee-grad">Chăm chỉ xin thẻ và Donate đều tay để cả Clan cùng max bài lấy Top 1 War!</span>'
   ];
