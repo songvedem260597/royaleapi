@@ -720,3 +720,25 @@ renderSummary = function(clan) {
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 };
 render();
+fetchClan = async function() {
+  const urls = [
+    '/api/royale-proxy/clans/%23GYQJL9GV',
+    'https://codexpro.muatenmien.store/api/royale-proxy/clans/%23GYQJL9GV',
+    './wintertime-data.json'
+  ];
+  for (const u of urls) {
+    try {
+      const r = await fetch(u);
+      if (r.ok) {
+        const d = await r.json();
+        if (d && Array.isArray(d.members) && d.members.length) {
+          currentClan = CA.analyzeClan(d);
+          render();
+          return;
+        }
+      }
+    } catch (e) {}
+  }
+  render();
+};
+fetchClan();
