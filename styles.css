@@ -800,3 +800,10 @@ body::before {
   box-shadow: 0 22px 55px rgba(2, 6, 23, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 .podium-card { backdrop-filter: blur(12px) saturate(1.2) !important; }
+
+.meta-decks-section { background: linear-gradient(160deg, rgba(13, 20, 38, 0.88), rgba(8, 12, 24, 0.94)); border: 1px solid rgba(56, 189, 248, 0.24); border-radius: 20px; padding: 20px 22px; margin-bottom: 18px; backdrop-filter: blur(16px); }
+.meta-decks-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid rgba(148, 163, 184, 0.14); padding-bottom: 10px; }
+.meta-decks-title { margin: 0; font-size: 1.12rem; font-weight: 800; color: #f8fafc; }
+.meta-decks-sub { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+.meta-decks-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.meta-deck-card { background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 14px; padding: 13px 15px; display: flex; flex-direction: column; gap: 10px; }
