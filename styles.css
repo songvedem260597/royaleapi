@@ -933,23 +933,11 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   0% { background-position: 0% center; }
   100% { background-position: 200% center; }
 }
-/* Clan Notice Goal Box */
-.notice-goal-box, #clan-notice-box {
-  flex: 1;
-  min-height: 110px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid rgba(250, 204, 21, 0.35) !important;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.78), rgba(30, 41, 59, 0.55)) !important;
-  padding: 18px;
-  text-align: center;
-  font-style: normal !important;
-  font-size: 1.08rem !important;
-  font-weight: 800;
-  color: #f8fafc !important;
-  box-shadow: inset 0 0 24px rgba(250, 204, 21, 0.08);
+/* Clan Notice Plain Text List */
+#clan-notice-box {
+  margin: 0;
+  padding-left: 18px;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  line-height: 1.5;
 }
