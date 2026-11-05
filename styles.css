@@ -959,3 +959,24 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   font-weight: 400 !important;
   line-height: 1.5 !important;
 }
+/* Animated Snowflake in Brand Title */
+.brand-title {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  filter: none !important;
+}
+.brand-snowflake {
+  display: inline-block;
+  font-style: normal;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.9));
+  animation: snowSpinFloat 5s ease-in-out infinite;
+  transform-origin: center center;
+}
+@keyframes snowSpinFloat {
+  0% { transform: translateY(0) rotate(0deg) scale(1); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75)); }
+  50% { transform: translateY(-4px) rotate(180deg) scale(1.14); filter: drop-shadow(0 0 16px rgba(125, 211, 252, 1)); }
+  100% { transform: translateY(0) rotate(360deg) scale(1); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75)); }
+}
