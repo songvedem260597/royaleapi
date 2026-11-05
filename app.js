@@ -679,3 +679,23 @@ render();
   const row = items.map(t => '<span class="wt-marquee-item">' + t + '</span>').join('');
   track.innerHTML = row + row;
 })();
+(function initBrandAndSnowEffect() {
+  const bt = document.querySelector('.brand-title');
+  if (bt) bt.innerHTML = '<span class="brand-snowflake">❄️</span><span class="brand-title-grad">WINTERTIME · #GYQJL9GV</span>';
+  if (document.getElementById('wt-snow-layer')) return;
+  const layer = document.createElement('div');
+  layer.id = 'wt-snow-layer';
+  layer.className = 'wt-snow-layer';
+  const glyphs = ['❄', '❅', '❆', '•'];
+  let html = '';
+  for (let i = 0; i < 14; i++) {
+    const left = (i * 7.2 + 3).toFixed(1);
+    const dur = (13 + (i % 5) * 2.4).toFixed(1);
+    const delay = (-1.5 * i).toFixed(1);
+    const size = (0.65 + (i % 4) * 0.16).toFixed(2);
+    const op = (0.26 + (i % 4) * 0.11).toFixed(2);
+    html += '<span class="wt-snow-flake" style="left:' + left + '%;animation-duration:' + dur + 's;animation-delay:' + delay + 's;font-size:' + size + 'rem;opacity:' + op + '">' + glyphs[i % glyphs.length] + '</span>';
+  }
+  layer.innerHTML = html;
+  document.body.appendChild(layer);
+})();
