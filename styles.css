@@ -919,3 +919,17 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-50%, 0, 0); }
 }
+/* Brand Title Gradient */
+.brand-title, .brand-title-grad {
+  background: linear-gradient(90deg, #38bdf8 0%, #34d399 45%, #facc15 80%, #38bdf8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brandGradShine 6s linear infinite;
+  filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.25));
+}
+@keyframes brandGradShine {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
