@@ -70,7 +70,6 @@ function renderSummary(clan) {
   if (!el) return;
   const avg = Math.round(clan.avgScore || 0);
   el.innerHTML =
-    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
     '<div class="hero-stats">' +
       '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
@@ -618,7 +617,6 @@ renderSummary = function(clan) {
   if (!el) return;
   const avg = Math.round(clan?.avgScore || 0);
   el.innerHTML =
-    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
     '<div class="hero-stats">' +
       '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
@@ -681,7 +679,7 @@ render();
 })();
 (function initBrandAndSnowEffect() {
   const bt = document.querySelector('.brand-title');
-  if (bt) bt.innerHTML = '<span class="brand-snowflake">❄️</span><span class="brand-title-grad">WINTERTIME · #GYQJL9GV</span>';
+  if (bt) bt.innerHTML = '<span class="brand-snowflake"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/><polyline points="9 4 12 7 15 4"/><polyline points="9 20 12 17 15 20"/><polyline points="4 9 7 12 4 15"/><polyline points="20 9 17 12 20 15"/></svg></span><span class="brand-title-grad">WINTERTIME · #GYQJL9GV</span>';
   if (document.getElementById('wt-snow-layer')) return;
   const layer = document.createElement('div');
   layer.id = 'wt-snow-layer';
@@ -707,7 +705,6 @@ renderSummary = function(clan) {
   const total = clan?.members?.length || 0;
   document.querySelectorAll('.kpi-grid').forEach(g => { g.style.display = 'none'; });
   el.innerHTML =
-    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
     '<div class="hero-stats hero-stats-unified">' +
       '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
