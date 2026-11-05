@@ -613,3 +613,23 @@ renderMetaDecks = function() {
       d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="' + px + c + '.png&w=150&output=png" alt="' + c + '" referrerpolicy="no-referrer" decoding="async" onerror="window.handleCardImgErr(this,\'' + c + '\')"></div>').join('') + '</div></div>').join('') + '</div>';
 };
 renderMetaDecks();
+renderSummary = function(clan) {
+  const el = document.getElementById('clan-summary');
+  if (!el) return;
+  const avg = Math.round(clan?.avgScore || 0);
+  el.innerHTML =
+    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
+    '<div class="hero-stats">' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+    '</div>' +
+    '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
+};
+const _prevTop3Mvp = renderTop3Podium;
+renderTop3Podium = function(clan) {
+  _prevTop3Mvp(clan);
+  const c1 = document.querySelector('#top3-podium-section .podium-1st .podium-rank-crest');
+  if (c1) c1.textContent = '🏆 1ST · MVP DẪN ĐẦU';
+};
+render();
