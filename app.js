@@ -525,3 +525,14 @@ document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.query
 });
 currentClan = CA.analyzeClan(currentClan);
 render();
+
+function renderMetaDecks() {
+  const sec = document.getElementById('meta-decks-section');
+  const decks = CA.TOP_META_DECKS || [];
+  if (!sec || !decks.length) return;
+  const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
+  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">?? Top 10 Deck Dang Meta (Top Ranked � 7 Ng�y)</h2><div class="meta-decks-sub">Ngu?n: RoyaleAPI TopRanked PvP � X?p theo Rating cao nh?t 7 ng�y qua</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">M? B?ng Meta RoyaleAPI ?</a></div><div class="meta-decks-grid">' +
+    decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">? ' + d.rating + '</span><span class="meta-pill meta-pill-win">Win ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">?? ' + d.elixir + '</span><a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Chi ti?t ?</a></div></div><div class="meta-cards-row">' +
+      d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="https://raw.githubusercontent.com/RoyaleAPI/cr-api-assets/master/cards-150/' + c + '.png" alt="' + c + '" loading="lazy"></div>').join('') + '</div></div>').join('') + '</div>';
+}
+renderMetaDecks();
