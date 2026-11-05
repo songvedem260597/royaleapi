@@ -866,3 +866,5 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
 }
 .badge-kick-now { background: linear-gradient(135deg, rgba(220, 38, 38, 0.35), rgba(153, 27, 27, 0.55)) !important; color: #fecaca !important; border: 1px solid rgba(248, 113, 113, 0.65) !important; box-shadow: 0 0 14px rgba(239, 68, 68, 0.35); font-weight: 800 !important; display: inline-flex; align-items: center; gap: 4px; }
 .kick-icon { display: inline-block; animation: kickBootPulse 1.8s ease-in-out infinite; }
+#btn-export-kick, #kick-output { display: none !important; }
+.toolbar-bento { grid-template-columns: 1.6fr 1fr 1fr !important; }
