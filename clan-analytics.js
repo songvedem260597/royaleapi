@@ -195,3 +195,10 @@ window.ClanAnalytics.TOP_META_DECKS = [
   { rank: 4, name: 'EvoSkeletons Goblinstein Hogs', rating: 56, usage: '1.1%', win: 53.9, elixir: '3.1', cycle: '7.0', cards: ['skeletons-ev1','goblinstein','mother-witch','royal-hogs','cannon-ev1','earthquake','ice-spirit','the-log'] },
   { rank: 5, name: 'Golem Hero Mini P.E.K.K.A NW', rating: 56, usage: '0.8%', win: 54.1, elixir: '4.1', cycle: '11.0', cards: ['golem','mini-pekka-hero','night-witch','phoenix','bomber','electro-dragon','tornado','barbarian-barrel'] }
 ];
+window.ClanAnalytics.TOP_META_DECKS.push(
+  { rank: 6, name: 'Hero Knight Goblin Barrel Bait', rating: 55, usage: '1.4%', win: 53.6, elixir: '3.1', cycle: '8.0', cards: ['goblin-barrel','knight-hero','princess','skeleton-army','goblin-gang','inferno-tower','ice-spirit','the-log'] },
+  { rank: 7, name: 'Hero Valkyrie WB Miner Cycle', rating: 55, usage: '1.0%', win: 53.8, elixir: '2.9', cycle: '8.0', cards: ['valkyrie-hero','wall-breakers','bats-ev1','miner','cannon','skeletons','fireball','the-log'] },
+  { rank: 8, name: 'EvoArchers Goblin Drill Control', rating: 55, usage: '0.7%', win: 53.5, elixir: '3.1', cycle: '8.0', cards: ['archers-ev1','goblin-drill','goblin-demolisher','knight','tesla','fire-spirit','poison','the-log'] },
+  { rank: 9, name: 'EvoRG EvoGhost Fisherman', rating: 54, usage: '1.2%', win: 53.3, elixir: '3.3', cycle: '9.0', cards: ['royal-giant-ev1','royal-ghost-ev1','fisherman','hunter','phoenix','electro-spirit','fireball','barbarian-barrel'] },
+  { rank: 10, name: 'Hog 2.6 Hero Musketeer Cycle', rating: 54, usage: '1.5%', win: 53.1, elixir: '2.6', cycle: '6.0', cards: ['cannon-ev1','skeletons-ev1','musketeer-hero','hog-rider','ice-golem','ice-spirit','fireball','the-log'] }
+);
