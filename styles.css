@@ -789,13 +789,13 @@ body::after {
 @media (max-width: 900px) { .clan-info-grid { grid-template-columns: 1fr; } }
 
 body::before {
-  background-image: url("https://n.uguu.se/PEGGaNsN.jpg") !important;
+  background-image: url("./bg-page.jpg") !important;
   background-position: center 28% !important;
   background-size: cover !important;
   filter: blur(18px) saturate(1.25) brightness(0.46) !important;
 }
 .podium-section {
-  background: linear-gradient(180deg, rgba(8, 12, 26, 0.56) 0%, rgba(11, 16, 33, 0.76) 65%, rgba(9, 14, 28, 0.9) 100%), url("https://d.uguu.se/NMcZVtst.jpg") center 30% / cover no-repeat !important;
+  background: linear-gradient(180deg, rgba(8, 12, 26, 0.56) 0%, rgba(11, 16, 33, 0.76) 65%, rgba(9, 14, 28, 0.9) 100%), url("./bg-podium.jpg") center 30% / cover no-repeat !important;
   border: 1px solid rgba(192, 132, 252, 0.38) !important;
   box-shadow: 0 22px 55px rgba(2, 6, 23, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
@@ -1059,10 +1059,16 @@ header h1.brand-title, .brand-title { background: transparent !important; -webki
 .brand-snowflake { display: inline-flex !important; align-items: center; justify-content: center; background: transparent !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; }
 .brand-snowflake svg { display: block; overflow: visible; }
 
-/* ===== Mobile 60fps performance optimizations ===== */
-@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+/* ===== Mobile 60fps performance optimizations (preserving all background images) ===== */
+@media (max-width: 768px) {
   body {
     background-attachment: scroll !important;
+  }
+
+  body::before {
+    background-image: url("./bg-page.jpg") !important;
+    filter: blur(12px) saturate(1.2) brightness(0.48) !important;
+    transform: translateZ(0) scale(1.04) !important;
   }
 
   .bento-nav,
@@ -1070,30 +1076,21 @@ header h1.brand-title, .brand-title { background: transparent !important; -webki
   .kpi-card,
   .toolbar-bento,
   .table-card,
-  header,
-  section,
-  .insights-panel,
-  .table-wrap,
+  .cw2-panel,
   .meta-decks-section,
-  .podium-card,
   .info-card {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: rgba(11, 17, 30, 0.96) !important;
+  }
+
+  .podium-section {
+    background: linear-gradient(180deg, rgba(8, 12, 26, 0.52) 0%, rgba(11, 16, 33, 0.72) 65%, rgba(9, 14, 28, 0.88) 100%), url("./bg-podium.jpg") center 30% / cover no-repeat !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 
   .wt-snow-layer {
     display: none !important;
-  }
-
-  .podium-1st,
-  .podium-2nd,
-  .podium-3rd,
-  .brand-snowflake,
-  .kick-icon {
-    animation: none !important;
-    filter: none !important;
-    will-change: auto !important;
   }
 
   .table-card,
