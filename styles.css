@@ -1053,3 +1053,8 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
 @media (max-width: 640px) {
   .hero-stats-unified { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
+/* Fix brand snowflake background-clip & hide summary-title */
+.summary-title { display: none !important; }
+header h1.brand-title, .brand-title { background: transparent !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; color: #38bdf8 !important; -webkit-text-fill-color: initial !important; }
+.brand-snowflake { display: inline-flex !important; align-items: center; justify-content: center; background: transparent !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; }
+.brand-snowflake svg { display: block; overflow: visible; }
