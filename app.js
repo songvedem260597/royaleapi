@@ -595,3 +595,21 @@ isKick2WeeksZero = function(m) {
 currentClan = CA.analyzeClan(currentClan);
 render();
 fetchClan();
+window.handleCardImgErr = function(img, c) {
+  const base = String(c || '').replace(/-(ev1|hero)$/, '');
+  const step = Number(img.dataset.fb || 0);
+  if (step === 0) { img.dataset.fb = '1'; img.src = 'https://cdns3.royaleapi.com/static/img/cards/v11-a8e42334/' + c + '.png'; }
+  else if (step === 1) { img.dataset.fb = '2'; img.src = 'https://cdn.jsdelivr.net/gh/RoyaleAPI/cr-api-assets@master/cards-150/' + base + '.png'; }
+  else if (step === 2) { img.dataset.fb = '3'; img.src = 'https://raw.githubusercontent.com/RoyaleAPI/cr-api-assets/master/cards-150/' + base + '.png'; }
+};
+renderMetaDecks = function() {
+  const sec = document.getElementById('meta-decks-section');
+  const decks = CA.TOP_META_DECKS || [];
+  if (!sec || !decks.length) return;
+  const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
+  const px = 'https://wsrv.nl/?url=cdns3.royaleapi.com/static/img/cards/v11-a8e42334/';
+  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Meta Season</h2><div class="meta-decks-sub">Nguồn: RoyaleAPI</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
+    decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">Rating ' + d.rating + '</span><span class="meta-pill">Usage ' + (d.usage || '1.0%') + '</span><span class="meta-pill meta-pill-win">Wins ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">💧 ' + d.elixir + ' · Cycle ' + d.cycle + '</span><a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div><div class="meta-cards-row">' +
+      d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="' + px + c + '.png&w=150&output=png" alt="' + c + '" referrerpolicy="no-referrer" decoding="async" onerror="window.handleCardImgErr(this,\'' + c + '\')"></div>').join('') + '</div></div>').join('') + '</div>';
+};
+renderMetaDecks();
