@@ -534,3 +534,16 @@ function renderMetaDecks() {
       d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="https://raw.githubusercontent.com/RoyaleAPI/cr-api-assets/master/cards-150/' + c + '.png" alt="' + c + '" loading="lazy"></div>').join('') + '</div></div>').join('') + '</div>';
 }
 renderMetaDecks();
+renderTop3Podium = function(clan) {
+  _prevTop3(clan);
+  const t = document.querySelector('#top3-podium-section .podium-title');
+  if (t) t.textContent = 'Top 3 Cống Hiến Xuất Sắc Nhất Clan';
+};
+renderTop3Podium(currentClan);
+const mhTitle = document.querySelector('#meta-decks-section .meta-decks-title');
+if (mhTitle) mhTitle.textContent = '🔥 Top 10 Deck Đang Meta (Top Ranked · 7 Ngày)';
+const mhSub = document.querySelector('#meta-decks-section .meta-decks-sub');
+if (mhSub) mhSub.textContent = 'Nguồn: RoyaleAPI TopRanked PvP · Xếp theo Rating cao nhất 7 ngày qua';
+const mhBtn = document.querySelector('#meta-decks-section .meta-decks-head .btn');
+if (mhBtn) mhBtn.textContent = 'Mở Bảng Meta RoyaleAPI ↗';
+document.querySelectorAll('#meta-decks-section .meta-deck-badges a.meta-pill').forEach(a => { a.textContent = 'Chi tiết ↗'; });
