@@ -203,3 +203,27 @@ window.ClanAnalytics.TOP_META_DECKS.push(
   { rank: 9, name: 'EvoRG EvoGhost Fisherman', rating: 54, usage: '1.2%', win: 53.3, elixir: '3.3', cycle: '9.0', cards: ['royal-giant-ev1','royal-ghost-ev1','fisherman','hunter','phoenix','electro-spirit','fireball','barbarian-barrel'] },
   { rank: 10, name: 'Hog 2.6 Hero Musketeer Cycle', rating: 54, usage: '1.5%', win: 53.1, elixir: '2.6', cycle: '6.0', cards: ['cannon-ev1','skeletons-ev1','musketeer-hero','hog-rider','ice-golem','ice-spirit','fireball','the-log'] }
 );
+const _origAM = window.ClanAnalytics.analyzeMember;
+const _origAC = window.ClanAnalytics.analyzeClan;
+window.ClanAnalytics.analyzeMember = function(m) {
+  const r = _origAM(m);
+  if (Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
+  else if (m?.trackerStatus === 'Mới vào' || (Array.isArray(m?.cw2History) && !m.cw2History.length)) r.cw2History = [];
+  const h = r.cw2History || [];
+  const z2 = h.length >= 2 && r.trackerStatus !== 'Mới vào' && h.some((x, i) => i < h.length - 1 && !x.fame && !h[i + 1].fame);
+  const noWar = r.warFame === 0 || z2 || (h.length > 0 && !h[0].fame);
+  const leech = r.donationsReceived > r.donations * 2;
+  const okDon = r.donations > 0 && !leech;
+  if ((noWar && leech) || (z2 && !okDon)) { r.status = 'kick'; r.statusLabel = '🥾 Kick'; }
+  else if (r.warFame === 0 && okDon) { r.status = 'warning'; r.statusLabel = 'Trung bình'; }
+  else if (r.warFame <= 400) { r.status = 'kick'; r.statusLabel = 'Cảnh báo'; }
+  return r;
+};
+window.ClanAnalytics.analyzeClan = function(d) {
+  const c = _origAC(d);
+  const raw = Array.isArray(d?.members) && d.members.length ? d.members : c.members;
+  c.members = raw.map(window.ClanAnalytics.analyzeMember);
+  c.counts = { total: c.members.length, good: 0, warning: 0, kick: 0 };
+  c.members.forEach(x => { c.counts[x.status] = (c.counts[x.status] || 0) + 1; });
+  return c;
+};
