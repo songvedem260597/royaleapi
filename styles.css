@@ -1007,3 +1007,19 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   50% { transform: translate3d(24px, 50vh, 0) rotate(180deg); }
   100% { transform: translate3d(-18px, 106vh, 0) rotate(360deg); }
 }
+/* Unified Bento Hero + KPI Block & Hide Brand Sub */
+.brand-sub { display: none !important; }
+.bento-hero .kpi-grid {
+  margin-top: 18px !important;
+  margin-bottom: 0 !important;
+  padding-top: 18px !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.14) !important;
+  gap: 14px !important;
+}
+.bento-hero .kpi-card {
+  background: rgba(15, 23, 42, 0.48) !important;
+  border: 1px solid rgba(148, 163, 184, 0.12) !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+}
