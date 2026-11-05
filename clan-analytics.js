@@ -188,3 +188,10 @@ window.ClanAnalytics.TOP_META_DECKS = [
   { rank: 9, name: 'Splashyard Graveyard Control', rating: 63.8, win: 54.6, elixir: 3.6, cycle: 11, cards: ['graveyard','poison','baby-dragon','ice-wizard','knight','tombstone','tornado','barbarian-barrel'] },
   { rank: 10, name: 'Mortar Skeleton King Bait', rating: 63.4, win: 54.3, elixir: 3.1, cycle: 9, cards: ['mortar','miner','poison','skeleton-king','musketeer','goblin-gang','spear-goblins','the-log'] }
 ];
+window.ClanAnalytics.TOP_META_DECKS = [
+  { rank: 1, name: 'EvoCannon Evo Bats 3.0 Cycle', rating: 59, usage: '0.8%', win: 55.2, elixir: '3.0', cycle: '8.0', cards: ['cannon-ev1','ice-wizard','bats-ev1','electro-dragon','knight','lightning','skeletons','barbarian-barrel'] },
+  { rank: 2, name: 'EvoLJ GS Furnace', rating: 57, usage: '1.3%', win: 54.0, elixir: '3.6', cycle: '10.0', cards: ['battle-ram-ev1','electro-wizard','lumberjack-ev1','giant-skeleton','bandit','furnace','arrows','heal-spirit'] },
+  { rank: 3, name: 'EvoMortar EvoFurnace Rascals', rating: 57, usage: '0.9%', win: 54.4, elixir: '3.5', cycle: '10.0', cards: ['mortar-ev1','furnace-ev1','mighty-miner','rascals','cannon-cart','skeleton-barrel','goblin-gang','arrows'] },
+  { rank: 4, name: 'EvoSkeletons Goblinstein Hogs', rating: 56, usage: '1.1%', win: 53.9, elixir: '3.1', cycle: '7.0', cards: ['skeletons-ev1','goblinstein','mother-witch','royal-hogs','cannon-ev1','earthquake','ice-spirit','the-log'] },
+  { rank: 5, name: 'Golem Hero Mini P.E.K.K.A NW', rating: 56, usage: '0.8%', win: 54.1, elixir: '4.1', cycle: '11.0', cards: ['golem','mini-pekka-hero','night-witch','phoenix','bomber','electro-dragon','tornado','barbarian-barrel'] }
+];
