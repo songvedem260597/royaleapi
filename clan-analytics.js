@@ -175,3 +175,16 @@ window.ClanAnalytics = {
   analyzeClan,
   generateDemoClan
 };
+
+window.ClanAnalytics.TOP_META_DECKS = [
+  { rank: 1, name: 'P.E.K.K.A Bridge Spam', rating: 67.4, win: 56.8, elixir: 3.8, cycle: 10, cards: ['pekka','battle-ram','bandit','royal-ghost','electro-wizard','magic-archer','zap','poison'] },
+  { rank: 2, name: 'Mega Knight Ram Rider', rating: 66.9, win: 56.2, elixir: 3.9, cycle: 9, cards: ['mega-knight','ram-rider','bandit','inferno-dragon','electro-spirit','barbarian-barrel','lightning','giant-snowball'] },
+  { rank: 3, name: 'Hog Firecracker EQ Cycle', rating: 66.1, win: 55.6, elixir: 2.8, cycle: 7, cards: ['hog-rider','firecracker','earthquake','mighty-miner','tesla','skeletons','ice-spirit','the-log'] },
+  { rank: 4, name: 'LavaLoon Top Ranked Beatdown', rating: 65.8, win: 56.1, elixir: 4.0, cycle: 12, cards: ['lava-hound','balloon','mega-minion','skeleton-dragons','valkyrie','tombstone','fireball','zap'] },
+  { rank: 5, name: 'Royal Giant Fisherman Cycle', rating: 65.3, win: 55.3, elixir: 3.3, cycle: 9, cards: ['royal-giant','fisherman','hunter','phoenix','royal-ghost','electro-spirit','fireball','the-log'] },
+  { rank: 6, name: 'Classic Log Bait Barrel', rating: 64.9, win: 54.9, elixir: 3.1, cycle: 8, cards: ['goblin-barrel','princess','knight','goblin-gang','inferno-tower','ice-spirit','rocket','the-log'] },
+  { rank: 7, name: 'Miner Poison Wall Breakers', rating: 64.5, win: 55.1, elixir: 2.9, cycle: 8, cards: ['miner','wall-breakers','poison','magic-archer','bomb-tower','valkyrie','skeletons','the-log'] },
+  { rank: 8, name: 'Golem Night Witch Beatdown', rating: 64.1, win: 54.8, elixir: 4.3, cycle: 13, cards: ['golem','night-witch','baby-dragon','lumberjack','mega-minion','tornado','lightning','barbarian-barrel'] },
+  { rank: 9, name: 'Splashyard Graveyard Control', rating: 63.8, win: 54.6, elixir: 3.6, cycle: 11, cards: ['graveyard','poison','baby-dragon','ice-wizard','knight','tombstone','tornado','barbarian-barrel'] },
+  { rank: 10, name: 'Mortar Skeleton King Bait', rating: 63.4, win: 54.3, elixir: 3.1, cycle: 9, cards: ['mortar','miner','poison','skeleton-king','musketeer','goblin-gang','spear-goblins','the-log'] }
+];
