@@ -868,3 +868,18 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
 .kick-icon { display: inline-block; animation: kickBootPulse 1.8s ease-in-out infinite; }
 #btn-export-kick, #kick-output { display: none !important; }
 .toolbar-bento { grid-template-columns: 1.6fr 1fr 1fr !important; }
+/* Mobile Meta Card Slot Fix */
+.meta-card-slot {
+  aspect-ratio: 5 / 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2px;
+}
+.meta-card-slot img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block;
+}
