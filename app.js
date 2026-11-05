@@ -579,3 +579,13 @@ renderCW2Panel = function(m) {
   const b = document.querySelector('#cw2-player-meta .badge-kick');
   if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">🥾</span> Kick'; }
 };
+const _prevRenderMeta = renderMetaDecks;
+renderMetaDecks = function() {
+  _prevRenderMeta();
+  const t = document.querySelector('#meta-decks-section .meta-decks-title');
+  if (t) t.textContent = '🔥 Top 10 Deck Meta Season';
+  const s = document.querySelector('#meta-decks-section .meta-decks-sub');
+  if (s) s.textContent = 'Nguồn: RoyaleAPI';
+};
+renderMetaDecks();
+render();
