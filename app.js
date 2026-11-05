@@ -589,3 +589,9 @@ renderMetaDecks = function() {
 };
 renderMetaDecks();
 render();
+isKick2WeeksZero = function(m) {
+  return m?.statusLabel === '🥾 Kick';
+};
+currentClan = CA.analyzeClan(currentClan);
+render();
+fetchClan();
