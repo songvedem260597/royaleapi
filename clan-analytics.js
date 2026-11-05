@@ -210,8 +210,8 @@ window.ClanAnalytics.analyzeMember = function(m) {
   if (Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
   else if (m?.trackerStatus === 'Mới vào' || (Array.isArray(m?.cw2History) && !m.cw2History.length)) r.cw2History = [];
   const h = r.cw2History || [];
-  const z2 = h.length >= 2 && r.trackerStatus !== 'Mới vào' && h.some((x, i) => i < h.length - 1 && !x.fame && !h[i + 1].fame);
-  const noWar = r.warFame === 0 || z2 || (h.length > 0 && !h[0].fame);
+  const z2 = h.length >= 2 && r.trackerStatus !== 'Mới vào' && (r.warFame <= 400 || (!h[0].fame && !h[1].fame)) && h.some((x, i) => i < h.length - 1 && !x.fame && !h[i + 1].fame);
+  const noWar = r.warFame === 0 || (h.length >= 2 && !h[0].fame && !h[1].fame) || (r.warFame <= 400 && h.length > 0 && !h[0].fame);
   const leech = r.donationsReceived > r.donations * 2;
   const okDon = r.donations > 0 && !leech;
   if ((noWar && leech) || (z2 && !okDon)) { r.status = 'kick'; r.statusLabel = '🥾 Kick'; }
