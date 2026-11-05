@@ -1058,3 +1058,48 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
 header h1.brand-title, .brand-title { background: transparent !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; color: #38bdf8 !important; -webkit-text-fill-color: initial !important; }
 .brand-snowflake { display: inline-flex !important; align-items: center; justify-content: center; background: transparent !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; }
 .brand-snowflake svg { display: block; overflow: visible; }
+
+/* ===== Mobile 60fps performance optimizations ===== */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  body {
+    background-attachment: scroll !important;
+  }
+
+  .bento-nav,
+  .bento-hero,
+  .kpi-card,
+  .toolbar-bento,
+  .table-card,
+  header,
+  section,
+  .insights-panel,
+  .table-wrap,
+  .meta-decks-section,
+  .podium-card,
+  .info-card {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(11, 17, 30, 0.96) !important;
+  }
+
+  .wt-snow-layer {
+    display: none !important;
+  }
+
+  .podium-1st,
+  .podium-2nd,
+  .podium-3rd,
+  .brand-snowflake,
+  .kick-icon {
+    animation: none !important;
+    filter: none !important;
+    will-change: auto !important;
+  }
+
+  .table-card,
+  .cw2-panel,
+  .meta-decks-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 420px;
+  }
+}
