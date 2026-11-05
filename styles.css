@@ -1023,3 +1023,18 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   border-radius: 12px !important;
   padding: 14px 18px !important;
 }
+/* Single Unified Block for Clan Stats + KPI */
+.kpi-grid { display: none !important; }
+.hero-stats-unified {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin: 16px 0 !important;
+  align-items: end;
+}
+@media (max-width: 1024px) {
+  .hero-stats-unified { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 640px) {
+  .hero-stats-unified { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
