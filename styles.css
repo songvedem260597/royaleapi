@@ -980,3 +980,30 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   50% { transform: translateY(-4px) rotate(180deg) scale(1.14); filter: drop-shadow(0 0 16px rgba(125, 211, 252, 1)); }
   100% { transform: translateY(0) rotate(360deg) scale(1); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75)); }
 }
+/* Full-Page Sparse CSS Snow Effects */
+.wt-snow-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9990;
+  overflow: hidden;
+}
+.wt-snow-flake {
+  position: absolute;
+  top: -32px;
+  color: #e0f2fe;
+  user-select: none;
+  pointer-events: none;
+  will-change: transform;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+  animation-name: wtSnowFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes wtSnowFall {
+  0% { transform: translate3d(0, -5vh, 0) rotate(0deg); }
+  50% { transform: translate3d(24px, 50vh, 0) rotate(180deg); }
+  100% { transform: translate3d(-18px, 106vh, 0) rotate(360deg); }
+}
