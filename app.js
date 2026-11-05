@@ -699,3 +699,24 @@ render();
   layer.innerHTML = html;
   document.body.appendChild(layer);
 })();
+renderSummary = function(clan) {
+  const el = document.getElementById('clan-summary');
+  if (!el) return;
+  const avg = Math.round(clan?.avgScore || 0);
+  const cnt = clan?.counts || { good: 0, warning: 0, kick: 0 };
+  const total = clan?.members?.length || 0;
+  document.querySelectorAll('.kpi-grid').forEach(g => { g.style.display = 'none'; });
+  el.innerHTML =
+    '<div class="summary-title"><strong>❄️ WinterTime (#GYQJL9GV)</strong> — Ae là 1 BiG Familie · Yêu cầu bắt buộc biết đánh WAR</div>' +
+    '<div class="hero-stats hero-stats-unified">' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+      '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members" style="color:#38bdf8">' + total + '/50</strong></div>' +
+      '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good" style="color:#10b981">' + (cnt.good || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Mức Trung Bình</span><strong id="kpi-warning" style="color:#f59e0b">' + (cnt.warning || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Cảnh Báo</span><strong id="kpi-kick" style="color:#ef4444">' + (cnt.kick || 0) + '</strong></div>' +
+    '</div>' +
+    '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
+};
+render();
