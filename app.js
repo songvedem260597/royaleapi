@@ -244,6 +244,10 @@ async function fetchClan() {
     currentClan = CA.analyzeClan(CA.generateDemoClan());
   }
   render();
+  // [AUTO-REFRESH ADDED] Update last updated time and UI
+  lastUpdated = new Date();
+  updateLastUpdatedUI(lastUpdated);
+  updateLiveIndicator(true);
 }
 
 function bindEvents() {
