@@ -840,3 +840,16 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   .meta-cards-row { grid-template-columns: repeat(4, 1fr) !important; }
   .podium-section, .cw2-panel, .meta-decks-section { padding: 14px !important; }
 }
+@keyframes cloudFloat1st {
+  0%, 100% { transform: translateY(-10px); box-shadow: 0 22px 48px rgba(250, 204, 21, 0.26), 0 0 28px rgba(236, 72, 153, 0.2); }
+  50% { transform: translateY(-20px); box-shadow: 0 32px 64px rgba(250, 204, 21, 0.4), 0 0 38px rgba(56, 189, 248, 0.32); }
+}
+@keyframes cloudFloatSide {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes gradientBorderFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
