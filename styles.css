@@ -883,3 +883,39 @@ section.clan-info-grid, #clan-info-grid { background: transparent !important; bo
   object-fit: contain !important;
   display: block;
 }
+/* WinterTime Top Marquee Ticker */
+.wt-marquee-bar {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto 16px auto;
+  padding: 10px 0;
+  background: rgba(9, 15, 28, 0.82);
+  border-top: 1px solid rgba(56, 189, 248, 0.16);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+.wt-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+  width: max-content;
+  white-space: nowrap;
+  animation: wtMarqueeRun 34s linear infinite;
+}
+.wt-marquee-bar:hover .wt-marquee-track { animation-play-state: paused; }
+.wt-marquee-item { font-size: 0.9rem; color: #e2e8f0; font-weight: 500; letter-spacing: 0.01em; }
+.wt-marquee-grad {
+  background: linear-gradient(90deg, #38bdf8 0%, #34d399 48%, #facc15 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+@keyframes wtMarqueeRun {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
