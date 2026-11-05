@@ -78,3 +78,41 @@
       </table>
     </div>
   </section>
+  <section id="meta-decks-section" class="meta-decks-section"></section>
+  <section class="toolbar-bento">
+    <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag..." aria-label="Tìm thành viên">
+    <select id="filter-status" aria-label="Lọc trạng thái">
+      <option value="all">Tất cả trạng thái</option>
+      <option value="good">Tốt</option>
+      <option value="warning">Trung bình</option>
+      <option value="kick">Cảnh báo</option>
+    </select>
+    <select id="sort-by" aria-label="Sắp xếp">
+      <option value="score">Điểm hiệu quả</option>
+      <option value="trophies">Cúp 🏆</option>
+      <option value="donations">Donate</option>
+    </select>
+  </section>
+  <section class="table-card">
+    <table class="member-table">
+      <thead>
+        <tr>
+          <th>Hạng</th>
+          <th>Thành viên</th>
+          <th>Chức vụ</th>
+          <th>Cúp 🏆</th>
+          <th>War &amp; Fame TB (10 mùa)</th>
+          <th>Donate Cho/Nhận</th>
+          <th>Điểm Cống Hiến</th>
+          <th>Đánh giá &amp; CW2</th>
+        </tr>
+      </thead>
+      <tbody id="member-tbody"></tbody>
+    </table>
+  </section>
+  <pre id="kick-output" class="kick-output" hidden></pre>
+</main>
+<script src="clan-analytics.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
