@@ -745,9 +745,6 @@ fetchClan = async function() {
       if (r.ok) {
         const d = await r.json();
         if (d && Array.isArray(d.members) && d.members.length) {
-          if (Array.isArray(d.topMetaDecks) && d.topMetaDecks.length) {
-            CA.TOP_META_DECKS = d.topMetaDecks;
-          }
           currentClan = CA.analyzeClan(d);
           lastUpdated = new Date();
           saveClanDatabase(currentClan);

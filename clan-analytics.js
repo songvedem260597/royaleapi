@@ -216,8 +216,17 @@ window.ClanAnalytics.analyzeClan = function(d) {
   c.clanWarTrophies = Number(d?.clanWarTrophies || d?.warTrophies) || 2369;
   c.updatedAt = d?.updatedAt || new Date().toISOString();
   if (Array.isArray(d?.topMetaDecks) && d.topMetaDecks.length) {
-    window.ClanAnalytics.TOP_META_DECKS = d.topMetaDecks;
-    c.topMetaDecks = d.topMetaDecks;
+    const merged = d.topMetaDecks.slice(0, 10);
+    if (merged.length < 10 && Array.isArray(window.ClanAnalytics.TOP_META_DECKS)) {
+      for (const fb of window.ClanAnalytics.TOP_META_DECKS) {
+        if (merged.length >= 10) break;
+        if (!merged.some(x => x.name === fb.name)) {
+          merged.push({ ...fb, rank: merged.length + 1 });
+        }
+      }
+    }
+    window.ClanAnalytics.TOP_META_DECKS = merged;
+    c.topMetaDecks = merged;
   }
   return c;
 };
