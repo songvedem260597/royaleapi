@@ -211,10 +211,64 @@ window.ClanAnalytics.analyzeClan = function(d) {
   const raw = Array.isArray(d?.members) && d.members.length ? d.members : c.members;
   c.members = raw.map(window.ClanAnalytics.analyzeMember);
   c.counts = { total: c.members.length, good: 0, warning: 0, kick: 0 };
-  c.members.forEach(x => { c.counts[x.status] = (c.counts[x.status] || 0) + 1; });
+  let totalDonations = 0;
+  let totalDonationsReceived = 0;
+  c.members.forEach(x => {
+    c.counts[x.status] = (c.counts[x.status] || 0) + 1;
+    totalDonations += Number(x.donations) || 0;
+    totalDonationsReceived += Number(x.donationsReceived) || 0;
+  });
+  c.totalDonations = totalDonations;
+  c.totalDonationsReceived = totalDonationsReceived;
   c.rawClanScore = Number(d?.clanScore) > 1000 ? Number(d.clanScore) : (Number(d?.rawClanScore) || 130593);
   c.clanWarTrophies = Number(d?.clanWarTrophies || d?.warTrophies) || 2369;
   c.updatedAt = d?.updatedAt || new Date().toISOString();
+
+  const seasonsMeta = Array.isArray(d?.warSeasonsMeta) && d.warSeasonsMeta.length ? d.warSeasonsMeta : WAR_SEASONS_META;
+  c.warSeasons = seasonsMeta;
+  const clanHistory = seasonsMeta.map((meta, idx) => {
+    let sumFame = 0, sumDecks = 0, sumRepair = 0, sumBoat = 0, participants = 0;
+    for (const m of c.members) {
+      const h = (m.cw2History || []).find(x => x.season === meta.season) || (m.cw2History || [])[idx];
+      if (h) {
+        const f = Number(h.fame) || 0;
+        const dk = Number(h.decks) || 0;
+        sumFame += f;
+        sumDecks += dk;
+        sumRepair += Number(h.repair) || 0;
+        sumBoat += Number(h.boatAttacks) || 0;
+        if (dk > 0 || f > 0) participants++;
+      }
+    }
+    const fame = Math.max(Number(meta.clanFame) || 0, sumFame);
+    const decks = Math.max(Number(meta.clanDecks) || 0, sumDecks);
+    const avgPerParticipant = participants > 0 ? Math.round(fame / participants) : 0;
+    const rawMetaFame = Number(meta.clanFame) || 0;
+    const raceTarget = (rawMetaFame > 0 && rawMetaFame <= 10000) ? (rawMetaFame.toLocaleString('en-US') + '/10,000') : 'Colosseum';
+    return {
+      season: meta.season,
+      date: meta.date,
+      rank: Number(meta.rank) || 1,
+      clan: c.name || DEFAULT_CLAN_NAME,
+      participants,
+      membersCount: c.members.length,
+      decks,
+      fame,
+      repair: sumRepair,
+      boatAttacks: sumBoat,
+      raceTarget,
+      avgPerParticipant,
+      total: fame,
+      movingAvg: 0
+    };
+  });
+  const chronoClan = clanHistory.slice().reverse();
+  chronoClan.forEach((entry, idx) => {
+    const win = chronoClan.slice(Math.max(0, idx - 3), idx + 1);
+    entry.movingAvg = Math.round(win.reduce((s, x) => s + x.fame, 0) / win.length);
+  });
+  c.cw2ClanHistory = clanHistory;
+
   if (Array.isArray(d?.topMetaDecks) && d.topMetaDecks.length) {
     const merged = d.topMetaDecks.slice(0, 10);
     if (merged.length < 10 && Array.isArray(window.ClanAnalytics.TOP_META_DECKS)) {

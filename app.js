@@ -12,7 +12,7 @@ function getFilters() {
 }
 
 function upgradeCustomSelects() {
-  ['filter-status', 'sort-by', 'cw2-member-select'].forEach(id => {
+  ['filter-status', 'sort-by', 'cw2-member-select', 'cw2-clan-range-select'].forEach(id => {
     const sel = document.getElementById(id);
     if (!sel) return;
     let wrap = sel.closest('.custom-dropdown');
@@ -343,15 +343,15 @@ syncWintertimeDataFile();
     sortSel.appendChild(opt);
     upgradeCustomSelects();
   }
-  const actions = document.querySelector('.cw2-actions');
+  const actions = document.querySelector('#cw2-history-panel .cw2-actions');
   if (actions && !document.getElementById('cw2-clan-analytics-link')) {
     const a = document.createElement('a');
     a.id = 'cw2-clan-analytics-link';
     a.className = 'btn btn-ghost';
-    a.href = 'https://royaleapi.com/clan/GYQJL9GV/war/analytics';
+    a.href = 'https://royaleapi.com/player/' + (selectedMemberTag || '#2LL9V9088').replace('#', '');
     a.target = '_blank';
     a.rel = 'noopener';
-    a.textContent = 'War Analytics Toàn Clan ↗';
+    a.textContent = 'Hồ Sơ Cá Nhân ↗';
     actions.appendChild(a);
   }
 })();
@@ -466,7 +466,7 @@ function renderTop3Podium(clan) {
     sec = document.createElement('section');
     sec.id = 'top3-podium-section';
     sec.className = 'podium-section';
-    const ref = document.getElementById('cw2-history-panel') || document.querySelector('.toolbar-bento');
+    const ref = document.getElementById('cw2-clan-panel') || document.getElementById('cw2-history-panel') || document.querySelector('.toolbar-bento');
     if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref);
   }
   const top = clan.members.slice().sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((b.warFame || 0) - (a.warFame || 0)));
@@ -610,6 +610,130 @@ isKick2WeeksZero = function(m) {
   return m?.statusLabel === '🥾 Kick';
 };
 currentClan = CA.analyzeClan(currentClan);
+function renderClanCW2Panel(clan) {
+  if (!clan) return;
+  const panel = document.getElementById('cw2-clan-panel');
+  if (!panel) return;
+  const rangeSel = document.getElementById('cw2-clan-range-select');
+  const limit = Number(rangeSel?.value) || 5;
+  const fullHist = Array.isArray(clan.cw2ClanHistory) ? clan.cw2ClanHistory : [];
+  const slice = fullHist.slice(0, limit);
+  const latest = slice[0] || { season: '137-4', fame: 60500, decks: 355, participants: 37, movingAvg: 61981, rank: 1 };
+  const totalFame = slice.reduce((s, x) => s + (Number(x.fame) || 0), 0);
+  const totalDecks = slice.reduce((s, x) => s + (Number(x.decks) || 0), 0);
+  const avgFame = slice.length ? Math.round(totalFame / slice.length) : 0;
+  const rank1Count = slice.filter(x => Number(x.rank) === 1).length;
+  const maxPossibleDecks = Math.max(1, slice.length * (clan.members?.length || 46) * 16);
+  const partPct = Math.min(100, Math.round((totalDecks / maxPossibleDecks) * 100));
+
+  const meta = document.getElementById('cw2-clan-meta');
+  if (meta) {
+    meta.innerHTML =
+      '<strong>🏰 Toàn Clan ' + (clan.name || 'WinterTime') + '</strong> ' +
+      '<span class="tag-mono">' + (clan.tag || '#GYQJL9GV') + '</span> ' +
+      '<span class="role-badge">🏆 Gold League · ' + (clan.clanWarTrophies || 2369).toLocaleString('en-US') + ' Cúp War</span> ' +
+      '<span class="badge badge-good">Hạng #' + (latest.rank || 1) + ' River Race</span>';
+  }
+
+  const bd = document.getElementById('cw2-clan-breakdown');
+  if (bd) {
+    const cards = [
+      [
+        'Điểm Cống Hiến Toàn Clan',
+        Math.round(clan.avgScore || 84) + '/100',
+        'Thắng Hạng #1: ' + rank1Count + '/' + slice.length + ' mùa (' + (clan.counts?.good || 0) + ' TV Ưu tú)'
+      ],
+      [
+        'Điểm War Fame Toàn Clan (Chuẩn 50,000+)',
+        (latest.fame || 0).toLocaleString('en-US') + ' Fame/tuần',
+        'TB ' + slice.length + ' mùa: ' + avgFame.toLocaleString('en-US') + ' Fame/tuần'
+      ],
+      [
+        'Chuyên Cần Sử Dụng Deck Toàn Clan',
+        partPct + '% (' + totalDecks.toLocaleString('en-US') + ' deck/' + slice.length + ' mùa)',
+        'Mùa ' + (latest.season || '137-4') + ': ' + (latest.decks || 0) + ' deck · ' + (latest.participants || 0) + '/' + (clan.members?.length || 46) + ' TV tham chiến'
+      ],
+      [
+        'Moving Avg (4 mùa gần nhất) & Tổng Donate',
+        (latest.movingAvg || latest.fame || 0).toLocaleString('en-US') + ' Fame · Tặng ' + (clan.totalDonations || 0).toLocaleString('en-US'),
+        'Tổng Fame ' + slice.length + ' mùa: ' + totalFame.toLocaleString('en-US') + ' Fame'
+      ]
+    ];
+    bd.innerHTML = cards.map(x =>
+      '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
+    ).join('');
+  }
+
+  const chartBox = document.getElementById('cw2-clan-chart-box');
+  if (chartBox) {
+    const hist = slice.slice().reverse();
+    const W = 760, H = 230, padL = 46, padR = 20, padT = 30, padB = 40;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+    const maxFame = 75000;
+    const y = f => padT + chartH - (Math.min(f, maxFame) / maxFame) * chartH;
+    const n = hist.length || 1;
+    const bw = chartW / n;
+    let bars = '', labels = '', pts = [];
+    hist.forEach((h, i) => {
+      const x = padL + i * bw + bw * 0.15;
+      const w = bw * 0.7;
+      const fame = Number(h.fame) || 0;
+      const top = y(fame);
+      const color = fame < 50000 ? '#f472b6' : '#38bdf8';
+      bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' + (padT + chartH - top) + '" fill="' + color + '" rx="3"/>';
+      bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) + '" fill="#e2e8f0" font-size="10" font-weight="600" text-anchor="middle">' + fame.toLocaleString('en-US') + '</text>';
+      labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + ' (#' + (h.rank || 1) + ')</text>';
+      const ma = Number(h.movingAvg) || fame;
+      pts.push((x + w / 2) + ',' + y(ma));
+    });
+    const warnTop = y(50000);
+    const warn = '<rect x="' + padL + '" y="' + warnTop + '" width="' + chartW + '" height="' + (padT + chartH - warnTop) + '" fill="#f472b6" opacity="0.08"/>';
+    const ref1 = '<line x1="' + padL + '" y1="' + y(50000) + '" x2="' + (W - padR) + '" y2="' + y(50000) + '" stroke="#f472b6" stroke-dasharray="4 4" stroke-width="1"/>';
+    const ref2 = '<line x1="' + padL + '" y1="' + y(60000) + '" x2="' + (W - padR) + '" y2="' + y(60000) + '" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="1"/>';
+    const poly = pts.length ? '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3b82f6" stroke-width="2.2"/>' : '';
+    chartBox.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + warn + ref1 + ref2 + bars + poly + labels + '</svg>';
+  }
+
+  const tbody = document.getElementById('cw2-clan-history-tbody');
+  if (tbody) {
+    tbody.innerHTML = slice.map(h =>
+      '<tr>' +
+        '<td>' + (h.season || '') + '</td>' +
+        '<td>' + (h.date || '') + '</td>' +
+        '<td>' + (Number(h.rank) === 1 ? '🥇 1' : ('#' + (h.rank || 1))) + '</td>' +
+        '<td>🏆 Gold</td>' +
+        '<td>' + (h.clan || 'WinterTime') + '</td>' +
+        '<td>' + (h.participants || 0) + '/' + (h.membersCount || 46) + ' TV</td>' +
+        '<td>' + (h.decks || 0).toLocaleString('en-US') + '</td>' +
+        '<td><strong>' + (h.fame || 0).toLocaleString('en-US') + '</strong></td>' +
+        '<td>' + (h.avgPerParticipant || 0).toLocaleString('en-US') + '</td>' +
+        '<td>' + (h.raceTarget || 'Colosseum') + '</td>' +
+        '<td><strong>' + (h.total || h.fame || 0).toLocaleString('en-US') + '</strong></td>' +
+      '</tr>'
+    ).join('');
+  }
+}
+
+document.getElementById('cw2-clan-range-select')?.addEventListener('change', () => {
+  renderClanCW2Panel(currentClan);
+});
+
+const _prevRenderCW2WithLink = renderCW2Panel;
+renderCW2Panel = function(m) {
+  _prevRenderCW2WithLink(m);
+  const pLink = document.getElementById('cw2-clan-analytics-link');
+  if (pLink && m?.tag) {
+    pLink.href = 'https://royaleapi.com/player/' + m.tag.replace('#', '');
+    pLink.textContent = 'Hồ Sơ Cá Nhân ↗';
+  }
+};
+
+const _prevRenderMain = render;
+render = function() {
+  _prevRenderMain();
+  renderClanCW2Panel(currentClan);
+};
+
 render();
 fetchClan();
 window.handleCardImgErr = function(img, c) {
