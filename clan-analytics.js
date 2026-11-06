@@ -193,7 +193,7 @@ const _origAM = window.ClanAnalytics.analyzeMember;
 const _origAC = window.ClanAnalytics.analyzeClan;
 window.ClanAnalytics.analyzeMember = function(m) {
   const r = _origAM(m);
-  if (Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
+  if (!(Array.isArray(m?.cw2History) && m.cw2History.length) && Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
   else if (m?.trackerStatus === 'Mới vào' || (Array.isArray(m?.cw2History) && !m.cw2History.length)) r.cw2History = [];
   const h = r.cw2History || [];
   const isNew = r.trackerStatus === 'Mới vào' || h.length === 0;
