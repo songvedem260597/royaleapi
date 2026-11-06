@@ -165,7 +165,7 @@ function generateDemoClan() {
     { name: 'muronggg', tag: '#VCGVJLGPY', role: 'member', roleLabel: 'Thành viên', trophies: 9672, donations: 0, donationsReceived: 0, warParticipation: 8, warFame: 171, trackerStatus: 'Bỏ war' },
     { name: 'Độc♥cô♦cầu♥bại', tag: '#2LL9V9088', role: 'member', roleLabel: 'Thành viên', trophies: 14000, donations: 271, donationsReceived: 240, warParticipation: 26, warFame: 725, trackerStatus: 'Cần theo dõi' }
   ];
-  return { name: DEFAULT_CLAN_NAME, tag: DEFAULT_CLAN_TAG, region: 'Vietnam', membersCount: 47, clanScore: 131349, warTrophies: 2369, members };
+  return { name: DEFAULT_CLAN_NAME, tag: DEFAULT_CLAN_TAG, region: 'Vietnam', membersCount: 46, clanScore: 130593, warTrophies: 2369, members };
 }
 
 window.ClanAnalytics = {
@@ -178,31 +178,17 @@ window.ClanAnalytics = {
 };
 
 window.ClanAnalytics.TOP_META_DECKS = [
-  { rank: 1, name: 'P.E.K.K.A Bridge Spam', rating: 67.4, win: 56.8, elixir: 3.8, cycle: 10, cards: ['pekka','battle-ram','bandit','royal-ghost','electro-wizard','magic-archer','zap','poison'] },
-  { rank: 2, name: 'Mega Knight Ram Rider', rating: 66.9, win: 56.2, elixir: 3.9, cycle: 9, cards: ['mega-knight','ram-rider','bandit','inferno-dragon','electro-spirit','barbarian-barrel','lightning','giant-snowball'] },
-  { rank: 3, name: 'Hog Firecracker EQ Cycle', rating: 66.1, win: 55.6, elixir: 2.8, cycle: 7, cards: ['hog-rider','firecracker','earthquake','mighty-miner','tesla','skeletons','ice-spirit','the-log'] },
-  { rank: 4, name: 'LavaLoon Top Ranked Beatdown', rating: 65.8, win: 56.1, elixir: 4.0, cycle: 12, cards: ['lava-hound','balloon','mega-minion','skeleton-dragons','valkyrie','tombstone','fireball','zap'] },
-  { rank: 5, name: 'Royal Giant Fisherman Cycle', rating: 65.3, win: 55.3, elixir: 3.3, cycle: 9, cards: ['royal-giant','fisherman','hunter','phoenix','royal-ghost','electro-spirit','fireball','the-log'] },
-  { rank: 6, name: 'Classic Log Bait Barrel', rating: 64.9, win: 54.9, elixir: 3.1, cycle: 8, cards: ['goblin-barrel','princess','knight','goblin-gang','inferno-tower','ice-spirit','rocket','the-log'] },
-  { rank: 7, name: 'Miner Poison Wall Breakers', rating: 64.5, win: 55.1, elixir: 2.9, cycle: 8, cards: ['miner','wall-breakers','poison','magic-archer','bomb-tower','valkyrie','skeletons','the-log'] },
-  { rank: 8, name: 'Golem Night Witch Beatdown', rating: 64.1, win: 54.8, elixir: 4.3, cycle: 13, cards: ['golem','night-witch','baby-dragon','lumberjack','mega-minion','tornado','lightning','barbarian-barrel'] },
-  { rank: 9, name: 'Splashyard Graveyard Control', rating: 63.8, win: 54.6, elixir: 3.6, cycle: 11, cards: ['graveyard','poison','baby-dragon','ice-wizard','knight','tombstone','tornado','barbarian-barrel'] },
-  { rank: 10, name: 'Mortar Skeleton King Bait', rating: 63.4, win: 54.3, elixir: 3.1, cycle: 9, cards: ['mortar','miner','poison','skeleton-king','musketeer','goblin-gang','spear-goblins','the-log'] }
+  { rank: 1, name: 'Giant 4.0', rating: 59, usage: '2.37%', win: 53.5, elixir: '4.0', cycle: '12.0', cards: ['giant-snowball-ev1','bowler-hero','witch-ev1','graveyard','zappies','guards','giant','arrows'], cardImages: ['https://royaletrack.com/cards/cardevolutions-7MaJLa6hK9WN2_VIshuh5DIDfGwm0wEv98gXtAxLDPs.webp?v=2','https://royaletrack.com/cards/cardheroes-SU4qFXmbQXWjvASxVI6z9IJuTYolx4A0MKK90sTIE88.webp?v=2','https://royaletrack.com/cards/cardevolutions-cfwk1vzehVyHC-uloEIH6NOI0hOdofCutR5PyhIgO6w.webp?v=2','https://royaletrack.com/cards/cards-Icp8BIyyfBTj1ncCJS7mb82SY7TPV-MAE-J2L2R48DI.webp?v=2','https://royaletrack.com/cards/cards-QZfHRpLRmutZbCr5fpLnTpIp89vLI6NrAwzGZ8tHEc4.webp?v=2','https://royaletrack.com/cards/cards-1ArKfLJxYo6_NU_S9cAeIrfbXqWH0oULVJXedxBXQlU.webp?v=2','https://royaletrack.com/cards/cards-Axr4ox5_b7edmLsoHxBX3vmgijAIibuF6RImTbqLlXE.webp?v=2','https://royaletrack.com/cards/cards-Flsoci-Y6y8ZFVi5uRFTmgkPnCmMyMVrU7YmmuPvSBo.webp?v=2'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=28000017;26000034;26000007;28000010;26000052;26000025;26000003;28000001' },
+  { rank: 2, name: 'Lightning 3.0', rating: 65, usage: '2.04%', win: 60.4, elixir: '3.0', cycle: '8.0', cards: ['cannon-ev1','ice-wizard-hero','bats-ev1','minion-giant','knight','lightning','skeletons','barbarian-barrel'], cardImages: ['https://royaletrack.com/cards/cardevolutions-nZK1y-beLxO5vnlyUhK6-2zH2NzXJwqykcosqQ1cmZ8.webp?v=2','https://royaletrack.com/cards/cardheroes-W3dkw0HTw9n1jB-zbknY2w3wHuyuLxSRIAV5fUT1SEY.webp?v=2','https://royaletrack.com/cards/cardevolutions-EnIcvO21hxiNpoI-zO6MDjLmzwPbq8Z4JPo2OKoVUjU.webp?v=2','https://royaletrack.com/cards/cards-VRjL0yVLzrnoe-IBh2l2fDHDok0L-UoM9cG-X_8xbMk.webp?v=2','https://royaletrack.com/cards/cards-jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.webp?v=2','https://royaletrack.com/cards/cards-fpnESbYqe5GyZmaVVYe-SEu7tE0Kxh_HZyVigzvLjks.webp?v=2','https://royaletrack.com/cards/cards-oO7iKMU5m0cdxhYPZA3nWQiAUh2yoGgdThLWB1rVSec.webp?v=2','https://royaletrack.com/cards/cards-Gb0G1yNy0i5cIGUHin8uoFWxqntNtRPhY_jeMXg7HnA.webp?v=2'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=27000000;26000023;26000049;26000107;26000000;28000007;26000010;28000015' },
+  { rank: 3, name: 'Hog Rider 2.6', rating: 57, usage: '1.92%', win: 52.6, elixir: '2.6', cycle: '6.0', cards: ['skeletons-ev1','musketeer-hero','cannon-ev1','ice-spirit','hog-rider','ice-golem','the-log','fireball'], cardImages: ['https://royaletrack.com/cards/cardevolutions-oO7iKMU5m0cdxhYPZA3nWQiAUh2yoGgdThLWB1rVSec.webp?v=2','https://royaletrack.com/cards/cardheroes-Tex1C48UTq9FKtAX-3tzG0FJmc9jzncUZG3bb5Vf-Ds.webp?v=2','https://royaletrack.com/cards/cardevolutions-nZK1y-beLxO5vnlyUhK6-2zH2NzXJwqykcosqQ1cmZ8.webp?v=2','https://royaletrack.com/cards/cards-lv1budiafU9XmSdrDkk0NYyqASAFYyZ06CPysXKZXlA.webp?v=2','https://royaletrack.com/cards/cards-Ubu0oUl8tZkusnkZf8Xv9Vno5IO29Y-jbZ4fhoNJ5oc.webp?v=2','https://royaletrack.com/cards/cards-r05cmpwV1o7i7FHodtZwW3fmjbXCW34IJCsDEV5cZC4.webp?v=2','https://royaletrack.com/cards/cards-_iDwuDLexHPFZ_x4_a0eP-rxCS6vwWgTs6DLauwwoaY.webp?v=2','https://royaletrack.com/cards/cards-lZD9MILQv7O-P3XBr_xOLS5idwuz3_7Ws9G60U36yhc.webp?v=2'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=26000010;26000014;27000000;26000030;26000021;26000038;28000011;28000000' },
+  { rank: 4, name: 'Royal Hogs 2.9', rating: 55, usage: '1.87%', win: 51.1, elixir: '2.9', cycle: '7.0', cards: ['royal-hogs-ev1','royal-ghost-ev1','archer-queen','cannon','earthquake','skeletons','ice-spirit','the-log'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=26000059;26000050;26000072;27000000;28000014;26000010;26000030;28000011' },
+  { rank: 5, name: 'Minion Giant 2.8', rating: 62, usage: '1.80%', win: 57.8, elixir: '2.8', cycle: '8.0', cards: ['cannon-ev1','ice-wizard-hero','bats-ev1','minion-giant','miner','poison','skeletons','barbarian-barrel'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=27000000;26000023;26000049;26000107;26000032;28000009;26000010;28000015' },
+  { rank: 6, name: 'Golem 4.3', rating: 60, usage: '1.77%', win: 55.9, elixir: '4.3', cycle: '11.0', cards: ['electro-dragon-ev1','bowler-hero','baby-dragon-ev1','minion-giant','tornado','golem','vines','barbarian-barrel'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=26000063;26000034;26000015;26000107;28000012;26000009;28000026;28000015' },
+  { rank: 7, name: 'Electro Giant 3.8', rating: 64, usage: '1.31%', win: 60.9, elixir: '3.8', cycle: '9.0', cards: ['goblin-cage-ev1','ice-wizard-hero','baby-dragon-ev1','electro-giant','tornado','lightning','vines','barbarian-barrel'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=27000012;26000023;26000015;26000085;28000012;28000007;28000026;28000015' },
+  { rank: 8, name: 'Graveyard 3.1', rating: 55, usage: '1.08%', win: 52.8, elixir: '3.1', cycle: '8.0', cards: ['royal-ghost-ev1','bowler-hero','skeletons-ev1','ice-wizard-hero','graveyard','vines','poison','barbarian-barrel'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=26000050;26000034;26000010;26000023;28000010;28000026;28000009;28000015' },
+  { rank: 9, name: 'Hog Rider 2.8', rating: 58, usage: '1.06%', win: 55.6, elixir: '2.8', cycle: '6.0', cards: ['firecracker-ev1','knight-hero','tesla-ev1','earthquake','hog-rider','skeletons','ice-spirit','the-log'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=26000064;26000000;27000006;28000014;26000021;26000010;26000030;28000011' },
+  { rank: 10, name: 'Royal Hogs 3.9', rating: 57, usage: '0.94%', win: 55.1, elixir: '3.9', cycle: '11.0', cards: ['royal-recruits-ev1','goblin-cage-ev1','flying-machine','electro-spirit','barbarian-barrel','zappies','royal-hogs','fireball'], copyUrl: 'https://link.clashroyale.com/deck/fr?deck=26000047;27000012;26000057;26000084;28000015;26000052;26000059;28000000' }
 ];
-window.ClanAnalytics.TOP_META_DECKS = [
-  { rank: 1, name: 'EvoCannon Evo Bats 3.0 Cycle', rating: 59, usage: '0.8%', win: 55.2, elixir: '3.0', cycle: '8.0', cards: ['cannon-ev1','ice-wizard','bats-ev1','electro-dragon','knight','lightning','skeletons','barbarian-barrel'] },
-  { rank: 2, name: 'EvoLJ GS Furnace', rating: 57, usage: '1.3%', win: 54.0, elixir: '3.6', cycle: '10.0', cards: ['battle-ram-ev1','electro-wizard','lumberjack-ev1','giant-skeleton','bandit','furnace','arrows','heal-spirit'] },
-  { rank: 3, name: 'EvoMortar EvoFurnace Rascals', rating: 57, usage: '0.9%', win: 54.4, elixir: '3.5', cycle: '10.0', cards: ['mortar-ev1','furnace-ev1','mighty-miner','rascals','cannon-cart','skeleton-barrel','goblin-gang','arrows'] },
-  { rank: 4, name: 'EvoSkeletons Goblinstein Hogs', rating: 56, usage: '1.1%', win: 53.9, elixir: '3.1', cycle: '7.0', cards: ['skeletons-ev1','goblinstein','mother-witch','royal-hogs','cannon-ev1','earthquake','ice-spirit','the-log'] },
-  { rank: 5, name: 'Golem Hero Mini P.E.K.K.A NW', rating: 56, usage: '0.8%', win: 54.1, elixir: '4.1', cycle: '11.0', cards: ['golem','mini-pekka-hero','night-witch','phoenix','bomber','electro-dragon','tornado','barbarian-barrel'] }
-];
-window.ClanAnalytics.TOP_META_DECKS.push(
-  { rank: 6, name: 'Hero Knight Goblin Barrel Bait', rating: 55, usage: '1.4%', win: 53.6, elixir: '3.1', cycle: '8.0', cards: ['goblin-barrel','knight-hero','princess','skeleton-army','goblin-gang','inferno-tower','ice-spirit','the-log'] },
-  { rank: 7, name: 'Hero Valkyrie WB Miner Cycle', rating: 55, usage: '1.0%', win: 53.8, elixir: '2.9', cycle: '8.0', cards: ['valkyrie-hero','wall-breakers','bats-ev1','miner','cannon','skeletons','fireball','the-log'] },
-  { rank: 8, name: 'EvoArchers Goblin Drill Control', rating: 55, usage: '0.7%', win: 53.5, elixir: '3.1', cycle: '8.0', cards: ['archers-ev1','goblin-drill','goblin-demolisher','knight','tesla','fire-spirit','poison','the-log'] },
-  { rank: 9, name: 'EvoRG EvoGhost Fisherman', rating: 54, usage: '1.2%', win: 53.3, elixir: '3.3', cycle: '9.0', cards: ['royal-giant-ev1','royal-ghost-ev1','fisherman','hunter','phoenix','electro-spirit','fireball','barbarian-barrel'] },
-  { rank: 10, name: 'Hog 2.6 Hero Musketeer Cycle', rating: 54, usage: '1.5%', win: 53.1, elixir: '2.6', cycle: '6.0', cards: ['cannon-ev1','skeletons-ev1','musketeer-hero','hog-rider','ice-golem','ice-spirit','fireball','the-log'] }
-);
 const _origAM = window.ClanAnalytics.analyzeMember;
 const _origAC = window.ClanAnalytics.analyzeClan;
 window.ClanAnalytics.analyzeMember = function(m) {
@@ -225,5 +211,12 @@ window.ClanAnalytics.analyzeClan = function(d) {
   c.members = raw.map(window.ClanAnalytics.analyzeMember);
   c.counts = { total: c.members.length, good: 0, warning: 0, kick: 0 };
   c.members.forEach(x => { c.counts[x.status] = (c.counts[x.status] || 0) + 1; });
+  c.rawClanScore = Number(d?.clanScore) > 1000 ? Number(d.clanScore) : (Number(d?.rawClanScore) || 130593);
+  c.clanWarTrophies = Number(d?.clanWarTrophies || d?.warTrophies) || 2369;
+  c.updatedAt = d?.updatedAt || new Date().toISOString();
+  if (Array.isArray(d?.topMetaDecks) && d.topMetaDecks.length) {
+    window.ClanAnalytics.TOP_META_DECKS = d.topMetaDecks;
+    c.topMetaDecks = d.topMetaDecks;
+  }
   return c;
 };

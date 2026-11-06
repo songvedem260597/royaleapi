@@ -69,10 +69,12 @@ function renderSummary(clan) {
   const el = document.getElementById('clan-summary');
   if (!el) return;
   const avg = Math.round(clan.avgScore || 0);
+  const cScore = (clan?.rawClanScore || 130593).toLocaleString('en-US');
+  const wTrophies = (clan?.clanWarTrophies || 2369).toLocaleString('en-US');
   el.innerHTML =
     '<div class="hero-stats">' +
-      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
-      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong>' + cScore + '</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
       '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Chủ lực MVP</span><strong>' + (clan.mvpName || '—') + '</strong></div>' +
     '</div>' +
@@ -234,6 +236,19 @@ function showKickList() {
   out.removeAttribute('hidden');
 }
 
+let lastUpdated = null;
+function updateLastUpdatedUI(dt) {
+  const el = document.getElementById('auto-sync-text');
+  if (el && dt instanceof Date) {
+    const now = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    el.textContent = 'Tự động đồng bộ RoyaleAPI Live · Cập nhật ' + now;
+  }
+}
+function updateLiveIndicator(isLive) {
+  const dot = document.querySelector('.sync-dot, .live-dot');
+  if (dot) dot.style.background = isLive ? '#10b981' : '#f59e0b';
+}
+
 async function fetchClan() {
   try {
     const res = await fetch('/api/royale-proxy/clans/%23GYQJL9GV');
@@ -244,7 +259,6 @@ async function fetchClan() {
     currentClan = CA.analyzeClan(CA.generateDemoClan());
   }
   render();
-  // [AUTO-REFRESH ADDED] Update last updated time and UI
   lastUpdated = new Date();
   updateLastUpdatedUI(lastUpdated);
   updateLiveIndicator(true);
@@ -291,7 +305,7 @@ function saveClanDatabase(clan) {
   const today = new Date().toISOString().slice(0, 10);
   snapshots = snapshots.filter(s => s && s.date !== today);
   snapshots.push({ date: today, season: '137-4', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
-  const db = { schemaVersion: '2.0', updatedAt: new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: 131349, clanWarTrophies: 2369, membersCount: clan.members.length }, warSeasonsMeta: CA.WAR_SEASONS_META || [], snapshots, members: clan.members };
+  const db = { schemaVersion: '2.1', updatedAt: new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: clan?.rawClanScore || 130593, clanWarTrophies: clan?.clanWarTrophies || 2369, membersCount: clan.members.length }, warSeasonsMeta: CA.WAR_SEASONS_META || [], topMetaDecks: CA.TOP_META_DECKS || [], snapshots, members: clan.members };
   window.__wintertimeDB = db;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
   return db;
@@ -611,19 +625,25 @@ renderMetaDecks = function() {
   if (!sec || !decks.length) return;
   const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
   const px = 'https://wsrv.nl/?url=cdns3.royaleapi.com/static/img/cards/v11-a8e42334/';
-  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Meta Season</h2><div class="meta-decks-sub">Nguồn: RoyaleAPI</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
-    decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">Rating ' + d.rating + '</span><span class="meta-pill">Usage ' + (d.usage || '1.0%') + '</span><span class="meta-pill meta-pill-win">Wins ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">💧 ' + d.elixir + ' · Cycle ' + d.cycle + '</span><a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div><div class="meta-cards-row">' +
-      d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="' + px + c + '.png&w=150&output=png" alt="' + c + '" referrerpolicy="no-referrer" decoding="async" onerror="window.handleCardImgErr(this,\'' + c + '\')"></div>').join('') + '</div></div>').join('') + '</div>';
+  const syncTime = lastUpdated instanceof Date ? (' · Cập nhật ' + lastUpdated.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })) : '';
+  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Meta Season</h2><div class="meta-decks-sub">Nguồn: RoyaleAPI Live Meta' + syncTime + '</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
+    decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">Rating ' + d.rating + '</span><span class="meta-pill">Usage ' + (d.usage || '1.0%') + '</span><span class="meta-pill meta-pill-win">Wins ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">💧 ' + d.elixir + ' · Cycle ' + d.cycle + '</span>' + (d.copyUrl ? '<a class="meta-pill" href="' + d.copyUrl + '" target="_blank" rel="noopener">Copy Deck ↗</a>' : '') + '<a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div><div class="meta-cards-row">' +
+      d.cards.map((c, idx) => {
+        const imgSrc = (Array.isArray(d.cardImages) && d.cardImages[idx]) ? d.cardImages[idx] : (px + c + '.png&w=150&output=png');
+        return '<div class="meta-card-slot" title="' + c + '"><img src="' + imgSrc + '" alt="' + c + '" referrerpolicy="no-referrer" decoding="async" onerror="window.handleCardImgErr(this,\'' + c + '\')"></div>';
+      }).join('') + '</div></div>').join('') + '</div>';
 };
 renderMetaDecks();
 renderSummary = function(clan) {
   const el = document.getElementById('clan-summary');
   if (!el) return;
   const avg = Math.round(clan?.avgScore || 0);
+  const cScore = (clan?.rawClanScore || 130593).toLocaleString('en-US');
+  const wTrophies = (clan?.clanWarTrophies || 2369).toLocaleString('en-US');
   el.innerHTML =
     '<div class="hero-stats">' +
-      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
-      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong>' + cScore + '</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
       '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
@@ -635,23 +655,6 @@ renderTop3Podium = function(clan) {
   if (c1) c1.textContent = '🏆 1ST · MVP DẪN ĐẦU';
 };
 render();
-(function mountWinterTimeMarquee() {
-  if (document.getElementById('wt-marquee-bar')) return;
-  const main = document.querySelector('.bento-main');
-  if (!main) return;
-  const items = [
-    '❄️ Đại gia đình WinterTime: <span class="wt-marquee-grad">Chúc anh em chơi game vui vẻ, leo rank vù vù, mở rương toàn thẻ ngon!</span>',
-    '⚔️ Nhắc nhở mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 từ Thủ lĩnh nha anh em!</span>',
-    '👑 Tinh thần BiG Familie: <span class="wt-marquee-grad">Thắng không kiêu, bại không cay, thả emote HEHEHEHA văn minh lịch sự!</span>',
-    '🎁 Góc đồng đội: <span class="wt-marquee-grad">Chăm chỉ xin thẻ và Donate đều tay để cả Clan cùng max bài lấy Top 1 War!</span>'
-  ];
-  const row = items.map(t => '<span class="wt-marquee-item">' + t + '</span>').join('');
-  const bar = document.createElement('div');
-  bar.id = 'wt-marquee-bar';
-  bar.className = 'wt-marquee-bar';
-  bar.innerHTML = '<div class="wt-marquee-track">' + row + row + '</div>';
-  main.prepend(bar);
-})();
 (function mountWinterTimeMarquee() {
   if (document.getElementById('wt-marquee-bar')) return;
   const main = document.querySelector('.bento-main');
@@ -707,11 +710,13 @@ renderSummary = function(clan) {
   const avg = Math.round(clan?.avgScore || 0);
   const cnt = clan?.counts || { good: 0, warning: 0, kick: 0 };
   const total = clan?.members?.length || 0;
+  const cScore = (clan?.rawClanScore || 130593).toLocaleString('en-US');
+  const wTrophies = (clan?.clanWarTrophies || 2369).toLocaleString('en-US');
   document.querySelectorAll('.kpi-grid').forEach(g => { g.style.display = 'none'; });
   el.innerHTML =
     '<div class="hero-stats hero-stats-unified">' +
-      '<div><span class="kpi-label">Điểm Clan</span><strong>131,349</strong></div>' +
-      '<div><span class="kpi-label">Cúp War</span><strong>2,369</strong></div>' +
+      '<div><span class="kpi-label">Điểm Clan</span><strong id="kpi-clan-score">' + cScore + '</strong></div>' +
+      '<div><span class="kpi-label">Cúp War</span><strong id="kpi-war-trophies">' + wTrophies + '</strong></div>' +
       '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members" style="color:#38bdf8">' + total + '/50</strong></div>' +
       '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good" style="color:#10b981">' + (cnt.good || 0) + '</strong></div>' +
@@ -722,27 +727,50 @@ renderSummary = function(clan) {
 };
 render();
 fetchClan = async function() {
-  const urls = [
-    '/api/royale-proxy/clans/%23GYQJL9GV',
-    'https://codexpro.muatenmien.store/api/royale-proxy/clans/%23GYQJL9GV',
-    './wintertime-data.json'
-  ];
+  const ts = Date.now();
+  const isExternalHost = typeof location !== 'undefined' && (location.hostname === 'wintertime.muatenmien.store' || location.hostname.endsWith('.github.io'));
+  const urls = isExternalHost
+    ? [
+        'https://codexpro.muatenmien.store/api/royale-proxy/clans/%23GYQJL9GV?t=' + ts,
+        './wintertime-data.json?t=' + ts
+      ]
+    : [
+        '/api/royale-proxy/clans/%23GYQJL9GV?t=' + ts,
+        'https://codexpro.muatenmien.store/api/royale-proxy/clans/%23GYQJL9GV?t=' + ts,
+        './wintertime-data.json?t=' + ts
+      ];
   for (const u of urls) {
     try {
-      const r = await fetch(u);
+      const r = await fetch(u, { cache: 'no-store' });
       if (r.ok) {
         const d = await r.json();
         if (d && Array.isArray(d.members) && d.members.length) {
+          if (Array.isArray(d.topMetaDecks) && d.topMetaDecks.length) {
+            CA.TOP_META_DECKS = d.topMetaDecks;
+          }
           currentClan = CA.analyzeClan(d);
+          lastUpdated = new Date();
+          saveClanDatabase(currentClan);
           render();
+          renderMetaDecks();
+          updateLastUpdatedUI(lastUpdated);
+          updateLiveIndicator(true);
           return;
         }
       }
     } catch (e) {}
   }
   render();
+  renderMetaDecks();
 };
 fetchClan();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (!lastUpdated || (Date.now() - lastUpdated.getTime() > 15000)) {
+      fetchClan();
+    }
+  }
+});
 
 /* ===== Mobile 60fps performance optimizer ===== */
 (function optimizeMobilePerformance() {
