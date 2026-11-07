@@ -1119,6 +1119,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.c
 .auto-sync-status,#auto-sync-text{color:#cfe9f2!important;font-size:13px!important;letter-spacing:.02em;}
 /* (5) responsive 768 / 390 */
 @media(max-width:768px){
+  body{padding:12px!important;}
   .bento-nav{padding:var(--ui-space-3)!important;flex-wrap:wrap;gap:var(--ui-space-2);}
   .header-controls,.filter-bar,.cw2-actions{flex-wrap:wrap;gap:var(--ui-space-2);}
   .clan-info-grid{grid-template-columns:1fr!important;}
