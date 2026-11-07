@@ -298,6 +298,13 @@ select option {
   opacity: 1;
 }
 
+@media (max-width: 640px) {
+  .custom-dropdown { max-width: 100%; min-width: 0; }
+  .custom-dropdown-trigger { min-width: 0; max-width: 100%; min-height: 44px; }
+  .custom-dropdown-label { display: block; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}
+.custom-dropdown-item:focus-visible { outline: 2px solid #22d3ee; outline-offset: -2px; background: rgba(34,211,238,.14); }
+
 /* Remove redundant outer background/border on .kpi-grid wrapper section */
 section.kpi-grid,
 .kpi-grid {
