@@ -1115,7 +1115,7 @@ body{font-family:var(--ui-font);}
 /* (3) focus-visible đúng thật */
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.custom-dropdown-trigger:focus-visible{outline:2px solid var(--ui-cyan)!important;outline-offset:3px!important;}
 /* (4) header & auto-sync readable */
-header,.site-header,.topbar{background:rgba(10,18,28,.92)!important;border-bottom:1px solid var(--ui-border)!important;}
+.bento-nav{background:rgba(10,18,28,.92)!important;border-bottom:1px solid var(--ui-border)!important;}
 .auto-sync,.sync-status,.sync-indicator{color:#cfe9f2!important;font-size:13px!important;letter-spacing:.02em;}
 /* (5) responsive 768 / 390 */
 @media(max-width:768px){
