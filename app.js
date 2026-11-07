@@ -30,11 +30,25 @@ function upgradeCustomSelects() {
       menu.className = 'custom-dropdown-menu';
       wrap.appendChild(trigger);
       wrap.appendChild(menu);
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      trigger.setAttribute('aria-expanded', 'false');
+      menu.id = 'menu-' + id;
+      trigger.setAttribute('aria-controls', menu.id);
+      menu.setAttribute('role', 'listbox');
       trigger.addEventListener('click', e => {
         e.stopPropagation();
         const isOpen = wrap.classList.contains('open');
-        document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
-        if (!isOpen) wrap.classList.add('open');
+        document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+          d.classList.remove('open');
+          const t = d.querySelector('.custom-dropdown-trigger');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          wrap.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        } else {
+          trigger.setAttribute('aria-expanded', 'false');
+        }
       });
     }
     const menu = wrap.querySelector('.custom-dropdown-menu');
