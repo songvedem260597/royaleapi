@@ -30,11 +30,25 @@ function upgradeCustomSelects() {
       menu.className = 'custom-dropdown-menu';
       wrap.appendChild(trigger);
       wrap.appendChild(menu);
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      trigger.setAttribute('aria-expanded', 'false');
+      menu.id = 'menu-' + id;
+      trigger.setAttribute('aria-controls', menu.id);
+      menu.setAttribute('role', 'listbox');
       trigger.addEventListener('click', e => {
         e.stopPropagation();
         const isOpen = wrap.classList.contains('open');
-        document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
-        if (!isOpen) wrap.classList.add('open');
+        document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+          d.classList.remove('open');
+          const t = d.querySelector('.custom-dropdown-trigger');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          wrap.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        } else {
+          trigger.setAttribute('aria-expanded', 'false');
+        }
       });
     }
     const menu = wrap.querySelector('.custom-dropdown-menu');
@@ -44,25 +58,108 @@ function upgradeCustomSelects() {
       const item = document.createElement('div');
       item.className = 'custom-dropdown-item' + (opt.value === sel.value ? ' selected' : '');
       item.dataset.value = opt.value;
-      item.innerHTML = '<span>' + opt.textContent + '</span><span class="check">✓</span>';
+      item.setAttribute('role', 'option');
+      item.setAttribute('tabindex', '-1');
+      item.setAttribute('aria-selected', opt.value === sel.value ? 'true' : 'false');
+      const txt = document.createElement('span');
+      txt.textContent = opt.textContent;
+      const chk = document.createElement('span');
+      chk.className = 'check';
+      chk.textContent = '✓';
+      item.appendChild(txt);
+      item.appendChild(chk);
       item.addEventListener('click', e => {
         e.stopPropagation();
         sel.value = opt.value;
-        menu.querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('selected'));
+        menu.querySelectorAll('.custom-dropdown-item').forEach(i => {
+          i.classList.remove('selected');
+          i.setAttribute('aria-selected', 'false');
+        });
         item.classList.add('selected');
+        item.setAttribute('aria-selected', 'true');
         label.textContent = opt.textContent;
         wrap.classList.remove('open');
+        const trg = wrap.querySelector('.custom-dropdown-trigger');
+        if (trg) trg.setAttribute('aria-expanded', 'false');
         sel.dispatchEvent(new Event('change'));
       });
       menu.appendChild(item);
     });
     const cur = sel.options[sel.selectedIndex];
     label.textContent = cur ? cur.textContent : '';
+    const trigger = wrap.querySelector('.custom-dropdown-trigger');
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', wrap.classList.contains('open') ? 'true' : 'false');
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      trigger.setAttribute('aria-controls', menu.id);
+    }
+    menu.setAttribute('role', 'listbox');
   });
 }
 
 document.addEventListener('click', () => {
-  document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+    d.classList.remove('open');
+    const t = d.querySelector('.custom-dropdown-trigger');
+    if (t) t.setAttribute('aria-expanded', 'false');
+  });
+});
+
+document.addEventListener('keydown', e => {
+  const wrap = e.target.closest && e.target.closest('.custom-dropdown');
+  if (!wrap) return;
+  const trigger = wrap.querySelector('.custom-dropdown-trigger');
+  const menu = wrap.querySelector('.custom-dropdown-menu');
+  if (!trigger || !menu) return;
+  const items = Array.from(menu.querySelectorAll('.custom-dropdown-item'));
+  const isTrigger = e.target === trigger;
+  const isOpen = wrap.classList.contains('open');
+  if (isTrigger) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!isOpen) {
+        document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+          d.classList.remove('open');
+          const t = d.querySelector('.custom-dropdown-trigger');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        });
+        wrap.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+      const first = items.find(i => i.classList.contains('selected')) || items[0];
+      if (first) first.focus();
+    } else if (e.key === 'Escape' && isOpen) {
+      wrap.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+    return;
+  }
+  const idx = items.indexOf(e.target);
+  if (idx === -1) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    (items[idx + 1] || items[0]).focus();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    (items[idx - 1] || items[items.length - 1]).focus();
+  } else if (e.key === 'Home') {
+    e.preventDefault();
+    items[0].focus();
+  } else if (e.key === 'End') {
+    e.preventDefault();
+    items[items.length - 1].focus();
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    e.target.click();
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    wrap.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.focus();
+  } else if (e.key === 'Tab') {
+    wrap.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+  }
 });
 
 function renderSummary(clan) {
