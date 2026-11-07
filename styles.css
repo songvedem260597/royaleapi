@@ -283,7 +283,7 @@ select option {
 .custom-dropdown-trigger:focus,
 .custom-dropdown-trigger:focus-visible,
 .custom-dropdown-trigger:active {
-  outline: none !important;
+  outline: none;
 }
 .custom-dropdown-menu {
   z-index: 10000 !important;
