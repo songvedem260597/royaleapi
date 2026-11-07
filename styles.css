@@ -351,7 +351,7 @@ button:focus-visible,
 select,
 select:focus,
 select:focus-visible {
-  outline: none !important;
+  outline: none;
   outline-width: 0 !important;
   outline-color: transparent !important;
 }
