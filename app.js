@@ -58,14 +58,29 @@ function upgradeCustomSelects() {
       const item = document.createElement('div');
       item.className = 'custom-dropdown-item' + (opt.value === sel.value ? ' selected' : '');
       item.dataset.value = opt.value;
-      item.innerHTML = '<span>' + opt.textContent + '</span><span class="check">✓</span>';
+      item.setAttribute('role', 'option');
+      item.setAttribute('tabindex', '-1');
+      item.setAttribute('aria-selected', opt.value === sel.value ? 'true' : 'false');
+      const txt = document.createElement('span');
+      txt.textContent = opt.textContent;
+      const chk = document.createElement('span');
+      chk.className = 'check';
+      chk.textContent = '✓';
+      item.appendChild(txt);
+      item.appendChild(chk);
       item.addEventListener('click', e => {
         e.stopPropagation();
         sel.value = opt.value;
-        menu.querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('selected'));
+        menu.querySelectorAll('.custom-dropdown-item').forEach(i => {
+          i.classList.remove('selected');
+          i.setAttribute('aria-selected', 'false');
+        });
         item.classList.add('selected');
+        item.setAttribute('aria-selected', 'true');
         label.textContent = opt.textContent;
         wrap.classList.remove('open');
+        const trg = wrap.querySelector('.custom-dropdown-trigger');
+        if (trg) trg.setAttribute('aria-expanded', 'false');
         sel.dispatchEvent(new Event('change'));
       });
       menu.appendChild(item);
