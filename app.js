@@ -82,6 +82,7 @@ function upgradeCustomSelects() {
         const trg = wrap.querySelector('.custom-dropdown-trigger');
         if (trg) trg.setAttribute('aria-expanded', 'false');
         sel.dispatchEvent(new Event('change'));
+        if (trg) trg.focus();
       });
       menu.appendChild(item);
     });
