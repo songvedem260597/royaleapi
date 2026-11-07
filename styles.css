@@ -1120,7 +1120,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.c
 /* (5) responsive 768 / 390 */
 @media(max-width:768px){
   .bento-nav{padding:var(--ui-space-3)!important;flex-wrap:wrap;gap:var(--ui-space-2);}
-  .controls,.filter-bar,.toolbar{flex-wrap:wrap;gap:var(--ui-space-2);}
+  .header-controls,.filter-bar,.cw2-actions{flex-wrap:wrap;gap:var(--ui-space-2);}
   .info-cards,.info-grid{grid-template-columns:1fr!important;}
   .hero-stats,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:var(--ui-space-3);}
   table{display:block;overflow-x:auto;white-space:nowrap;}
