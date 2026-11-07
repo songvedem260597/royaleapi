@@ -1128,9 +1128,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.c
 }
 @media(max-width:390px){
   body{padding:12px!important;}
-  .hero-stats,.stats-grid{grid-template-columns:repeat(2,1fr)!important;}
-  .controls,.filter-bar,.toolbar{flex-direction:column;align-items:stretch;}
-  table{overflow-x:auto;}
+  .hero-stats-unified{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .header-controls,.filter-bar,.cw2-actions{flex-direction:column;align-items:stretch;}
+  .cw2-table-wrap,.table-wrap{overflow-x:auto;max-width:100%;}
 }
 /* (6) prefers-reduced-motion */
 @media(prefers-reduced-motion:reduce){
