@@ -1123,7 +1123,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.c
   .header-controls,.filter-bar,.cw2-actions{flex-wrap:wrap;gap:var(--ui-space-2);}
   .clan-info-grid{grid-template-columns:1fr!important;}
   .hero-stats-unified{grid-template-columns:repeat(2,1fr)!important;gap:var(--ui-space-3);}
-  table{display:block;overflow-x:auto;white-space:nowrap;}
+  .cw2-table-wrap,.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .cw2-table{min-width:720px;}
 }
 @media(max-width:390px){
   .container,.wrap,.main-container{padding-inline:12px!important;}
