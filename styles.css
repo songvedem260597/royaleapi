@@ -1100,3 +1100,42 @@ header h1.brand-title, .brand-title { background: transparent !important; -webki
     contain-intrinsic-size: 1px 420px;
   }
 }
+
+/* WinterTime UI Refactor — Taste Skill + Impeccable OPERATE — 2026-11-07 */
+:root{
+  --ui-space-1:4px;--ui-space-2:8px;--ui-space-3:12px;--ui-space-4:16px;--ui-space-5:24px;--ui-space-6:32px;
+  --ui-font:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --ui-cyan:#22d3ee;--ui-gold:#f5c542;--ui-border:rgba(34,211,238,.18);
+}
+body{font-family:var(--ui-font);}
+.container,.wrap,.main-container{max-width:1440px;margin-inline:auto;padding-inline:var(--ui-space-5);}
+@media(max-width:768px){.container,.wrap,.main-container{padding-inline:var(--ui-space-3);}}
+/* (2) giảm shadow/blur lạm dụng, bento border tinh tế */
+.bento,.bento-panel,.panel,.card,.info-card{box-shadow:0 1px 2px rgba(0,0,0,.25)!important;border:1px solid var(--ui-border)!important;backdrop-filter:none!important;}
+/* (3) focus-visible đúng thật */
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.custom-dropdown-trigger:focus-visible{outline:2px solid var(--ui-cyan)!important;outline-offset:3px!important;}
+/* (4) header & auto-sync readable */
+header,.site-header,.topbar{background:rgba(10,18,28,.92)!important;border-bottom:1px solid var(--ui-border)!important;}
+.auto-sync,.sync-status,.sync-indicator{color:#cfe9f2!important;font-size:13px!important;letter-spacing:.02em;}
+/* (5) responsive 768 / 390 */
+@media(max-width:768px){
+  header,.site-header,.topbar{padding:var(--ui-space-3)!important;flex-wrap:wrap;gap:var(--ui-space-2);}
+  .controls,.filter-bar,.toolbar{flex-wrap:wrap;gap:var(--ui-space-2);}
+  .info-cards,.info-grid{grid-template-columns:1fr!important;}
+  .hero-stats,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:var(--ui-space-3);}
+  table{display:block;overflow-x:auto;white-space:nowrap;}
+}
+@media(max-width:390px){
+  .container,.wrap,.main-container{padding-inline:12px!important;}
+  .hero-stats,.stats-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .controls,.filter-bar,.toolbar{flex-direction:column;align-items:stretch;}
+  table{overflow-x:auto;}
+}
+/* (6) prefers-reduced-motion */
+@media(prefers-reduced-motion:reduce){
+  .snowSpinFloat,.wtSnowFall,.snowflake{animation:none!important;transition:none!important;}
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}
+  button:hover,a:hover,.card:hover,.bento:hover{transform:none!important;}
+}
+/* (7) touch target */
+button,.btn,.filter-btn,.custom-dropdown-trigger,select{min-height:40px;}
