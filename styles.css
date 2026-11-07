@@ -1127,7 +1127,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.c
   .cw2-table{min-width:720px;}
 }
 @media(max-width:390px){
-  .container,.wrap,.main-container{padding-inline:12px!important;}
+  body{padding:12px!important;}
   .hero-stats,.stats-grid{grid-template-columns:repeat(2,1fr)!important;}
   .controls,.filter-bar,.toolbar{flex-direction:column;align-items:stretch;}
   table{overflow-x:auto;}
