@@ -98,7 +98,68 @@ function upgradeCustomSelects() {
 }
 
 document.addEventListener('click', () => {
-  document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+    d.classList.remove('open');
+    const t = d.querySelector('.custom-dropdown-trigger');
+    if (t) t.setAttribute('aria-expanded', 'false');
+  });
+});
+
+document.addEventListener('keydown', e => {
+  const wrap = e.target.closest && e.target.closest('.custom-dropdown');
+  if (!wrap) return;
+  const trigger = wrap.querySelector('.custom-dropdown-trigger');
+  const menu = wrap.querySelector('.custom-dropdown-menu');
+  if (!trigger || !menu) return;
+  const items = Array.from(menu.querySelectorAll('.custom-dropdown-item'));
+  const isTrigger = e.target === trigger;
+  const isOpen = wrap.classList.contains('open');
+  if (isTrigger) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!isOpen) {
+        document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+          d.classList.remove('open');
+          const t = d.querySelector('.custom-dropdown-trigger');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        });
+        wrap.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+      const first = items.find(i => i.classList.contains('selected')) || items[0];
+      if (first) first.focus();
+    } else if (e.key === 'Escape' && isOpen) {
+      wrap.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+    return;
+  }
+  const idx = items.indexOf(e.target);
+  if (idx === -1) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    (items[idx + 1] || items[0]).focus();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    (items[idx - 1] || items[items.length - 1]).focus();
+  } else if (e.key === 'Home') {
+    e.preventDefault();
+    items[0].focus();
+  } else if (e.key === 'End') {
+    e.preventDefault();
+    items[items.length - 1].focus();
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    e.target.click();
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    wrap.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.focus();
+  } else if (e.key === 'Tab') {
+    wrap.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+  }
 });
 
 function renderSummary(clan) {
