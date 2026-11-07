@@ -3,6 +3,9 @@ const CA = window.ClanAnalytics;
 let currentClan = CA.analyzeClan(CA.generateDemoClan());
 let selectedMemberTag = '#2LL9V9088';
 
+let currentClan = CA.analyzeClan(CA.generateDemoClan());
+let selectedMemberTag = '#2LL9V9088';
+
 function getFilters() {
   return {
     q: (document.getElementById('search-member')?.value || '').toLowerCase().trim(),
