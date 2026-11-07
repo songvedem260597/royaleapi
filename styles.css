@@ -1116,7 +1116,7 @@ body{font-family:var(--ui-font);}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.custom-dropdown-trigger:focus-visible{outline:2px solid var(--ui-cyan)!important;outline-offset:3px!important;}
 /* (4) header & auto-sync readable */
 .bento-nav{background:rgba(10,18,28,.92)!important;border-bottom:1px solid var(--ui-border)!important;}
-.auto-sync,.sync-status,.sync-indicator{color:#cfe9f2!important;font-size:13px!important;letter-spacing:.02em;}
+.auto-sync-status,#auto-sync-text{color:#cfe9f2!important;font-size:13px!important;letter-spacing:.02em;}
 /* (5) responsive 768 / 390 */
 @media(max-width:768px){
   header,.site-header,.topbar{padding:var(--ui-space-3)!important;flex-wrap:wrap;gap:var(--ui-space-2);}
