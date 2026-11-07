@@ -481,6 +481,14 @@ body::after {
   );
 }
 
+/* ===== Mobile Responsive Dropdown Fixes ===== */
+@media (max-width: 640px) {
+ .custom-dropdown { max-width: 100%; min-width: 0; }
+ .custom-dropdown-trigger { min-width: 0; max-width: 100%; min-height: 44px; }
+ .custom-dropdown-label { display:block; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+}
+.custom-dropdown-item:focus-visible { outline: 2px solid #22d3ee; outline-offset: -2px; background: rgba(34,211,238,.14); }
+
 /* ===== Top 3 Clan Leaderboard Podium (2ND · 1ST · 3RD) ===== */
 .podium-section {
   background: rgba(11, 16, 30, 0.78) !important;
