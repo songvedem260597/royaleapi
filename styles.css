@@ -1109,7 +1109,7 @@ header h1.brand-title, .brand-title { background: transparent !important; -webki
 }
 body{font-family:var(--ui-font);}
 .bento-main,.bento-nav{max-width:1440px;margin-inline:auto;padding-inline:var(--ui-space-5);}
-@media(max-width:768px){.container,.wrap,.main-container{padding-inline:var(--ui-space-3);}}
+@media(max-width:768px){.bento-main,.bento-nav{padding-inline:var(--ui-space-3);}}
 /* (2) giảm shadow/blur lạm dụng, bento border tinh tế */
 .bento,.bento-panel,.panel,.card,.info-card{box-shadow:0 1px 2px rgba(0,0,0,.25)!important;border:1px solid var(--ui-border)!important;backdrop-filter:none!important;}
 /* (3) focus-visible đúng thật */
