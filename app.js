@@ -87,6 +87,13 @@ function upgradeCustomSelects() {
     });
     const cur = sel.options[sel.selectedIndex];
     label.textContent = cur ? cur.textContent : '';
+    const trigger = wrap.querySelector('.custom-dropdown-trigger');
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', wrap.classList.contains('open') ? 'true' : 'false');
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      trigger.setAttribute('aria-controls', menu.id);
+    }
+    menu.setAttribute('role', 'listbox');
   });
 }
 
