@@ -242,7 +242,7 @@ select option {
 .custom-dropdown-trigger:focus,
 .custom-dropdown-trigger:focus-visible,
 .custom-dropdown-trigger:active {
-  outline: none !important;
+  outline: none;
 }
 .custom-dropdown-menu {
   z-index: 10000 !important;
@@ -283,7 +283,7 @@ select option {
 .custom-dropdown-trigger:focus,
 .custom-dropdown-trigger:focus-visible,
 .custom-dropdown-trigger:active {
-  outline: none !important;
+  outline: none;
 }
 .custom-dropdown-menu {
   z-index: 10000 !important;
@@ -351,7 +351,7 @@ button:focus-visible,
 select,
 select:focus,
 select:focus-visible {
-  outline: none !important;
+  outline: none;
   outline-width: 0 !important;
   outline-color: transparent !important;
 }
@@ -370,7 +370,7 @@ select:focus-visible {
 #search-member:focus-visible {
   border-color: rgba(56, 189, 248, 0.65) !important;
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
-  outline: none !important;
+  outline: none;
 }
 
 /* ===== Vietnamese Luxury Typography Upgrade (Be Vietnam Pro + Inter) ===== */
