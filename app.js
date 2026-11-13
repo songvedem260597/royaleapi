@@ -348,8 +348,10 @@ function updateLastUpdatedUI(dt, details = {}) {
       ? details.warDate.split('-').reverse().join('/') : 'chưa rõ';
     const prefix = details.fallback ? 'Dữ liệu dự phòng' : 'RoyaleTrack · CSV có thể chậm 5 phút';
     const freshness = details.stale ? ' · Lịch sử War đã cũ' : '';
-    const estimate = details.estimated ? ' · Fame lịch sử chưa được xác thực' : '';
-    el.textContent = prefix + ' · War ' + warDate + ' · Đồng bộ ' + now + freshness + estimate;
+    const warVerified = details.verifiedWars ? ' · War Log ' + details.verifiedWars + '/10 đã đối chiếu' : ' · Chưa có War Log xác minh';
+    const fameNote = details.individualFameUnknown ? ' · Fame từng người chưa có' : '';
+    const warStale = details.warLogStale ? ' · War Log đang dùng cache cũ' : '';
+    el.textContent = prefix + ' · War ' + warDate + ' · Đồng bộ ' + now + warVerified + freshness + fameNote + warStale;
   }
 }
 function updateLiveIndicator(isLive) {
@@ -740,8 +742,10 @@ function renderClanCW2Panel(clan) {
   const slice = fullHist.slice(0, limit);
   const latest = slice[0] || { season: '—', decks: 0, participants: 0, observed: 0, rank: null };
   const totalDecks = slice.reduce((s, x) => s + (Number(x.decks) || 0), 0);
+  const rosterDecks = slice.reduce((s, x) => s + (Number(x.rosterDecks) || 0), 0);
+  const verifiedWars = slice.filter(x => x.verified).length;
   const observedSlots = slice.reduce((s, x) => s + (Number(x.observed) || 0), 0);
-  const partPct = observedSlots ? Math.min(100, Math.round(totalDecks / (observedSlots * 16) * 100)) : null;
+  const partPct = observedSlots ? Math.min(100, Math.round(rosterDecks / (observedSlots * 16) * 100)) : null;
   const eligibleCount = window.WintertimeContribution.rankMembers(clan.members).length;
 
   const meta = document.getElementById('cw2-clan-meta');
@@ -749,25 +753,30 @@ function renderClanCW2Panel(clan) {
     meta.innerHTML =
       '<strong>🏰 Toàn Clan ' + (clan.name || 'WinterTime') + '</strong> ' +
       '<span class="tag-mono">' + (clan.tag || '#GYQJL9GV') + '</span> ' +
-      '<span class="role-badge">🏆 Gold League · ' + (clan.clanWarTrophies == null ? '— (chưa xác minh)' : clan.clanWarTrophies.toLocaleString('en-US')) + ' Cúp War</span> ' +
+      '<span class="role-badge">🏆 ' + (window.WintertimeWarHistory.leagueFromWarTrophies(clan.clanWarTrophies) || 'Chưa rõ giải') + ' · ' + (clan.clanWarTrophies == null ? '— (chưa xác minh)' : clan.clanWarTrophies.toLocaleString('en-US')) + ' Cúp War</span> ' +
       '<span class="badge badge-good">' + (latest.rank == null ? 'Chưa có hạng xác thực' : 'Hạng #' + latest.rank + ' River Race') + '</span>';
   }
 
   const bd = document.getElementById('cw2-clan-breakdown');
   if (bd) {
     const cards = [
-      ['Điểm hoạt động nội bộ toàn Clan',
+      ['Điểm hoạt động nội bộ',
         clan.avgScore == null ? 'Chưa đủ dữ liệu' : clan.avgScore + '/100',
         eligibleCount + '/' + clan.members.length + ' thành viên đủ dữ liệu · ' + (clan.counts?.good || 0) + ' thành viên Ưu tú'],
-      ['Deck War của thành viên hiện tại',
+      ['Fame Clan đã xác minh',
+        latest.fame == null ? 'Chưa có số liệu' : latest.fame.toLocaleString('en-US') + ' Fame',
+        verifiedWars + '/' + slice.length + ' kỳ War có log API · TB ' +
+        (latest.avgPerParticipant == null ? '—' : latest.avgPerParticipant.toLocaleString('en-US')) + ' Fame/người đã tham chiến'],
+      ['Deck War toàn Clan',
         totalDecks.toLocaleString('en-US') + ' Deck',
-        'Số Deck quan sát được trên ' + observedSlots + ' lượt người-kỳ · Không phải tổng War chính thức'],
-      ['Chuyên cần sử dụng Deck',
-        partPct == null ? 'Chưa đủ dữ liệu' : partPct + '%',
-        'Trong các kỳ có dữ liệu Deck · ' + (latest.participants || 0) + ' thành viên đã đánh kỳ gần nhất'],
-      ['Fame và hạng War chính thức',
-        'Chưa có dữ liệu xác thực',
-        'Không cộng Fame ước tính, không tự gán hạng 1 hoặc 2. Donate: ' + (clan.totalDonations || 0).toLocaleString('en-US')]
+        verifiedWars + '/' + slice.length + ' kỳ lấy tổng từ War Log · Chuyên cần thành viên hiện tại ' +
+        (partPct == null ? '—' : partPct + '%')],
+      ['Hạng War · Cúp hiện tại',
+        (latest.rank == null ? '—' : '#' + latest.rank) + ' · ' +
+        (clan.clanWarTrophies == null ? '—' : clan.clanWarTrophies.toLocaleString('en-US') + ' Cúp'),
+        'Đổi cúp kỳ gần nhất: ' + (latest.trophyChange == null ? '—' :
+          (latest.trophyChange >= 0 ? '+' : '') + latest.trophyChange) +
+        ' · Nguồn: WarStats (bộ nhớ đệm Clash Royale API)']
     ];
     bd.innerHTML = cards.map(x =>
       '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
@@ -779,7 +788,7 @@ function renderClanCW2Panel(clan) {
     const hist = slice.slice().reverse();
     const W = 760, H = 230, padL = 46, padR = 20, padT = 30, padB = 40;
     const chartW = W - padL - padR, chartH = H - padT - padB;
-    const maxDecks = Math.max(1, ...hist.map(h => Math.max(h.decks || 0, (h.observed || 0) * 16)));
+    const maxDecks = Math.max(1, ...hist.map(h => Number(h.decks) || 0));
     const y = decks => padT + chartH - (Math.min(decks, maxDecks) / maxDecks) * chartH;
     const bw = chartW / (hist.length || 1);
     let bars = '', labels = '';
@@ -795,8 +804,20 @@ function renderClanCW2Panel(clan) {
       labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
         '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
     });
-    chartBox.innerHTML = '<p class="meta-decks-sub">Deck của các thành viên hiện tại theo từng kỳ War (dữ liệu quan sát được, không phải Fame chính thức)</p>' +
+    chartBox.innerHTML = '<p class="meta-decks-sub">Tổng Deck theo từng kỳ River Race Log (WarStats · bộ nhớ đệm Clash Royale API); kỳ thiếu nguồn sẽ chỉ dùng Deck quan sát được</p>' +
       '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + bars + labels + '</svg>';
+  }
+
+  const note = document.getElementById('clan-war-source-note');
+  if (note) {
+    const lastSourceSync = clan.warLogRefreshedAt && Number.isFinite(Date.parse(clan.warLogRefreshedAt))
+      ? new Date(clan.warLogRefreshedAt).toLocaleString('vi-VN') : 'chưa rõ';
+    note.textContent = verifiedWars + '/' + slice.length +
+      ' kỳ có kết quả từ Clash Royale API qua WarStats (bộ nhớ đệm; cập nhật nguồn: ' + lastSourceSync + ')' +
+      (clan.warLogStale ? ' · ĐANG DÙNG BẢN ĐỆM CŨ' : '') +
+      '. Fame/Deck/Hạng là số toàn Clan trong log. Cột Tham gia tính theo các thành viên hiện tại;' +
+      ' TB/TV chia theo toàn bộ người đã tham chiến (có thể gồm người đã rời Clan).' +
+      ' Fame từng người trong lịch sử chưa được nguồn RoyaleTrack cung cấp.';
   }
 
   const tbody = document.getElementById('cw2-clan-history-tbody');
@@ -806,14 +827,14 @@ function renderClanCW2Panel(clan) {
         '<td>' + (h.season || '') + '</td>' +
         '<td>' + (h.date || '') + '</td>' +
         '<td>' + (h.rank == null ? '—' : Number(h.rank) === 1 ? '🥇 1' : ('#' + h.rank)) + '</td>' +
-        '<td>—</td>' +
+        '<td>' + (h.league || '—') + '</td>' +
         '<td>' + (h.clan || 'WinterTime') + '</td>' +
-        '<td>' + (h.participants || 0) + '/' + (h.membersCount || 46) + ' TV</td>' +
-        '<td>' + (h.decks || 0).toLocaleString('en-US') + '</td>' +
+        '<td title="Số người thuộc Clan hiện tại đã đánh Deck. Tổng người tham chiến trong log: ' + (h.officialParticipants == null ? '—' : h.officialParticipants) + ' (có thể gồm thành viên đã rời Clan)">' + h.participants + '/' + h.membersCount + ' TV</td>' +
+        '<td title="' + (h.officialDecks ? 'Tổng Deck lấy từ River Race Log' : 'Deck của thành viên hiện tại') + '">' + (h.decks || 0).toLocaleString('en-US') + '</td>' +
         '<td><strong>' + (h.fame == null ? '—' : h.fame.toLocaleString('en-US')) + '</strong></td>' +
         '<td>' + (h.avgPerParticipant == null ? '—' : h.avgPerParticipant.toLocaleString('en-US')) + '</td>' +
         '<td>' + (h.raceTarget || 'Colosseum') + '</td>' +
-        '<td><strong>' + (h.total == null ? '—' : h.total.toLocaleString('en-US')) + '</strong></td>' +
+        '<td title="Tổng Fame + Repair ghi nhận trong War Log; thay đổi cúp sau kỳ War"><strong>' + (h.total == null ? '—' : h.total.toLocaleString('en-US')) + '</strong>' + (h.trophyChange == null ? '' : ' <small>(' + (h.trophyChange >= 0 ? '+' : '') + h.trophyChange + ' 🏆)</small>') + '</td>' +
       '</tr>'
     ).join('');
   }
@@ -984,9 +1005,11 @@ fetchClan = async function() {
           const stale = !isLatestCompletedWarWeek(warDate);
           updateLastUpdatedUI(lastUpdated, {
             warDate, fallback, stale,
-            estimated: Boolean(d.warHistoryQuality?.fame && d.warHistoryQuality.fame !== 'verified')
+            verifiedWars: (d.warSeasonsMeta || []).filter(x => x.aggregatesVerified).length,
+            individualFameUnknown: d.warHistoryQuality?.fame === 'individual-unavailable',
+            warLogStale: Boolean(d.warLogStale)
           });
-          updateLiveIndicator(!fallback && !stale);
+          updateLiveIndicator(!fallback && !stale && !d.warLogStale);
           return;
         }
       }

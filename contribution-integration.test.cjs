@@ -3,10 +3,11 @@ const { test } = require('node:test');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const scorer = require('./contribution-score.js');
+const races = require('./war-history.js');
 const fixture = require('./wintertime-data.json');
 
 function analyzeSnapshot() {
-  const context = { window: { WintertimeContribution: scorer } };
+  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races } };
   vm.runInNewContext(fs.readFileSync('clan-analytics.js', 'utf8'), context, { filename: 'clan-analytics.js' });
   return context.window.ClanAnalytics.analyzeClan(fixture);
 }
@@ -14,7 +15,7 @@ function analyzeSnapshot() {
 test('all observed members use only source Deck, participation, donation, inactivity data', () => {
   const clan = analyzeSnapshot();
   assert.equal(clan.members.length, 50);
-  assert.equal(clan.clanWarTrophies, null);
+  assert.equal(clan.clanWarTrophies, 2389);
   const ranked = scorer.rankMembers(clan.members);
   assert.ok(ranked.length >= 3);
   assert.ok(ranked.every(m => m.score >= 0 && m.score <= 100 && m.contribution.complete));
@@ -25,9 +26,13 @@ test('all observed members use only source Deck, participation, donation, inacti
   assert.ok(clan.members.every(m => m.contribution.totalFame10Wars === null));
 });
 
-test('unknown Fame and official rank are never fabricated in the output', () => {
+test('official clan race values exist while unknown player Fame remains null', () => {
   const clan = analyzeSnapshot();
-  assert.ok(clan.cw2ClanHistory.every(h => h.fame === null && h.total === null && h.rank === null));
+  assert.equal(clan.cw2ClanHistory[0].rank, 1);
+  assert.equal(clan.cw2ClanHistory[0].fame, 10000);
+  assert.equal(clan.cw2ClanHistory[0].decks, 412);
+  assert.equal(clan.cw2ClanHistory[0].league, 'Vàng II');
+  assert.ok(clan.cw2ClanHistory.every(h => h.verified && h.rank != null && h.fame != null));
   assert.ok(clan.members.every(m => m.cw2History.every(h => h.fame === null)));
   assert.ok(clan.members.every(m => m.score == null || Number.isFinite(m.score)));
 });
@@ -42,7 +47,7 @@ test('missing data is not marked elite or automatic kick', () => {
       cw2History: []
     }]
   };
-  const context = { window: { WintertimeContribution: scorer } };
+  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races } };
   vm.runInNewContext(fs.readFileSync('clan-analytics.js', 'utf8'), context, { filename: 'clan-analytics.js' });
   const clan = context.window.ClanAnalytics.analyzeClan(data);
   assert.equal(clan.members[0].score, null);

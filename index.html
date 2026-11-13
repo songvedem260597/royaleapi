@@ -63,21 +63,22 @@
     </div>
     <div id="cw2-clan-breakdown" class="cw2-breakdown-grid"></div>
     <div id="cw2-clan-chart-box" class="cw2-chart-wrap"></div>
+    <p id="clan-war-source-note" class="meta-decks-sub" style="padding:12px 16px;line-height:1.6"></p>
     <div class="cw2-table-wrap">
       <table class="cw2-table">
         <thead>
           <tr>
             <th>S</th>
             <th>📅 Ngày</th>
-            <th>R</th>
-            <th>L</th>
+            <th title="Hạng kết thúc River Race">R</th>
+            <th title="Giải đấu theo cúp War lúc kết thúc kỳ">L</th>
             <th>C (Clan)</th>
-            <th>👥 Tham gia</th>
-            <th>⭐ Decks</th>
-            <th>🏅 Fame (nếu xác thực)</th>
-            <th>📊 TB/TV</th>
+            <th title="Thành viên hiện tại đã đánh Deck; không tính người rời Clan">👥 Tham gia</th>
+            <th title="Tổng Deck từ River Race Log khi có dữ liệu xác thực">⭐ Decks</th>
+            <th title="Tổng Fame toàn Clan từ River Race Log">🏅 Fame Clan</th>
+            <th title="Fame chia cho số người ghi nhận trong War Log, có thể gồm người đã rời Clan">📊 TB/TV</th>
             <th>⚔️ Đích War</th>
-            <th>✅ Cống hiến</th>
+            <th title="Fame + Repair (số trong ngoặc là thay đổi cúp War)">✅ Cống hiến · Cúp</th>
           </tr>
         </thead>
         <tbody id="cw2-clan-history-tbody"></tbody>
@@ -148,7 +149,8 @@
   <pre id="kick-output" class="kick-output" hidden></pre>
 </main>
 <script src="contribution-score.js?v=20261113-score-v2"></script>
-<script src="clan-analytics.js?v=20261113-score-v2"></script>
-<script src="app.js?v=20261113-score-v2"></script>
+<script src="war-history.js?v=20261113-races-v3"></script>
+<script src="clan-analytics.js?v=20261113-races-v3"></script>
+<script src="app.js?v=20261113-races-v3"></script>
 </body>
 </html>
