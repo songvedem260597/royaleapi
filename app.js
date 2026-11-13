@@ -335,15 +335,20 @@ function showKickList() {
 }
 
 let lastUpdated = null;
-function updateLastUpdatedUI(dt) {
+function updateLastUpdatedUI(dt, details = {}) {
   const el = document.getElementById('auto-sync-text');
   if (el && dt instanceof Date) {
     const now = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    el.textContent = 'Tự động đồng bộ RoyaleAPI Live · Cập nhật ' + now;
+    const warDate = /^\d{4}-\d{2}-\d{2}$/.test(details.warDate || '')
+      ? details.warDate.split('-').reverse().join('/') : 'chưa rõ';
+    const prefix = details.fallback ? 'Dữ liệu dự phòng' : 'RoyaleTrack Live';
+    const freshness = details.stale ? ' · Lịch sử War đã cũ' : '';
+    const estimate = details.estimated ? ' · Fame ước tính' : '';
+    el.textContent = prefix + ' · War ' + warDate + ' · Đồng bộ ' + now + freshness + estimate;
   }
 }
 function updateLiveIndicator(isLive) {
-  const dot = document.querySelector('.sync-dot, .live-dot');
+  const dot = document.querySelector('.auto-sync-dot, .sync-dot, .live-dot');
   if (dot) dot.style.background = isLive ? '#10b981' : '#f59e0b';
 }
 
@@ -402,8 +407,8 @@ function saveClanDatabase(clan) {
   } catch (e) {}
   const today = new Date().toISOString().slice(0, 10);
   snapshots = snapshots.filter(s => s && s.date !== today);
-  snapshots.push({ date: today, season: '137-4', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
-  const db = { schemaVersion: '2.1', updatedAt: new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: clan?.rawClanScore || 130593, clanWarTrophies: clan?.clanWarTrophies || 2369, membersCount: clan.members.length }, warSeasonsMeta: CA.WAR_SEASONS_META || [], topMetaDecks: CA.TOP_META_DECKS || [], snapshots, members: clan.members };
+  snapshots.push({ date: today, season: clan?.warSeasons?.[0]?.season || 'unknown', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
+  const db = { schemaVersion: '2.1', updatedAt: clan?.updatedAt || new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: clan?.rawClanScore || 130593, clanWarTrophies: clan?.clanWarTrophies || 2369, membersCount: clan.members.length }, warSeasonsMeta: clan?.warSeasons || [], topMetaDecks: CA.TOP_META_DECKS || [], snapshots, members: clan.members };
   window.__wintertimeDB = db;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
   return db;
@@ -417,11 +422,22 @@ function exportDataFile() {
   a.click();
 }
 
+function isLatestCompletedWarWeek(warDate) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(warDate || '')) return false;
+  const now = new Date();
+  const monday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(),
+    now.getUTCDate() - ((now.getUTCDay() + 6) % 7), 10);
+  const latest = monday <= now.getTime() ? monday : monday - 7 * 86400000;
+  return warDate === new Date(latest).toISOString().slice(0, 10);
+}
+
 async function syncWintertimeDataFile() {
   try {
     const f = await fetch('./wintertime-data.json');
     if (f.ok) {
       const fileData = await f.json();
+      // This is only a fallback snapshot. Do not overwrite a newer live response.
+      if (lastUpdated && Date.parse(currentClan?.updatedAt || '') >= Date.parse(fileData.updatedAt || '')) return;
       currentClan = CA.analyzeClan(fileData);
       saveClanDatabase(currentClan);
       render();
@@ -730,7 +746,7 @@ function renderClanCW2Panel(clan) {
       '<strong>🏰 Toàn Clan ' + (clan.name || 'WinterTime') + '</strong> ' +
       '<span class="tag-mono">' + (clan.tag || '#GYQJL9GV') + '</span> ' +
       '<span class="role-badge">🏆 Gold League · ' + (clan.clanWarTrophies || 2369).toLocaleString('en-US') + ' Cúp War</span> ' +
-      '<span class="badge badge-good">Hạng #' + (latest.rank || 1) + ' River Race</span>';
+      '<span class="badge badge-good">' + (latest.rank == null ? 'Chưa có hạng xác thực' : 'Hạng #' + latest.rank + ' River Race') + '</span>';
   }
 
   const bd = document.getElementById('cw2-clan-breakdown');
@@ -780,7 +796,7 @@ function renderClanCW2Panel(clan) {
       const color = fame < 50000 ? '#f472b6' : '#38bdf8';
       bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' + (padT + chartH - top) + '" fill="' + color + '" rx="3"/>';
       bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) + '" fill="#e2e8f0" font-size="10" font-weight="600" text-anchor="middle">' + fame.toLocaleString('en-US') + '</text>';
-      labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + ' (#' + (h.rank || 1) + ')</text>';
+      labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + ' (' + (h.rank == null ? '?' : '#' + h.rank) + ')</text>';
       const ma = Number(h.movingAvg) || fame;
       pts.push((x + w / 2) + ',' + y(ma));
     });
@@ -798,7 +814,7 @@ function renderClanCW2Panel(clan) {
       '<tr>' +
         '<td>' + (h.season || '') + '</td>' +
         '<td>' + (h.date || '') + '</td>' +
-        '<td>' + (Number(h.rank) === 1 ? '🥇 1' : ('#' + (h.rank || 1))) + '</td>' +
+        '<td>' + (h.rank == null ? '—' : Number(h.rank) === 1 ? '🥇 1' : ('#' + h.rank)) + '</td>' +
         '<td>🏆 Gold</td>' +
         '<td>' + (h.clan || 'WinterTime') + '</td>' +
         '<td>' + (h.participants || 0) + '/' + (h.membersCount || 46) + ' TV</td>' +
@@ -972,8 +988,14 @@ fetchClan = async function() {
           saveClanDatabase(currentClan);
           render();
           renderMetaDecks();
-          updateLastUpdatedUI(lastUpdated);
-          updateLiveIndicator(true);
+          const warDate = d.warSeasonsMeta?.[0]?.date;
+          const fallback = u.includes('wintertime-data.json');
+          const stale = !isLatestCompletedWarWeek(warDate);
+          updateLastUpdatedUI(lastUpdated, {
+            warDate, fallback, stale,
+            estimated: Boolean(d.warHistoryQuality?.fame?.includes('estimated'))
+          });
+          updateLiveIndicator(!fallback && !stale);
           return;
         }
       }
@@ -981,6 +1003,8 @@ fetchClan = async function() {
   }
   render();
   renderMetaDecks();
+  updateLiveIndicator(false);
+  updateLastUpdatedUI(new Date(), { fallback: true, stale: true, warDate: currentClan?.warSeasons?.[0]?.date });
 };
 fetchClan();
 document.addEventListener('visibilitychange', () => {

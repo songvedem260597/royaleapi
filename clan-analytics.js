@@ -52,7 +52,7 @@ function buildCw2FromMember(src) {
     return src.cw2History.map((h, i) => {
       const meta = WAR_SEASONS_META[i] || WAR_SEASONS_META[WAR_SEASONS_META.length - 1];
       const f = Number(h.fame) || 0;
-      return { season: h.season || meta.season, date: h.date || meta.date, rank: h.rank || meta.rank, clan: h.clan || DEFAULT_CLAN_NAME, decks: Number(h.decks) || 0, fame: f, repair: Number(h.repair) || 0, boatAttacks: Number(h.boatAttacks) || 0, total: Number(h.total) || f, movingAvg: Number(h.movingAvg) || 0 };
+      return { season: h.season || meta.season, date: h.date || meta.date, rank: Object.prototype.hasOwnProperty.call(h, 'rank') ? h.rank : meta.rank, clan: h.clan || DEFAULT_CLAN_NAME, decks: Number(h.decks) || 0, fame: f, repair: Number(h.repair) || 0, boatAttacks: Number(h.boatAttacks) || 0, total: Number(h.total) || f, movingAvg: Number(h.movingAvg) || 0 };
     });
   }
   const part = Number(src.warParticipation) || 0;
@@ -244,11 +244,11 @@ window.ClanAnalytics.analyzeClan = function(d) {
     const decks = Math.max(Number(meta.clanDecks) || 0, sumDecks);
     const avgPerParticipant = participants > 0 ? Math.round(fame / participants) : 0;
     const rawMetaFame = Number(meta.clanFame) || 0;
-    const raceTarget = (rawMetaFame > 0 && rawMetaFame <= 10000) ? (rawMetaFame.toLocaleString('en-US') + '/10,000') : 'Colosseum';
+    const raceTarget = rawMetaFame === 0 ? 'Chưa xác minh' : rawMetaFame <= 10000 ? (rawMetaFame.toLocaleString('en-US') + '/10,000') : 'Colosseum';
     return {
       season: meta.season,
       date: meta.date,
-      rank: Number(meta.rank) || 1,
+      rank: meta.rank == null ? null : Number(meta.rank),
       clan: c.name || DEFAULT_CLAN_NAME,
       participants,
       membersCount: c.members.length,
