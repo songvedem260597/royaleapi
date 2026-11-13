@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261107-dropdown-qa-v4">
+<link rel="stylesheet" href="styles.css?v=20261113-member-v5">
 </head>
 <body>
 <header class="bento-nav">
@@ -43,10 +43,10 @@
       <div class="info-card-head"><span class="info-card-title">📜 Nội Quy Clan WinterTime</span><span class="info-badge info-badge-gold">Bắt buộc</span></div>
       <ul class="clan-rules-list">
         <li><strong>⚔️ Mức điểm War (River Race):</strong> Đạt <strong>trên 400 điểm War</strong> tính mức <em>Trung bình</em>; từ <strong>1,600+ điểm</strong> đạt mức <em>Ưu tú</em>; từ 400 điểm trở xuống vào diện <em>Cảnh báo</em>.</li>
-        <li><strong>📊 Điểm hoạt động trên website:</strong> Chỉ số nội bộ từ 40% mức tham gia War, 40% Deck 4 kỳ, 10% Deck kỳ hiện tại, 10% Donate và trừ điểm offline. <strong>Ưu tú</strong> cần từ 75/100, mức tham gia từ 75%, Deck bình quân từ 12/16 và offline không quá 3 ngày. Không dùng Fame ước tính.</li>
+        <li><strong>📊 Điểm hoạt động nội bộ:</strong> Chỉ số tham khảo riêng (40% tham gia War, 40% Deck 4 kỳ, 10% Deck tuần này, 10% Donate, trừ điểm offline). <strong>Phân loại Ưu tú/Trung bình/Cảnh báo dựa vào Fame thật của kỳ War đã kết thúc gần nhất</strong>, không dựa vào điểm tham khảo.</li>
         <li><strong>🤝 Tương trợ đồng đội:</strong> Tích cực Donate thẻ bài hằng ngày - <em>Ae là 1 BiG Familie</em>.</li>
         <li><strong>📝 Báo nghỉ phép:</strong> Báo trước cho Leader / Co-leader nếu bạn không thể tham gia War.</li>
-        <li><strong>⚠️ Xử lý Cảnh báo:</strong> Thành viên bỏ 2 war liên tiếp không thông báo sẽ bị lọc cuối mỗi một tuần war.</li>
+        <li><strong>⚠️ Xét Kick:</strong> Nếu có 2 kỳ War đã kết thúc liên tiếp được xác minh 0 Deck, hệ thống chỉ <em>đề xuất xét Kick</em>. Leader/Co-leader cần kiểm tra báo nghỉ phép và thời điểm gia nhập trước khi quyết định. Không có bản ghi không đồng nghĩa 0 Deck.</li>
       </ul>
     </article>
   </section>
@@ -104,10 +104,10 @@
             <th>L</th>
             <th>C (Clan)</th>
             <th>⭐ Decks</th>
-            <th>🏅 Fame (nếu xác thực)</th>
+            <th title="Điểm Fame cá nhân từ War Log đã xác minh">🏅 Fame cá nhân</th>
             <th>🔨 Repair</th>
             <th>⚔️ Boat</th>
-            <th>✅ Cống hiến</th>
+            <th title="Fame cá nhân cộng điểm sửa thuyền nếu có">✅ Tổng đóng góp</th>
           </tr>
         </thead>
         <tbody id="cw2-history-tbody"></tbody>
@@ -119,16 +119,20 @@
     <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag..." aria-label="Tìm thành viên">
     <select id="filter-status" aria-label="Lọc trạng thái">
       <option value="all">Tất cả trạng thái</option>
-      <option value="good">Tốt</option>
-      <option value="warning">Trung bình</option>
-      <option value="kick">Cảnh báo</option>
+      <option value="good">Ưu tú (≥1.600 Fame)</option>
+      <option value="average">Trung bình (401–1.599)</option>
+      <option value="warning">Cảnh báo (≤400)</option>
+      <option value="kick">Đề xuất xét Kick</option>
+      <option value="unknown">Chưa có dữ liệu</option>
     </select>
     <select id="sort-by" aria-label="Sắp xếp">
-      <option value="score">Điểm hiệu quả</option>
+      <option value="latestFame">Fame War gần nhất</option>
+      <option value="score">Điểm hoạt động nội bộ</option>
       <option value="trophies">Cúp 🏆</option>
       <option value="donations">Donate</option>
     </select>
   </section>
+  <div class="kick-actions" style="margin: 12px 0 18px"><button id="btn-export-kick" class="btn btn-ghost" type="button">🛡️ Xem đề xuất xét Kick</button></div>
   <section class="table-card">
     <table class="member-table">
       <thead>
@@ -137,7 +141,7 @@
           <th>Thành viên</th>
           <th>Chức vụ</th>
           <th>Cúp 🏆</th>
-          <th>Deck War · Fame TB nguồn</th>
+          <th>Deck War · Fame kỳ gần nhất</th>
           <th>Donate Cho/Nhận</th>
           <th>Điểm hoạt động nội bộ</th>
           <th>Đánh giá &amp; CW2</th>
@@ -146,11 +150,12 @@
       <tbody id="member-tbody"></tbody>
     </table>
   </section>
-  <pre id="kick-output" class="kick-output" hidden></pre>
+  <div id="kick-output" class="kick-output" hidden></div>
 </main>
 <script src="contribution-score.js?v=20261113-score-v2"></script>
 <script src="war-history.js?v=20261113-medals-v4"></script>
-<script src="clan-analytics.js?v=20261113-medals-v4"></script>
-<script src="app.js?v=20261113-medals-v4"></script>
+<script src="war-member-evaluation.js?v=20261113-member-v5"></script>
+<script src="clan-analytics.js?v=20261113-member-v5"></script>
+<script src="app.js?v=20261113-member-v5"></script>
 </body>
 </html>

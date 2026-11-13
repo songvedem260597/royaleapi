@@ -61,6 +61,10 @@ function buildCw2FromMember(src) {
       boatAttacks: h.boatAttacks == null ? null : Number(h.boatAttacks),
       total: h.fameVerified === true && h.total != null ? Number(h.total) : null,
       fameVerified: h.fameVerified === true,
+      decksVerified: h.decksVerified === true,
+      recordedInWarLog: h.recordedInWarLog === true,
+      warLogAvailable: h.warLogAvailable === true,
+      source: h.source || 'unavailable',
       movingAvg: null
     }));
   }
@@ -86,7 +90,8 @@ function computeContribution(src, cw2History) {
     deckScore: result.breakdown.historicalDeckPoints,
     donateScore: result.breakdown.donationPoints,
     movingAvgFame: null,
-    totalFame10Wars: null,
+    totalFame10Wars: cw2History.filter(h => h.fameVerified).reduce((s, h) => s + h.fame, 0),
+    fameVerifiedWeeks: cw2History.filter(h => h.fameVerified).length,
     totalDecks10Wars: observedDecks.reduce((s, h) => s + h.decks, 0)
   };
 }
@@ -110,23 +115,14 @@ function analyzeMember(m) {
   const cw2History = buildCw2FromMember(src);
   const contribution = computeContribution(src, cw2History);
   const score = contribution.score;
-  let status, statusLabel;
-  if (!contribution.complete) {
-    status = 'warning'; statusLabel = 'Thiếu dữ liệu';
-  } else if (contribution.review) {
-    status = 'kick'; statusLabel = 'Cần xem xét';
-  } else if (contribution.excellent) {
-    status = 'good'; statusLabel = 'Ưu tú';
-  } else {
-    status = 'warning'; statusLabel = 'Trung bình';
-  }
-  const reason = 'Điểm hoạt động nội bộ: ' + (score == null ? '—' : score + '/100') +
-    ' · War: ' + (warParticipation == null ? '—' : warParticipation + '%') +
-    ' · Deck 4 kỳ: ' + contribution.completedDecks + '/' + (contribution.observedWeeks * 16) +
-    ' · Tuần này: ' + (decksThisWeek == null ? '—' : decksThisWeek) +
-    ' · Donate: ' + donations + ' · Offline: ' + daysOffline + ' ngày';
+  const warEvaluation = window.WintertimeWarEvaluation.evaluate({ ...src, cw2History });
+  const status = warEvaluation.status;
+  const statusLabel = warEvaluation.statusLabel;
+  const reason = warEvaluation.reason + ' · Điểm hoạt động nội bộ: ' +
+    (score == null ? '—' : score + '/100') + ' · Donate: ' + donations +
+    ' · Offline: ' + daysOffline + ' ngày';
 
-  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, decksThisWeek, warDecksHistory, trackerStatus, cw2History, contribution, score, status, statusLabel, reason };
+  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, decksThisWeek, warDecksHistory, trackerStatus, cw2History, contribution, score, warEvaluation, latestFame: warEvaluation.latestFame, latestWarDecks: warEvaluation.latestDecks, warDecksVerifiedHistory: src.warDecksVerifiedHistory || [], verifiedWarWeeks: src.verifiedWarWeeks ?? 0, status, statusLabel, reason };
 }
 
 function analyzeClan(clanData) {
@@ -190,8 +186,10 @@ const _origAM = window.ClanAnalytics.analyzeMember;
 const _origAC = window.ClanAnalytics.analyzeClan;
 window.ClanAnalytics.analyzeMember = function(m) {
   const r = _origAM(m);
-  if (!(Array.isArray(m?.cw2History) && m.cw2History.length) && Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
-  else if (m?.trackerStatus === 'Mới vào' || (Array.isArray(m?.cw2History) && !m.cw2History.length)) r.cw2History = [];
+  // Never discard official War Log rows for members marked "Mới vào".
+  // A missing historical roster entry is unknown, not zero or a reason to erase history.
+  if (!Array.isArray(m?.cw2History) && Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
+
   // No kick/elite decisions from zero-coerced or fabricated Fame.
   // analyzeMember already grades observed Deck/participation/donate metrics.
   return r;
@@ -208,6 +206,7 @@ window.ClanAnalytics.analyzeClan = function(d) {
     totalDonations += Number(x.donations) || 0;
     totalDonationsReceived += Number(x.donationsReceived) || 0;
   });
+  c.mvpName = window.WintertimeWarEvaluation.rankByLatestWar(c.members)[0]?.name || '';
   c.totalDonations = totalDonations;
   c.totalDonationsReceived = totalDonationsReceived;
   c.rawClanScore = d?.clanScore == null ? null : Number(d.clanScore);

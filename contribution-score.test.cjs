@@ -26,10 +26,10 @@ test('missing Fame does not change score; fabricated Fame cannot improve rank', 
 
 test('two observed zero Deck wars and low participation flag review; never from missing Fame', () => {
   assert.equal(calculate(active({
-    warParticipation: 10, warDecksHistory: [0, 0, 16, 16]
+    warParticipation: 10, warDecksVerifiedHistory: [0, 0, 16, 16]
   })).review, true);
   assert.equal(calculate(active({
-    warParticipation: 10, warDecksHistory: [null, null, 0, 0]
+    warParticipation: 10, warDecksVerifiedHistory: [null, null, 0, 0]
   })).review, false);
 });
 
