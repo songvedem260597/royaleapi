@@ -210,37 +210,7 @@ function renderCW2Panel(member) {
   }
   const link = document.getElementById('cw2-royaleapi-link');
   if (link) link.href = 'https://royaleapi.com/player/' + member.tag.replace('#', '');
-  const bd = document.getElementById('cw2-breakdown');
-  if (bd) {
-    const c = member.contribution || {};
-    const ev = member.warEvaluation || {};
-    const history = member.cw2History || [];
-    const latest = history[0] || null;
-    const prev = history[1] || null;
-    const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
-    const decksText = h => h?.decksVerified ? h.decks + ' Deck' : 'Chưa có bản ghi';
-    const fameRows = history.filter(h => h.fameVerified);
-    const totalFame = fameRows.reduce((s, h) => s + h.fame, 0);
-    const cards = [
-      ['🏅 Fame War ' + (ev.latestSeason || 'gần nhất'),
-        member.latestFame == null ? 'Chưa có dữ liệu' : fmt(member.latestFame) + ' Fame',
-        ev.statusLabel + ' · Ưu tú ≥1.600 · Trung bình 401–1.599 · Cảnh báo ≤400'],
-      ['⚔️ Deck hai kỳ gần nhất',
-        decksText(latest) + ' / ' + decksText(prev),
-        ev.twoVerifiedZeroDecks ? '⚠️ Hai kỳ 0 Deck đã xác minh: đề xuất xét Kick, cần kiểm tra báo nghỉ phép'
-          : 'Chỉ tính từ War Log; thiếu bản ghi không phải 0 Deck'],
-      ['📊 Tổng Fame lịch sử có nguồn',
-        fameRows.length ? fmt(totalFame) + ' Fame' : 'Chưa có dữ liệu',
-        fameRows.length + '/' + history.length + ' kỳ đã xác minh · Không tính các kỳ không có bản ghi'],
-      ['⭐ Điểm hoạt động nội bộ',
-        member.score == null ? 'Chưa đủ dữ liệu' : member.score + '/100',
-        'Tham khảo riêng · War ' + (member.warParticipation == null ? '—' : member.warParticipation + '%') +
-          ' · Donate ' + member.donations + ' · Offline ' + member.daysOffline + ' ngày']
-    ];
-    bd.innerHTML = cards.map(x =>
-      '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
-    ).join('');
-  }
+
   renderCW2Chart(member);
   renderCW2History(member);
 }
