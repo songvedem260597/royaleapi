@@ -215,6 +215,9 @@ window.ClanAnalytics.analyzeClan = function(d) {
   c.updatedAt = d?.updatedAt || null;
   c.fieldSources = d?.fieldSources || {};
   c.warHistoryQuality = d?.warHistoryQuality || {};
+  c.warLogSource = d?.warLogSource || null;
+  c.warLogRefreshedAt = d?.warLogRefreshedAt || null;
+  c.warLogStale = Boolean(d?.warLogStale);
 
   const seasonsMeta = Array.isArray(d?.warSeasonsMeta) && d.warSeasonsMeta.length ? d.warSeasonsMeta : WAR_SEASONS_META;
   c.warSeasons = seasonsMeta;
@@ -228,24 +231,10 @@ window.ClanAnalytics.analyzeClan = function(d) {
         if (h.decks > 0) participants++;
       }
     }
-    return {
-      season: meta.season,
-      date: meta.date,
-      rank: meta.aggregatesVerified === true ? meta.rank : null,
-      clan: c.name || DEFAULT_CLAN_NAME,
-      participants,
-      observed,
-      membersCount: c.members.length,
-      decks: totalDecks,
-      fame: null,
-      repair: null,
-      boatAttacks: null,
-      raceTarget: 'Chưa xác minh',
-      avgPerParticipant: null,
-      total: null,
-      movingAvg: null,
-      source: 'RoyaleTrack observed deck counts; Fame/rank unavailable'
-    };
+    return window.WintertimeWarHistory.raceRow(meta, {
+      name: c.name || DEFAULT_CLAN_NAME, participants, observed,
+      membersCount: c.members.length, decks: totalDecks
+    });
   });
   c.cw2ClanHistory = clanHistory;
 
