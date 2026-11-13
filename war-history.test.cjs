@@ -16,14 +16,16 @@ test('138-1 official War displays all verified fields', () => {
   assert.equal(meta.season, '138-1');
   assert.equal(row.rank, 1);
   assert.equal(row.league, 'Vàng II');
-  assert.equal(row.fame, 10000);
+  assert.equal(row.fame, 63750);
+  assert.equal(row.riverProgress, 10000);
+  assert.equal(row.medalsVerified, true);
   assert.equal(row.decks, 412);
   assert.equal(row.rosterDecks, 395);
-  assert.equal(row.avgPerParticipant, Math.round(10000/48));
+  assert.equal(row.avgPerParticipant, Math.round(63750/48));
   assert.equal(row.officialParticipants, 48);
   assert.equal(row.participants, 43);
   assert.equal(row.trophyChange, 20);
-  assert.equal(row.total, 10000);
+  assert.equal(row.total, 63750);
   assert.equal(row.raceTarget, '10,000/10,000');
 });
 
@@ -35,6 +37,8 @@ test('Colosseum War uses source Fame and includes historical departed players in
   assert.equal(row.avgPerParticipant, Math.round(60500/85));
   assert.equal(row.decks, 355);
   assert.equal(row.raceTarget, 'Colosseum');
+  assert.equal(row.riverProgress, 60500);
+  assert.equal(row.isColosseum, true);
   assert.equal(row.trophyChange, 100);
 });
 
@@ -44,6 +48,8 @@ test('unknown race result never borrows historical rank, Fame or trophies', () =
     { decks: 10, participants: 2, observed: 20, membersCount: 50 });
   assert.equal(x.rank, null);
   assert.equal(x.fame, null);
+  assert.equal(x.riverProgress, null);
+  assert.equal(x.medalsVerified, false);
   assert.equal(x.league, null);
   assert.equal(x.trophyChange, null);
   assert.equal(x.decks, 10);
@@ -56,5 +62,5 @@ test('last 10 source races all verified with per-war rank, Fame, Deck', () => {
   assert.ok(source.warSeasonsMeta.every(x => x.aggregatesVerified));
   const rows = source.warSeasonsMeta.map(x => raceRow(x, { membersCount: 50 }));
   assert.ok(rows.every(x => x.rank > 0 && x.fame >= 0 && x.officialDecks));
-  assert.deepEqual(rows.slice(0, 3).map(x => [x.rank, x.fame, x.decks]), [[1,10000,412],[1,60500,355],[1,10000,416]]);
+  assert.deepEqual(rows.slice(0, 3).map(x => [x.rank, x.fame, x.decks]), [[1,63750,412],[1,60500,355],[1,64100,416]]);
 });
