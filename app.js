@@ -210,37 +210,7 @@ function renderCW2Panel(member) {
   }
   const link = document.getElementById('cw2-royaleapi-link');
   if (link) link.href = 'https://royaleapi.com/player/' + member.tag.replace('#', '');
-  const bd = document.getElementById('cw2-breakdown');
-  if (bd) {
-    const c = member.contribution || {};
-    const ev = member.warEvaluation || {};
-    const history = member.cw2History || [];
-    const latest = history[0] || null;
-    const prev = history[1] || null;
-    const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
-    const decksText = h => h?.decksVerified ? h.decks + ' Deck' : 'Chưa có bản ghi';
-    const fameRows = history.filter(h => h.fameVerified);
-    const totalFame = fameRows.reduce((s, h) => s + h.fame, 0);
-    const cards = [
-      ['🏅 Fame War ' + (ev.latestSeason || 'gần nhất'),
-        member.latestFame == null ? 'Chưa có dữ liệu' : fmt(member.latestFame) + ' Fame',
-        ev.statusLabel + ' · Ưu tú ≥1.600 · Trung bình 401–1.599 · Cảnh báo ≤400'],
-      ['⚔️ Deck hai kỳ gần nhất',
-        decksText(latest) + ' / ' + decksText(prev),
-        ev.twoVerifiedZeroDecks ? '⚠️ Hai kỳ 0 Deck đã xác minh: đề xuất xét Kick, cần kiểm tra báo nghỉ phép'
-          : 'Chỉ tính từ War Log; thiếu bản ghi không phải 0 Deck'],
-      ['📊 Tổng Fame lịch sử có nguồn',
-        fameRows.length ? fmt(totalFame) + ' Fame' : 'Chưa có dữ liệu',
-        fameRows.length + '/' + history.length + ' kỳ đã xác minh · Không tính các kỳ không có bản ghi'],
-      ['⭐ Điểm hoạt động nội bộ',
-        member.score == null ? 'Chưa đủ dữ liệu' : member.score + '/100',
-        'Tham khảo riêng · War ' + (member.warParticipation == null ? '—' : member.warParticipation + '%') +
-          ' · Donate ' + member.donations + ' · Offline ' + member.daysOffline + ' ngày']
-    ];
-    bd.innerHTML = cards.map(x =>
-      '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
-    ).join('');
-  }
+
   renderCW2Chart(member);
   renderCW2History(member);
 }
@@ -774,12 +744,12 @@ function renderClanCW2Panel(clan) {
   const fullHist = Array.isArray(clan.cw2ClanHistory) ? clan.cw2ClanHistory : [];
   const slice = fullHist.slice(0, limit);
   const latest = slice[0] || { season: '—', decks: 0, participants: 0, observed: 0, rank: null };
-  const totalDecks = slice.reduce((s, x) => s + (Number(x.decks) || 0), 0);
-  const rosterDecks = slice.reduce((s, x) => s + (Number(x.rosterDecks) || 0), 0);
+
+
   const verifiedWars = slice.filter(x => x.verified).length;
-  const observedSlots = slice.reduce((s, x) => s + (Number(x.observed) || 0), 0);
-  const partPct = observedSlots ? Math.min(100, Math.round(rosterDecks / (observedSlots * 16) * 100)) : null;
-  const eligibleCount = window.WintertimeContribution.rankMembers(clan.members).length;
+
+
+
 
   const meta = document.getElementById('cw2-clan-meta');
   if (meta) {
@@ -790,31 +760,7 @@ function renderClanCW2Panel(clan) {
       '<span class="badge badge-good">' + (latest.rank == null ? 'Chưa có hạng xác thực' : 'Hạng #' + latest.rank + ' River Race') + '</span>';
   }
 
-  const bd = document.getElementById('cw2-clan-breakdown');
-  if (bd) {
-    const cards = [
-      ['Điểm hoạt động nội bộ',
-        clan.avgScore == null ? 'Chưa đủ dữ liệu' : clan.avgScore + '/100',
-        eligibleCount + '/' + clan.members.length + ' thành viên đủ dữ liệu · ' + (clan.counts?.good || 0) + ' thành viên Ưu tú'],
-      ['Fame đóng góp toàn Clan',
-        latest.fame == null ? 'Chưa có số liệu' : latest.fame.toLocaleString('en-US') + ' Fame',
-        verifiedWars + '/' + slice.length + ' kỳ War · Cộng Fame từ người tham chiến (không phải mốc thuyền 10.000) · TB ' +
-        (latest.avgPerParticipant == null ? '—' : latest.avgPerParticipant.toLocaleString('en-US')) + ' Fame/người đã tham chiến'],
-      ['Deck War toàn Clan',
-        totalDecks.toLocaleString('en-US') + ' Deck',
-        verifiedWars + '/' + slice.length + ' kỳ lấy tổng từ War Log · Chuyên cần thành viên hiện tại ' +
-        (partPct == null ? '—' : partPct + '%')],
-      ['Hạng War · Cúp hiện tại',
-        (latest.rank == null ? '—' : '#' + latest.rank) + ' · ' +
-        (clan.clanWarTrophies == null ? '—' : clan.clanWarTrophies.toLocaleString('en-US') + ' Cúp'),
-        'Tiến độ thuyền/Colosseum: ' + (latest.raceTarget || '—') + ' · Đổi cúp kỳ gần nhất: ' + (latest.trophyChange == null ? '—' :
-          (latest.trophyChange >= 0 ? '+' : '') + latest.trophyChange) +
-        ' · Nguồn: WarStats (bộ nhớ đệm Clash Royale API)']
-    ];
-    bd.innerHTML = cards.map(x =>
-      '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
-    ).join('');
-  }
+
 
   const chartBox = document.getElementById('cw2-clan-chart-box');
   if (chartBox) {
