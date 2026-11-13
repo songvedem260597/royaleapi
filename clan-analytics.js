@@ -48,51 +48,47 @@ function buildCw2History(decks, fame) {
 }
 
 function buildCw2FromMember(src) {
-  if (Array.isArray(src.cw2History) && src.cw2History.length) {
-    return src.cw2History.map((h, i) => {
-      const meta = WAR_SEASONS_META[i] || WAR_SEASONS_META[WAR_SEASONS_META.length - 1];
-      const f = Number(h.fame) || 0;
-      return { season: h.season || meta.season, date: h.date || meta.date, rank: Object.prototype.hasOwnProperty.call(h, 'rank') ? h.rank : meta.rank, clan: h.clan || DEFAULT_CLAN_NAME, decks: Number(h.decks) || 0, fame: f, repair: Number(h.repair) || 0, boatAttacks: Number(h.boatAttacks) || 0, total: Number(h.total) || f, movingAvg: Number(h.movingAvg) || 0 };
-    });
+  const known = Array.isArray(src.cw2History) ? src.cw2History : null;
+  if (known) {
+    return known.map((h, i) => ({
+      season: h.season ?? WAR_SEASONS_META[i]?.season ?? null,
+      date: h.date ?? WAR_SEASONS_META[i]?.date ?? null,
+      rank: h.rank ?? null,
+      clan: h.clan || DEFAULT_CLAN_NAME,
+      decks: h.decks == null ? null : Number(h.decks),
+      fame: h.fameVerified === true && h.fame != null ? Number(h.fame) : null,
+      repair: h.repair == null ? null : Number(h.repair),
+      boatAttacks: h.boatAttacks == null ? null : Number(h.boatAttacks),
+      total: h.fameVerified === true && h.total != null ? Number(h.total) : null,
+      fameVerified: h.fameVerified === true,
+      movingAvg: null
+    }));
   }
-  const part = Number(src.warParticipation) || 0;
-  const fame = Number(src.warFame) || 0;
-  const decksPerWar = Math.round(clamp(part / 100, 0, 1) * 16);
-  if (Array.isArray(src.recentWars) && src.recentWars.length) {
-    const rDecks = [];
-    const rFames = [];
-    for (let i = 0; i < WAR_SEASONS_META.length; i++) {
-      const raw = src.recentWars[i];
-      const d = raw != null ? (parseInt(String(raw).split('/')[0], 10) || 0) : 0;
-      rDecks.push(d);
-      rFames.push(d === 0 ? 0 : Math.round((d * ((Number(src.warFame) || 1600) / Math.max(1, decksPerWar))) / 25) * 25);
-    }
-    return buildCw2History(rDecks, rFames);
-  }
-  const decks = [];
-  const fames = [];
-  for (let i = 0; i < WAR_SEASONS_META.length; i++) {
-    const decay = 1 - i * 0.03;
-    decks.push(Math.round(clamp(decksPerWar * decay, 0, 16)));
-    fames.push(Math.round(fame * decay));
-  }
-  return buildCw2History(decks, fames);
+  // No fake battles or Fame for players without observed War history.
+  return WAR_SEASONS_META.flatMap((meta, i) => {
+    const raw = Array.isArray(src.warDecksHistory) ? src.warDecksHistory[i]
+      : Array.isArray(src.recentWars) ? src.recentWars[i]?.split('/')[0] : null;
+    if (raw == null || raw === '' || !Number.isFinite(Number(raw))) return [];
+    return [{
+      season: meta.season, date: meta.date, rank: null, clan: DEFAULT_CLAN_NAME,
+      decks: Number(raw), fame: null, repair: null, boatAttacks: null,
+      total: null, fameVerified: false, movingAvg: null
+    }];
+  });
 }
 
 function computeContribution(src, cw2History) {
-  const warFame = Number(src.warFame) || 0;
-  const warParticipation = Number(src.warParticipation) || 0;
-  const donations = Number(src.donations) || 0;
-  const daysOffline = Number(src.daysOffline) || 0;
-  const fameScore = Math.round(clamp(warFame / 2600, 0, 1) * 45);
-  const deckScore = Math.round(clamp(warParticipation / 100, 0, 1) * 35);
-  const donateScore = Math.round(clamp(donations / 300, 0, 1) * 20);
-  const score = clamp(fameScore + deckScore + donateScore - daysOffline * 3, 0, 100);
-  const recent = cw2History.slice(0, 4);
-  const movingAvgFame = recent.length ? Math.round(recent.reduce((s, h) => s + h.fame, 0) / recent.length) : 0;
-  const totalFame10Wars = cw2History.reduce((s, h) => s + h.fame, 0);
-  const totalDecks10Wars = cw2History.reduce((s, h) => s + h.decks, 0);
-  return { fameScore, deckScore, donateScore, score, movingAvgFame, totalFame10Wars, totalDecks10Wars };
+  const result = window.WintertimeContribution.calculate(src);
+  const observedDecks = cw2History.filter(h => h && Number.isFinite(h.decks));
+  return {
+    ...result,
+    fameScore: null,
+    deckScore: result.breakdown.historicalDeckPoints,
+    donateScore: result.breakdown.donationPoints,
+    movingAvgFame: null,
+    totalFame10Wars: null,
+    totalDecks10Wars: observedDecks.reduce((s, h) => s + h.decks, 0)
+  };
 }
 
 function analyzeMember(m) {
@@ -104,32 +100,33 @@ function analyzeMember(m) {
   const trophies = Number(src.trophies) || 0;
   const donations = Number(src.donations) || 0;
   const donationsReceived = Number(src.donationsReceived) || 0;
-  const warFame = Number(src.warFame) || 0;
+  const warFame = src.warFame == null ? null : Number(src.warFame);
   const daysOffline = Number(src.daysOffline) || 0;
   const trackerStatus = src.trackerStatus || null;
-  const warParticipation = src.warParticipation != null ? Number(src.warParticipation) : null;
+  const warParticipation = src.warParticipation == null ? null : Number(src.warParticipation);
+  const decksThisWeek = src.decksThisWeek == null ? null : Number(src.decksThisWeek);
+  const warDecksHistory = Array.isArray(src.warDecksHistory) ? src.warDecksHistory : [];
 
-  let cw2History;
-  if (tag === ROYALE_TAG && !(Array.isArray(src.cw2History) && src.cw2History.length)) {
-    cw2History = buildCw2History(ROYALE_DECKS, ROYALE_FAME);
-  } else {
-    cw2History = buildCw2FromMember(src);
-  }
-
+  const cw2History = buildCw2FromMember(src);
   const contribution = computeContribution(src, cw2History);
   const score = contribution.score;
-  let status, statusLabel, reason;
-  const kick2Zero = cw2History.some((h, i) => i < cw2History.length - 1 && (Number(h.fame) || 0) === 0 && (Number(cw2History[i + 1].fame) || 0) === 0);
-  if (warFame <= 400) {
-    status = 'kick'; statusLabel = kick2Zero ? '🥾 Kick' : 'Cảnh báo';
-  } else if (trackerStatus === 'Đáng tin' || score >= 70) {
+  let status, statusLabel;
+  if (!contribution.complete) {
+    status = 'warning'; statusLabel = 'Thiếu dữ liệu';
+  } else if (contribution.review) {
+    status = 'kick'; statusLabel = 'Cần xem xét';
+  } else if (contribution.excellent) {
     status = 'good'; statusLabel = 'Ưu tú';
   } else {
     status = 'warning'; statusLabel = 'Trung bình';
   }
-  reason = 'War: ' + (warParticipation != null ? warParticipation : 0) + '% (' + warFame + ' đ/war) · Fame10: ' + contribution.totalFame10Wars + ' · Offline: ' + daysOffline + 'd';
+  const reason = 'Điểm hoạt động nội bộ: ' + (score == null ? '—' : score + '/100') +
+    ' · War: ' + (warParticipation == null ? '—' : warParticipation + '%') +
+    ' · Deck 4 kỳ: ' + contribution.completedDecks + '/' + (contribution.observedWeeks * 16) +
+    ' · Tuần này: ' + (decksThisWeek == null ? '—' : decksThisWeek) +
+    ' · Donate: ' + donations + ' · Offline: ' + daysOffline + ' ngày';
 
-  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, trackerStatus, cw2History, contribution, score, status, statusLabel, reason };
+  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, decksThisWeek, warDecksHistory, trackerStatus, cw2History, contribution, score, status, statusLabel, reason };
 }
 
 function analyzeClan(clanData) {
@@ -140,14 +137,14 @@ function analyzeClan(clanData) {
   const members = rawMembers.map(analyzeMember);
   const counts = { total: members.length, good: 0, warning: 0, kick: 0 };
   let sum = 0;
-  let mvp = members[0];
+  const ranked = window.WintertimeContribution.rankMembers(members);
+  const mvp = ranked[0] || null;
   members.forEach((mm) => {
     counts[mm.status] = (counts[mm.status] || 0) + 1;
-    sum += mm.score;
-    if (!mvp || mm.score > mvp.score) mvp = mm;
+    if (Number.isFinite(mm.score)) sum += mm.score;
   });
-  const avgScore = members.length ? Math.round(sum / members.length) : 0;
-  const clanScore = clamp(Math.round(avgScore * 0.7 + clamp(counts.good / Math.max(1, members.length), 0, 1) * 30), 0, 100);
+  const avgScore = ranked.length ? Math.round(sum / ranked.length) : null;
+  const clanScore = avgScore == null ? null : clamp(Math.round(avgScore * 0.7 + clamp(counts.good / Math.max(1, members.length), 0, 1) * 30), 0, 100);
   return { name, tag, clanScore, membersCount: members.length, avgScore, mvpName: mvp ? mvp.name : '', counts, members, warSeasons: WAR_SEASONS_META };
 }
 
@@ -195,15 +192,8 @@ window.ClanAnalytics.analyzeMember = function(m) {
   const r = _origAM(m);
   if (!(Array.isArray(m?.cw2History) && m.cw2History.length) && Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
   else if (m?.trackerStatus === 'Mới vào' || (Array.isArray(m?.cw2History) && !m.cw2History.length)) r.cw2History = [];
-  const h = r.cw2History || [];
-  const isNew = r.trackerStatus === 'Mới vào' || h.length === 0;
-  const z2 = !isNew && h.length >= 2 && (r.warFame <= 400 || (!h[0].fame && !h[1].fame)) && h.some((x, i) => i < h.length - 1 && !x.fame && !h[i + 1].fame);
-  const noWar = !isNew && (r.warFame === 0 || (h.length >= 2 && !h[0].fame && !h[1].fame) || (r.warFame <= 400 && h.length > 0 && !h[0].fame));
-  const leech = r.donationsReceived > r.donations * 2;
-  const okDon = r.donations > 0 && !leech;
-  if (z2 || (noWar && leech)) { r.status = 'kick'; r.statusLabel = '🥾 Kick'; }
-  else if (isNew && r.warFame === 0 && okDon) { r.status = 'warning'; r.statusLabel = 'Trung bình'; }
-  else if (r.warFame <= 400) { r.status = 'kick'; r.statusLabel = 'Cảnh báo'; }
+  // No kick/elite decisions from zero-coerced or fabricated Fame.
+  // analyzeMember already grades observed Deck/participation/donate metrics.
   return r;
 };
 window.ClanAnalytics.analyzeClan = function(d) {
@@ -220,52 +210,42 @@ window.ClanAnalytics.analyzeClan = function(d) {
   });
   c.totalDonations = totalDonations;
   c.totalDonationsReceived = totalDonationsReceived;
-  c.rawClanScore = Number(d?.clanScore) > 1000 ? Number(d.clanScore) : (Number(d?.rawClanScore) || 130593);
-  c.clanWarTrophies = Number(d?.clanWarTrophies || d?.warTrophies) || 2369;
-  c.updatedAt = d?.updatedAt || new Date().toISOString();
+  c.rawClanScore = d?.clanScore == null ? null : Number(d.clanScore);
+  c.clanWarTrophies = d?.clanWarTrophies == null ? null : Number(d.clanWarTrophies);
+  c.updatedAt = d?.updatedAt || null;
+  c.fieldSources = d?.fieldSources || {};
+  c.warHistoryQuality = d?.warHistoryQuality || {};
 
   const seasonsMeta = Array.isArray(d?.warSeasonsMeta) && d.warSeasonsMeta.length ? d.warSeasonsMeta : WAR_SEASONS_META;
   c.warSeasons = seasonsMeta;
-  const clanHistory = seasonsMeta.map((meta, idx) => {
-    let sumFame = 0, sumDecks = 0, sumRepair = 0, sumBoat = 0, participants = 0;
+  const clanHistory = seasonsMeta.map(meta => {
+    let totalDecks = 0, participants = 0, observed = 0;
     for (const m of c.members) {
-      const h = (m.cw2History || []).find(x => x.season === meta.season) || (m.cw2History || [])[idx];
-      if (h) {
-        const f = Number(h.fame) || 0;
-        const dk = Number(h.decks) || 0;
-        sumFame += f;
-        sumDecks += dk;
-        sumRepair += Number(h.repair) || 0;
-        sumBoat += Number(h.boatAttacks) || 0;
-        if (dk > 0 || f > 0) participants++;
+      const h = (m.cw2History || []).find(x => x.date === meta.date);
+      if (h && Number.isFinite(h.decks)) {
+        totalDecks += h.decks;
+        observed++;
+        if (h.decks > 0) participants++;
       }
     }
-    const fame = Math.max(Number(meta.clanFame) || 0, sumFame);
-    const decks = Math.max(Number(meta.clanDecks) || 0, sumDecks);
-    const avgPerParticipant = participants > 0 ? Math.round(fame / participants) : 0;
-    const rawMetaFame = Number(meta.clanFame) || 0;
-    const raceTarget = rawMetaFame === 0 ? 'Chưa xác minh' : rawMetaFame <= 10000 ? (rawMetaFame.toLocaleString('en-US') + '/10,000') : 'Colosseum';
     return {
       season: meta.season,
       date: meta.date,
-      rank: meta.rank == null ? null : Number(meta.rank),
+      rank: meta.aggregatesVerified === true ? meta.rank : null,
       clan: c.name || DEFAULT_CLAN_NAME,
       participants,
+      observed,
       membersCount: c.members.length,
-      decks,
-      fame,
-      repair: sumRepair,
-      boatAttacks: sumBoat,
-      raceTarget,
-      avgPerParticipant,
-      total: fame,
-      movingAvg: 0
+      decks: totalDecks,
+      fame: null,
+      repair: null,
+      boatAttacks: null,
+      raceTarget: 'Chưa xác minh',
+      avgPerParticipant: null,
+      total: null,
+      movingAvg: null,
+      source: 'RoyaleTrack observed deck counts; Fame/rank unavailable'
     };
-  });
-  const chronoClan = clanHistory.slice().reverse();
-  chronoClan.forEach((entry, idx) => {
-    const win = chronoClan.slice(Math.max(0, idx - 3), idx + 1);
-    entry.movingAvg = Math.round(win.reduce((s, x) => s + x.fame, 0) / win.length);
   });
   c.cw2ClanHistory = clanHistory;
 
