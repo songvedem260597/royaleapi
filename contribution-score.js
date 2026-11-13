@@ -15,7 +15,8 @@
     const currentDecks = optionalNumber(m.decksThisWeek);
     const donations = optionalNumber(m.donations);
     const daysOffline = optionalNumber(m.daysOffline);
-    const rawHistory = Array.isArray(m.warDecksHistory) ? m.warDecksHistory.slice(0, 4) : [];
+    const rawHistory = Array.isArray(m.warDecksVerifiedHistory) ? m.warDecksVerifiedHistory.slice(0, 4)
+      : Array.isArray(m.warDecksHistory) ? m.warDecksHistory.slice(0, 4) : [];
     const observed = rawHistory.map(optionalNumber).filter(x => x != null && x >= 0);
     const complete = participation != null && currentDecks != null && donations != null
       && daysOffline != null && observed.length >= 2;
@@ -33,9 +34,9 @@
       + breakdown.currentDeckPoints + breakdown.donationPoints - breakdown.offlinePenalty,
       0, 100
     ) : null;
-    const lastTwoZeroDecks = rawHistory.length >= 2
+    const lastTwoZeroDecks = Array.isArray(m.warDecksVerifiedHistory) && rawHistory.length >= 2
       && optionalNumber(rawHistory[0]) === 0 && optionalNumber(rawHistory[1]) === 0;
-    const review = complete && lastTwoZeroDecks && participation < 20;
+    const review = lastTwoZeroDecks; // Review only; never automatic removal
     const excellent = complete && score >= 75 && participation >= 75 && averageDecks >= 12 && daysOffline <= 3;
     return {
       score,

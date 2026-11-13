@@ -213,17 +213,29 @@ function renderCW2Panel(member) {
   const bd = document.getElementById('cw2-breakdown');
   if (bd) {
     const c = member.contribution || {};
-    const b = c.breakdown || {};
-    const valid = n => n == null ? '—' : n;
+    const ev = member.warEvaluation || {};
+    const history = member.cw2History || [];
+    const latest = history[0] || null;
+    const prev = history[1] || null;
+    const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
+    const decksText = h => h?.decksVerified ? h.decks + ' Deck' : 'Chưa có bản ghi';
+    const fameRows = history.filter(h => h.fameVerified);
+    const totalFame = fameRows.reduce((s, h) => s + h.fame, 0);
     const cards = [
-      ['Điểm hoạt động nội bộ', member.score == null ? 'Chưa đủ dữ liệu' : member.score + '/100',
-        'Xếp loại: ' + (member.statusLabel || member.status)],
-      ['Deck 4 kỳ War gần nhất', c.observedWeeks ? c.completedDecks + '/' + (c.observedWeeks * 16) + ' Deck' : 'Chưa đủ dữ liệu',
-        'Đóng góp: ' + valid(b.historicalDeckPoints) + '/40 điểm · ' + (c.observedWeeks || 0) + ' kỳ có dữ liệu'],
-      ['Mức tham gia War', member.warParticipation == null ? '—' : member.warParticipation + '%',
-        'Đóng góp: ' + valid(b.participationPoints) + '/40 điểm'],
-      ['Deck tuần này · Donate', valid(member.decksThisWeek) + ' Deck · ' + member.donations + ' Donate',
-        'Tuần +' + valid(b.currentDeckPoints) + '/10 · Donate +' + valid(b.donationPoints) + '/10 · Offline -' + valid(b.offlinePenalty)]
+      ['🏅 Fame War ' + (ev.latestSeason || 'gần nhất'),
+        member.latestFame == null ? 'Chưa có dữ liệu' : fmt(member.latestFame) + ' Fame',
+        ev.statusLabel + ' · Ưu tú ≥1.600 · Trung bình 401–1.599 · Cảnh báo ≤400'],
+      ['⚔️ Deck hai kỳ gần nhất',
+        decksText(latest) + ' / ' + decksText(prev),
+        ev.twoVerifiedZeroDecks ? '⚠️ Hai kỳ 0 Deck đã xác minh: đề xuất xét Kick, cần kiểm tra báo nghỉ phép'
+          : 'Chỉ tính từ War Log; thiếu bản ghi không phải 0 Deck'],
+      ['📊 Tổng Fame lịch sử có nguồn',
+        fameRows.length ? fmt(totalFame) + ' Fame' : 'Chưa có dữ liệu',
+        fameRows.length + '/' + history.length + ' kỳ đã xác minh · Không tính các kỳ không có bản ghi'],
+      ['⭐ Điểm hoạt động nội bộ',
+        member.score == null ? 'Chưa đủ dữ liệu' : member.score + '/100',
+        'Tham khảo riêng · War ' + (member.warParticipation == null ? '—' : member.warParticipation + '%') +
+          ' · Donate ' + member.donations + ' · Offline ' + member.daysOffline + ' ngày']
     ];
     bd.innerHTML = cards.map(x =>
       '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
@@ -236,29 +248,35 @@ function renderCW2Panel(member) {
 function renderCW2Chart(member) {
   const box = document.getElementById('cw2-chart-box');
   if (!box) return;
-  const hist = (member.cw2History || []).filter(h => Number.isFinite(h.decks)).slice().reverse();
-  if (!hist.length) {
-    box.textContent = 'Chưa có lịch sử Deck War đủ để vẽ biểu đồ.';
+  const hist = (member.cw2History || []).slice().reverse();
+  if (!hist.some(h => h.fameVerified)) {
+    box.textContent = 'Chưa có Fame cá nhân trong War Log. Thiếu bản ghi không đồng nghĩa 0 Fame.';
     return;
   }
-  const W = 760, H = 230, padL = 40, padR = 20, padT = 30, padB = 40;
-  const chartW = W - padL - padR, chartH = H - padT - padB;
-  const y = decks => padT + chartH - (Math.min(decks, 16) / 16) * chartH;
-  const bw = chartW / hist.length;
+  const W = 760, H = 240, left = 40, right = 20, topPad = 34, bottom = 45;
+  const chartH = H - topPad - bottom, chartW = W - left - right;
+  const maxFame = Math.max(1600, ...hist.filter(h=>h.fameVerified).map(h=>h.fame));
+  const scale = x => topPad + chartH - Math.min(x, maxFame) / maxFame * chartH;
+  const cellW = chartW / hist.length;
   let bars = '', labels = '';
   hist.forEach((h, i) => {
-    const x = padL + i * bw + bw * 0.15;
-    const w = bw * 0.7;
-    const deck = h.decks;
-    const top = y(deck);
-    bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' +
-      (padT + chartH - top) + '" fill="' + (deck >= 12 ? '#38bdf8' : '#f59e0b') + '" rx="3"/>';
-    bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) +
-      '" fill="#e2e8f0" font-size="11" text-anchor="middle">' + deck + '/16</text>';
-    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
+    const x = left + i * cellW + cellW * 0.14, w = cellW * 0.72;
+    const present = h.fameVerified && Number.isFinite(h.fame);
+    const value = present ? h.fame : null;
+    const y = value == null ? topPad + chartH : scale(value);
+    const color = value >= 1600 ? '#10b981' : value > 400 ? '#38bdf8' : '#f59e0b';
+    if (present) bars += '<rect x="' + x + '" y="' + y + '" width="' + w +
+      '" height="' + Math.max(2, topPad + chartH - y) + '" fill="' + color + '" rx="3"/>';
+    bars += '<text x="' + (x + w / 2) + '" y="' + (present ? y - 8 : topPad + chartH - 8) +
+      '" fill="#e2e8f0" font-size="11" text-anchor="middle">' +
+      (value == null ? '—' : value.toLocaleString('en-US')) + '</text>';
+    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 23) +
       '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 8) +
+      '" fill="#94a3b8" font-size="9" text-anchor="middle">' +
+      (h.decksVerified ? h.decks + ' Deck' : '—') + '</text>';
   });
-  box.innerHTML = '<p class="meta-decks-sub">Deck War đã ghi nhận (tối đa 16/kỳ) · Không sử dụng Fame ước tính</p>' +
+  box.innerHTML = '<p class="meta-decks-sub">🏅 Fame cá nhân từng kỳ (WarStats · bản đệm Clash Royale API) · Dòng dưới: Deck đã xác minh · — nghĩa là chưa có bản ghi</p>' +
     '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' +
     bars + labels + '</svg>';
 }
@@ -267,18 +285,23 @@ function renderCW2History(member) {
   const tb = document.getElementById('cw2-history-tbody');
   if (!tb) return;
   const hist = member.cw2History || [];
+  const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
+  const leagueFor = h => {
+    const m = (currentClan?.warSeasons || []).find(x => x.season === h.season && x.date === h.date);
+    return window.WintertimeWarHistory.leagueFromWarTrophies(m?.warTrophiesAtRace) || '—';
+  };
   tb.innerHTML = hist.map(h =>
     '<tr>' +
       '<td>' + (h.season || '') + '</td>' +
       '<td>' + (h.date || '') + '</td>' +
       '<td>' + (h.rank == null ? '—' : h.rank) + '</td>' +
-      '<td>—</td>' +
+      '<td>' + leagueFor(h) + '</td>' +
       '<td>WinterTime</td>' +
-      '<td>' + (h.decks == null ? '—' : h.decks) + '</td>' +
-      '<td>' + (h.fameVerified && h.fame != null ? h.fame : '—') + '</td>' +
-      '<td>' + (h.repair == null ? '—' : h.repair) + '</td>' +
-      '<td>' + (h.boatAttacks == null ? '—' : h.boatAttacks) + '</td>' +
-      '<td>' + (h.fameVerified && h.total != null ? h.total : '—') + '</td>' +
+      '<td title="' + (h.decksVerified ? 'Deck từ War Log' : 'Deck chưa xác minh từ War Log') + '">' + (h.decksVerified ? fmt(h.decks) : '—') + '</td>' +
+      '<td title="' + (h.fameVerified ? 'Fame cá nhân đã xác minh' : 'Không có bản ghi Fame: không đồng nghĩa 0') + '"><strong>' + (h.fameVerified ? fmt(h.fame) : '—') + '</strong></td>' +
+      '<td>' + (h.fameVerified ? fmt(h.repair) : '—') + '</td>' +
+      '<td>' + (h.fameVerified ? fmt(h.boatAttacks) : '—') + '</td>' +
+      '<td>' + (h.fameVerified ? fmt(h.total) : '—') + '</td>' +
     '</tr>'
   ).join('');
 }
@@ -334,7 +357,7 @@ function showKickList() {
   if (!out) return;
   const kicks = currentClan.members.filter(m => m.status === 'kick');
   out.innerHTML = kicks.length
-    ? '<ul>' + kicks.map(m => '<li><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span> — ' + (m.reason || '') + '</li>').join('') + '</ul>'
+    ? '<p>Đây là danh sách <strong>đề xuất kiểm tra</strong>, không tự động Kick. Leader cần xác minh báo nghỉ phép và thời điểm gia nhập.</p><ul>' + kicks.map(m => '<li><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span> — ' + (m.warEvaluation?.reason || '') + '</li>').join('') + '</ul>'
     : '<p>Không có thành viên nào cần xem xét do bỏ War liên tiếp.</p>';
   out.removeAttribute('hidden');
 }
@@ -349,7 +372,9 @@ function updateLastUpdatedUI(dt, details = {}) {
     const prefix = details.fallback ? 'Dữ liệu dự phòng' : 'RoyaleTrack · CSV có thể chậm 5 phút';
     const freshness = details.stale ? ' · Lịch sử War đã cũ' : '';
     const warVerified = details.verifiedWars ? ' · War Log ' + details.verifiedWars + '/10 đã đối chiếu' : ' · Chưa có War Log xác minh';
-    const fameNote = details.individualFameUnknown ? ' · Fame từng người chưa có' : '';
+    const fameNote = Number.isInteger(details.individualFameKnown)
+      ? ' · Fame cá nhân ' + details.individualFameKnown + '/50 có bản ghi' :
+      details.individualFameUnknown ? ' · Fame cá nhân chưa có' : '';
     const warStale = details.warLogStale ? ' · War Log đang dùng cache cũ' : '';
     el.textContent = prefix + ' · War ' + warDate + ' · Đồng bộ ' + now + warVerified + freshness + fameNote + warStale;
   }
@@ -489,16 +514,20 @@ function renderTable(clan) {
   rows.sort((a, b) => ((b[sortBy] ?? -1) - (a[sortBy] ?? -1)) || String(a.tag).localeCompare(String(b.tag)));
   tbody.innerHTML = rows.map((m, i) => {
     const pct = Number.isFinite(m.score) ? m.score : null;
-    const observedDecks = m.contribution?.totalDecks10Wars ?? 0;
-    const decks = (m.cw2History || []).slice(0, 8).map(h =>
-      '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '" title="' + h.season + ': ' + h.decks + ' deck · ' + ' Deck ghi nhận">' + h.decks + '</span>'
-    ).join('');
+    const observedDecks = (m.cw2History || []).filter(h => h.decksVerified).reduce((sum, h) => sum + h.decks, 0);
+    const decks = (m.cw2History || []).slice(0, 8).map(h => {
+      const d = h.decksVerified ? h.decks : null;
+      return '<span class="deck-pill ' +
+        (d == null ? 'deck-unknown' : d >= 16 ? 'deck-full' : d >= 8 ? 'deck-mid' : d > 0 ? 'deck-low' : 'deck-zero') +
+        '" title="' + h.season + ': ' + (d == null ? 'Chưa có Deck xác minh' : d + ' Deck War Log') +
+        '">' + (d == null ? '—' : d) + '</span>';
+    }).join('');
     return '<tr class="member-row-clickable' + (m.tag === selectedMemberTag ? ' member-row-active' : '') + '" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
       '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
-      '<td><strong>' + observedDecks.toLocaleString() + ' Deck đã ghi nhận</strong> <small>(Fame TB nguồn: ' + (m.warFame == null ? '—' : m.warFame) + ' · Tham gia: ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
+      '<td><strong>🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame kỳ ' + (m.warEvaluation?.latestSeason || '—') + '</strong> <small>(' + observedDecks + ' Deck đã xác minh / ' + (m.verifiedWarWeeks || 0) + ' kỳ · War ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + (pct == null ? 0 : pct) + '%"></div></div><small>' + (pct == null ? '—' : pct + '/100') + '</small></td>' +
       '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
@@ -519,8 +548,10 @@ renderTable(currentClan);
 function statusBadge(s) {
   const map = {
     good: ['badge-good', 'Tốt'],
-    warning: ['badge-warning', 'Trung bình'],
-    kick: ['badge-kick', 'Cảnh báo']
+    warning: ['badge-warning', 'Cảnh báo'],
+    average: ['badge-average', 'Trung bình'],
+    unknown: ['badge-unknown', 'Chưa đủ dữ liệu'],
+    kick: ['badge-kick', 'Đề xuất xét Kick']
   };
   const [cls, label] = map[s] || ['badge-warning', s];
   return '<span class="badge ' + cls + '">' + label + '</span>';
@@ -533,14 +564,16 @@ function statusBadge(s) {
     const optWarn = filterSel.querySelector('option[value="warning"]');
     const optKick = filterSel.querySelector('option[value="kick"]');
     if (optGood) optGood.textContent = 'Tốt';
-    if (optWarn) optWarn.textContent = 'Trung bình';
-    if (optKick) optKick.textContent = 'Cảnh báo';
+    if (optWarn) optWarn.textContent = 'Cảnh báo (≤400 Fame)';
+    if (optKick) optKick.textContent = 'Đề xuất xét Kick';
     upgradeCustomSelects();
   }
   if (currentClan && Array.isArray(currentClan.members)) {
     currentClan.members.forEach(m => {
-      if (m.status === 'warning') m.statusLabel = 'Trung bình';
-      else if (m.status === 'kick') m.statusLabel = 'Cảnh báo';
+      if (m.status === 'warning') m.statusLabel = 'Cảnh báo';
+      else if (m.status === 'average') m.statusLabel = 'Trung bình';
+      else if (m.status === 'unknown') m.statusLabel = 'Chưa đủ dữ liệu';
+      else if (m.status === 'kick') m.statusLabel = 'Đề xuất xét Kick';
       else if (m.status === 'good') m.statusLabel = 'Tốt';
     });
     render();
@@ -563,22 +596,22 @@ function statusBadge(s) {
 })();
 
 function statusBadge(s) {
-  const map = { good: ['badge-good', 'Ưu tú'], warning: ['badge-warning', 'Trung bình'], kick: ['badge-kick', 'Cảnh báo'] };
+  const map = { good: ['badge-good', 'Ưu tú'], average: ['badge-average', 'Trung bình'], warning: ['badge-warning', 'Cảnh báo'], kick: ['badge-kick', 'Đề xuất xét Kick'], unknown: ['badge-unknown', 'Chưa đủ dữ liệu'] };
   const [cls, label] = map[s] || ['badge-warning', s];
   return '<span class="badge ' + cls + '">' + label + '</span>';
 }
 
 function buildPodiumCard(m, cls, crest, crown) {
   if (!m) return '';
-  const recentDecks = m.contribution?.completedDecks ?? 0;
-  const observedWeeks = m.contribution?.observedWeeks ?? 0;
+  const recentDecks = m.warEvaluation?.latestDecks ?? null;
+  const observedWeeks = m.warEvaluation?.verifiedWeeks ?? 0;
   return '<div class="podium-card ' + cls + '" data-tag="' + m.tag + '">' +
     '<div class="podium-rank-crest">' + crest + '</div>' +
     '<div class="podium-avatar-wrap">' + crown + '<span>' + (m.name || 'W').slice(0, 2).toUpperCase() + '</span></div>' +
     '<div class="podium-name">' + m.name + '</div>' +
     '<div class="podium-meta">' + m.roleLabel + ' · <span class="tag-mono">' + m.tag + '</span></div>' +
-    '<div class="podium-fame-Main">⚔️ ' + recentDecks + '/' + (observedWeeks * 16) + ' Deck · ' + observedWeeks + ' kỳ War</div>' +
-    '<div class="podium-metrics"><span class="podium-metric-pill">⭐ ' + m.score + '/100 điểm hoạt động</span><span class="podium-metric-pill">⚔️ ' + (m.warParticipation ?? '—') + '% War</span><span class="podium-metric-pill">🎁 ' + m.donations + ' Donate</span></div></div>';
+    '<div class="podium-fame-Main">🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame · ' + (recentDecks == null ? '—' : recentDecks) + ' Deck</div>' +
+    '<div class="podium-metrics"><span class="podium-metric-pill">⚔️ ' + (m.warEvaluation?.latestSeason || '—') + '</span><span class="podium-metric-pill">📋 ' + observedWeeks + ' kỳ có Fame xác minh</span><span class="podium-metric-pill">⭐ ' + (m.score == null ? '—' : m.score + '/100') + ' điểm nội bộ</span></div></div>';
 }
 
 function renderTop3Podium(clan) {
@@ -591,8 +624,8 @@ function renderTop3Podium(clan) {
     const ref = document.getElementById('cw2-clan-panel') || document.getElementById('cw2-history-panel') || document.querySelector('.toolbar-bento');
     if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref);
   }
-  const top = window.WintertimeContribution.rankMembers(clan.members).slice(0, 3);
-  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME ACTIVITY SCORE ★</span><h2 class="podium-title">Top 3 Đóng Góp · Điểm Hoạt Động Nội Bộ</h2><p class="meta-decks-sub">40% tham gia War · 40% Deck 4 kỳ gần nhất · 10% Deck tuần này · 10% Donate · Trừ điểm offline. Không phải bảng xếp hạng chính thức.</p></div><div class="podium-stage">' +
+  const top = window.WintertimeWarEvaluation.rankByLatestWar(clan.members).slice(0, 3);
+  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME ACTIVITY SCORE ★</span><h2 class="podium-title">Top 3 Đóng Góp War · Fame Đã Xác Minh</h2><p class="meta-decks-sub">Xếp theo Fame cá nhân thực của kỳ War đã kết thúc gần nhất (WarStats, bản đệm Clash Royale API). Điểm hoạt động nội bộ hiển thị riêng để tham khảo.</p></div><div class="podium-stage">' +
     buildPodiumCard(top[1], 'podium-2nd', '🥈 2ND · Á QUÂN', '') +
     buildPodiumCard(top[0], 'podium-1st', '🏆 1ST · MVP CHỦ LỰC', '<span class="podium-crown">👑</span>') +
     buildPodiumCard(top[2], 'podium-3rd', '🥉 3RD · HẠNG BA', '') + '</div>';
@@ -615,7 +648,7 @@ render = function() {
 render();
 
 const kpiKickLbl = document.querySelector('.kpi-kick .kpi-label');
-if (kpiKickLbl) kpiKickLbl.textContent = 'Cảnh Báo';
+if (kpiKickLbl) kpiKickLbl.textContent = 'Đề xuất xét Kick';
 
 function bindDropdownSearchInput(inp, menu, empty) {
   ['click', 'keydown'].forEach(ev => inp.addEventListener(ev, e => e.stopPropagation()));
@@ -654,7 +687,7 @@ const _prevTop3 = renderTop3Podium;
 renderTop3Podium = function(clan) {
   _prevTop3(clan);
   const t = document.querySelector('#top3-podium-section .podium-title');
-  if (t) t.textContent = 'Top 3 Đóng Góp · Điểm Hoạt Động Nội Bộ';
+  if (t) t.textContent = 'Top 3 Đóng Góp War · Fame Đã Xác Minh';
 };
 document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-trigger')?.addEventListener('click', () => {
   const inp = document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-search');
@@ -676,7 +709,7 @@ renderMetaDecks();
 renderTop3Podium = function(clan) {
   _prevTop3(clan);
   const t = document.querySelector('#top3-podium-section .podium-title');
-  if (t) t.textContent = 'Top 3 Đóng Góp · Điểm Hoạt Động Nội Bộ';
+  if (t) t.textContent = 'Top 3 Đóng Góp War · Fame Đã Xác Minh';
 };
 renderTop3Podium(currentClan);
 const mhTitle = document.querySelector('#meta-decks-section .meta-decks-title');
@@ -699,24 +732,24 @@ renderMetaDecks = function() {
 renderMetaDecks();
 function isKick2WeeksZero(m) {
   const h = m?.cw2History || [];
-  return m?.status === 'kick' && h.some((x, i) => i < h.length - 1 && (Number(x.fame) || 0) === 0 && (Number(h[i + 1].fame) || 0) === 0);
+  return m?.warEvaluation?.twoVerifiedZeroDecks === true;
 }
 const _prevRenderTable = renderTable;
 renderTable = function(clan) {
-  (clan?.members || []).forEach(m => { if (isKick2WeeksZero(m)) m.statusLabel = '🥾 Kick'; });
+  (clan?.members || []).forEach(m => { if (isKick2WeeksZero(m)) m.statusLabel = 'Đề xuất xét Kick'; });
   _prevRenderTable(clan);
   document.querySelectorAll('#member-tbody tr[data-tag]').forEach(tr => {
     const m = clan?.members?.find(x => x.tag === tr.dataset.tag);
     const b = tr.querySelector('.badge-kick');
-    if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">🥾</span> Kick'; }
+    if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">⚠️</span> Xét Kick'; }
   });
 };
 const _prevRenderCW2 = renderCW2Panel;
 renderCW2Panel = function(m) {
-  if (isKick2WeeksZero(m)) m.statusLabel = '🥾 Kick';
+  if (isKick2WeeksZero(m)) m.statusLabel = 'Đề xuất xét Kick';
   _prevRenderCW2(m);
   const b = document.querySelector('#cw2-player-meta .badge-kick');
-  if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">🥾</span> Kick'; }
+  if (b && isKick2WeeksZero(m)) { b.className = 'badge badge-kick badge-kick-now'; b.innerHTML = '<span class="kick-icon">⚠️</span> Xét Kick'; }
 };
 const _prevRenderMeta = renderMetaDecks;
 renderMetaDecks = function() {
@@ -729,7 +762,7 @@ renderMetaDecks = function() {
 renderMetaDecks();
 render();
 isKick2WeeksZero = function(m) {
-  return m?.statusLabel === '🥾 Kick';
+  return m?.warEvaluation?.twoVerifiedZeroDecks === true;
 };
 currentClan = CA.analyzeClan(currentClan);
 function renderClanCW2Panel(clan) {
@@ -970,8 +1003,10 @@ renderSummary = function(clan) {
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members" style="color:#38bdf8">' + total + '/50</strong></div>' +
       '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good" style="color:#10b981">' + (cnt.good || 0) + '</strong></div>' +
-      '<div><span class="kpi-label">Mức Trung Bình</span><strong id="kpi-warning" style="color:#f59e0b">' + (cnt.warning || 0) + '</strong></div>' +
-      '<div><span class="kpi-label">Cảnh Báo</span><strong id="kpi-kick" style="color:#ef4444">' + (cnt.kick || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Trung bình</span><strong id="kpi-average" style="color:#f59e0b">' + (cnt.average || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Cảnh báo</span><strong id="kpi-warning" style="color:#f97316">' + (cnt.warning || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Đề xuất xét Kick</span><strong id="kpi-kick" style="color:#ef4444">' + (cnt.kick || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Chưa đủ dữ liệu</span><strong id="kpi-unknown">' + (cnt.unknown || 0) + '</strong></div>' +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 };
@@ -1007,6 +1042,7 @@ fetchClan = async function() {
             warDate, fallback, stale,
             verifiedWars: (d.warSeasonsMeta || []).filter(x => x.aggregatesVerified).length,
             individualFameUnknown: d.warHistoryQuality?.fame === 'individual-unavailable',
+            individualFameKnown: (d.members || []).filter(m => m.cw2History?.[0]?.fameVerified).length,
             warLogStale: Boolean(d.warLogStale)
           });
           updateLiveIndicator(!fallback && !stale && !d.warLogStale);
