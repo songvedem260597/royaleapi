@@ -167,13 +167,13 @@ function renderSummary(clan) {
   const el = document.getElementById('clan-summary');
   if (!el) return;
   const avg = Math.round(clan.avgScore || 0);
-  const cScore = (clan?.rawClanScore || 130593).toLocaleString('en-US');
-  const wTrophies = (clan?.clanWarTrophies || 2369).toLocaleString('en-US');
+  const cScore = (clan?.rawClanScore == null ? '—' : clan.rawClanScore.toLocaleString('en-US'));
+  const wTrophies = (clan?.clanWarTrophies == null ? '—' : clan.clanWarTrophies.toLocaleString('en-US'));
   el.innerHTML =
     '<div class="hero-stats">' +
-      '<div><span class="kpi-label">Điểm Clan</span><strong>' + cScore + '</strong></div>' +
+      '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong>' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
-      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Chủ lực MVP</span><strong>' + (clan.mvpName || '—') + '</strong></div>' +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
@@ -198,7 +198,7 @@ function renderCW2Panel(member) {
   const sel = document.getElementById('cw2-member-select');
   if (sel) {
     sel.innerHTML = currentClan.members.map(m =>
-      '<option value="' + m.tag + '">' + m.name + ' (' + m.tag + ') — ' + Math.round(m.score || 0) + ' đ</option>'
+      '<option value="' + m.tag + '">' + m.name + ' (' + m.tag + ') — ' + (m.score == null ? '—' : m.score) + ' đ</option>'
     ).join('');
     sel.value = member.tag;
     upgradeCustomSelects();
@@ -213,11 +213,17 @@ function renderCW2Panel(member) {
   const bd = document.getElementById('cw2-breakdown');
   if (bd) {
     const c = member.contribution || {};
+    const b = c.breakdown || {};
+    const valid = n => n == null ? '—' : n;
     const cards = [
-      ['Điểm Cống Hiến Cá Nhân', Math.round(member.score || 0) + '/100', 'Hạng đánh giá: ' + (member.statusLabel || member.status)],
-      ['Điểm War Fame (Chuẩn 1,600+)', (member.warFame || 0) + ' Fame/tuần', 'Fame Score: ' + (c.fameScore || 0) + '/45'],
-      ['Chuyên Cần Sử Dụng Deck', (member.warParticipation ?? 0) + '% (' + (c.totalDecks10Wars || 0) + ' deck/10 mùa)', 'Deck Score: ' + (c.deckScore || 0) + '/35'],
-      ['Moving Avg (4 mùa gần nhất) & Donate', (c.movingAvgFame || member.warFame || 0) + ' Fame · Tặng ' + (member.donations || 0), 'Donate Score: ' + (c.donateScore || 0) + '/20']
+      ['Điểm hoạt động nội bộ', member.score == null ? 'Chưa đủ dữ liệu' : member.score + '/100',
+        'Xếp loại: ' + (member.statusLabel || member.status)],
+      ['Deck 4 kỳ War gần nhất', c.observedWeeks ? c.completedDecks + '/' + (c.observedWeeks * 16) + ' Deck' : 'Chưa đủ dữ liệu',
+        'Đóng góp: ' + valid(b.historicalDeckPoints) + '/40 điểm · ' + (c.observedWeeks || 0) + ' kỳ có dữ liệu'],
+      ['Mức tham gia War', member.warParticipation == null ? '—' : member.warParticipation + '%',
+        'Đóng góp: ' + valid(b.participationPoints) + '/40 điểm'],
+      ['Deck tuần này · Donate', valid(member.decksThisWeek) + ' Deck · ' + member.donations + ' Donate',
+        'Tuần +' + valid(b.currentDeckPoints) + '/10 · Donate +' + valid(b.donationPoints) + '/10 · Offline -' + valid(b.offlinePenalty)]
     ];
     bd.innerHTML = cards.map(x =>
       '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
@@ -230,32 +236,31 @@ function renderCW2Panel(member) {
 function renderCW2Chart(member) {
   const box = document.getElementById('cw2-chart-box');
   if (!box) return;
-  const hist = (member.cw2History || []).slice().reverse();
+  const hist = (member.cw2History || []).filter(h => Number.isFinite(h.decks)).slice().reverse();
+  if (!hist.length) {
+    box.textContent = 'Chưa có lịch sử Deck War đủ để vẽ biểu đồ.';
+    return;
+  }
   const W = 760, H = 230, padL = 40, padR = 20, padT = 30, padB = 40;
   const chartW = W - padL - padR, chartH = H - padT - padB;
-  const maxFame = 3600;
-  const y = f => padT + chartH - (Math.min(f, maxFame) / maxFame) * chartH;
-  const n = hist.length || 1;
-  const bw = chartW / n;
-  let bars = '', labels = '', pts = [];
+  const y = decks => padT + chartH - (Math.min(decks, 16) / 16) * chartH;
+  const bw = chartW / hist.length;
+  let bars = '', labels = '';
   hist.forEach((h, i) => {
     const x = padL + i * bw + bw * 0.15;
     const w = bw * 0.7;
-    const fame = h.fame || 0;
-    const top = y(fame);
-    const color = fame < 1600 ? '#f472b6' : '#38bdf8';
-    bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' + (padT + chartH - top) + '" fill="' + color + '" rx="3"/>';
-    bars += '<text x="' + (x + w / 2) + '" y="' + (top - 5) + '" fill="#e2e8f0" font-size="10" text-anchor="middle">' + fame + '</text>';
-    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
-    const ma = h.movingAvg || fame;
-    pts.push((x + w / 2) + ',' + y(ma));
+    const deck = h.decks;
+    const top = y(deck);
+    bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' +
+      (padT + chartH - top) + '" fill="' + (deck >= 12 ? '#38bdf8' : '#f59e0b') + '" rx="3"/>';
+    bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) +
+      '" fill="#e2e8f0" font-size="11" text-anchor="middle">' + deck + '/16</text>';
+    labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
+      '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
   });
-  const warnTop = y(1600);
-  const warn = '<rect x="' + padL + '" y="' + warnTop + '" width="' + chartW + '" height="' + (padT + chartH - warnTop) + '" fill="#f472b6" opacity="0.08"/>';
-  const ref1 = '<line x1="' + padL + '" y1="' + y(1600) + '" x2="' + (W - padR) + '" y2="' + y(1600) + '" stroke="#f472b6" stroke-dasharray="4 4" stroke-width="1"/>';
-  const ref2 = '<line x1="' + padL + '" y1="' + y(2600) + '" x2="' + (W - padR) + '" y2="' + y(2600) + '" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="1"/>';
-  const poly = pts.length ? '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3b82f6" stroke-width="2"/>' : '';
-  box.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + warn + ref1 + ref2 + bars + poly + labels + '</svg>';
+  box.innerHTML = '<p class="meta-decks-sub">Deck War đã ghi nhận (tối đa 16/kỳ) · Không sử dụng Fame ước tính</p>' +
+    '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' +
+    bars + labels + '</svg>';
 }
 
 function renderCW2History(member) {
@@ -266,14 +271,14 @@ function renderCW2History(member) {
     '<tr>' +
       '<td>' + (h.season || '') + '</td>' +
       '<td>' + (h.date || '') + '</td>' +
-      '<td>' + (h.rank || '') + '</td>' +
-      '<td>🏆 Gold</td>' +
+      '<td>' + (h.rank == null ? '—' : h.rank) + '</td>' +
+      '<td>—</td>' +
       '<td>WinterTime</td>' +
-      '<td>' + (h.decks || 0) + '</td>' +
-      '<td>' + (h.fame || 0) + '</td>' +
-      '<td>' + (h.repair || 0) + '</td>' +
-      '<td>' + (h.boatAttacks || 0) + '</td>' +
-      '<td>' + (h.total || 0) + '</td>' +
+      '<td>' + (h.decks == null ? '—' : h.decks) + '</td>' +
+      '<td>' + (h.fameVerified && h.fame != null ? h.fame : '—') + '</td>' +
+      '<td>' + (h.repair == null ? '—' : h.repair) + '</td>' +
+      '<td>' + (h.boatAttacks == null ? '—' : h.boatAttacks) + '</td>' +
+      '<td>' + (h.fameVerified && h.total != null ? h.total : '—') + '</td>' +
     '</tr>'
   ).join('');
 }
@@ -287,18 +292,18 @@ function renderTable(clan) {
     if (q && !(m.name.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))) return false;
     return true;
   });
-  rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  rows.sort((a, b) => ((b[sortBy] ?? -1) - (a[sortBy] ?? -1)) || String(a.tag).localeCompare(String(b.tag)));
   tbody.innerHTML = rows.map((m, i) => {
-    const pct = Math.round(m.score || 0);
+    const pct = Number.isFinite(m.score) ? m.score : null;
     const decks = (m.cw2History || []).slice(0, 6).map(h => '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '">' + h.decks + '</span>').join('');
     return '<tr class="member-row-clickable" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
       '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
-      '<td>' + (m.warParticipation ?? 0) + '% · ' + (m.warFame || 0) + ' Fame<div class="deck-mini-list">' + decks + '</div></td>' +
+      '<td>' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ' · Fame TB ' + (m.warFame == null ? '—' : m.warFame) + '<div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
-      '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
+      '<td><div class="score-bar"><div class="score-fill" style="width:' + (pct == null ? 0 : pct) + '%"></div></div><small>' + (pct == null ? '—' : pct + '/100') + '</small></td>' +
       '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
       '</tr>';
   }).join('');
@@ -330,7 +335,7 @@ function showKickList() {
   const kicks = currentClan.members.filter(m => m.status === 'kick');
   out.innerHTML = kicks.length
     ? '<ul>' + kicks.map(m => '<li><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span> — ' + (m.reason || '') + '</li>').join('') + '</ul>'
-    : '<p>Không có thành viên nào cần kick.</p>';
+    : '<p>Không có thành viên nào cần xem xét do bỏ War liên tiếp.</p>';
   out.removeAttribute('hidden');
 }
 
@@ -341,9 +346,9 @@ function updateLastUpdatedUI(dt, details = {}) {
     const now = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const warDate = /^\d{4}-\d{2}-\d{2}$/.test(details.warDate || '')
       ? details.warDate.split('-').reverse().join('/') : 'chưa rõ';
-    const prefix = details.fallback ? 'Dữ liệu dự phòng' : 'RoyaleTrack Live';
+    const prefix = details.fallback ? 'Dữ liệu dự phòng' : 'RoyaleTrack · CSV có thể chậm 5 phút';
     const freshness = details.stale ? ' · Lịch sử War đã cũ' : '';
-    const estimate = details.estimated ? ' · Fame ước tính' : '';
+    const estimate = details.estimated ? ' · Fame lịch sử chưa được xác thực' : '';
     el.textContent = prefix + ' · War ' + warDate + ' · Đồng bộ ' + now + freshness + estimate;
   }
 }
@@ -408,7 +413,7 @@ function saveClanDatabase(clan) {
   const today = new Date().toISOString().slice(0, 10);
   snapshots = snapshots.filter(s => s && s.date !== today);
   snapshots.push({ date: today, season: clan?.warSeasons?.[0]?.season || 'unknown', membersCount: clan.members.length, avgScore: clan.avgScore, mvpName: clan.mvpName });
-  const db = { schemaVersion: '2.1', updatedAt: clan?.updatedAt || new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: clan?.rawClanScore || 130593, clanWarTrophies: clan?.clanWarTrophies || 2369, membersCount: clan.members.length }, warSeasonsMeta: clan?.warSeasons || [], topMetaDecks: CA.TOP_META_DECKS || [], snapshots, members: clan.members };
+  const db = { schemaVersion: '2.1', updatedAt: clan?.updatedAt || new Date().toISOString(), clan: { tag: '#GYQJL9GV', name: 'WinterTime', clanScore: clan?.rawClanScore ?? null, clanWarTrophies: clan?.clanWarTrophies ?? null, membersCount: clan.members.length }, warSeasonsMeta: clan?.warSeasons || [], topMetaDecks: CA.TOP_META_DECKS || [], snapshots, members: clan.members };
   window.__wintertimeDB = db;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
   return db;
@@ -479,21 +484,21 @@ function renderTable(clan) {
     if (q && !(m.name.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))) return false;
     return true;
   });
-  rows.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  rows.sort((a, b) => ((b[sortBy] ?? -1) - (a[sortBy] ?? -1)) || String(a.tag).localeCompare(String(b.tag)));
   tbody.innerHTML = rows.map((m, i) => {
-    const pct = Math.round(m.score || 0);
-    const totalFame = m.contribution?.totalFame10Wars || ((m.warFame || 0) * 10);
+    const pct = Number.isFinite(m.score) ? m.score : null;
+    const observedDecks = m.contribution?.totalDecks10Wars ?? 0;
     const decks = (m.cw2History || []).slice(0, 8).map(h =>
-      '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '" title="' + h.season + ': ' + h.decks + ' deck · ' + h.fame + ' Fame">' + h.decks + '</span>'
+      '<span class="deck-pill ' + (h.decks >= 16 ? 'deck-full' : h.decks >= 8 ? 'deck-mid' : h.decks > 0 ? 'deck-low' : 'deck-zero') + '" title="' + h.season + ': ' + h.decks + ' deck · ' + ' Deck ghi nhận">' + h.decks + '</span>'
     ).join('');
     return '<tr class="member-row-clickable' + (m.tag === selectedMemberTag ? ' member-row-active' : '') + '" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
       '<td><span class="role-badge">' + m.roleLabel + '</span></td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
-      '<td><strong>' + totalFame.toLocaleString() + ' Fame</strong> <small>(' + (m.warFame || 0) + '/tuần · ' + (m.warParticipation ?? 0) + '%)</small><div class="deck-mini-list">' + decks + '</div></td>' +
+      '<td><strong>' + observedDecks.toLocaleString() + ' Deck đã ghi nhận</strong> <small>(Fame TB nguồn: ' + (m.warFame == null ? '—' : m.warFame) + ' · Tham gia: ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
-      '<td><div class="score-bar"><div class="score-fill" style="width:' + pct + '%"></div></div><small>' + pct + '/100</small></td>' +
+      '<td><div class="score-bar"><div class="score-fill" style="width:' + (pct == null ? 0 : pct) + '%"></div></div><small>' + (pct == null ? '—' : pct + '/100') + '</small></td>' +
       '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
       '</tr>';
   }).join('');
@@ -551,7 +556,7 @@ function statusBadge(s) {
   };
   updateSyncBadge();
   setInterval(() => {
-    fetchClan().then(updateSyncBadge).catch(() => {});
+    fetchClan().catch(() => {});
   }, 60000);
 })();
 
@@ -563,14 +568,15 @@ function statusBadge(s) {
 
 function buildPodiumCard(m, cls, crest, crown) {
   if (!m) return '';
-  const tot = m.contribution?.totalFame10Wars || ((m.warFame || 0) * 10);
+  const recentDecks = m.contribution?.completedDecks ?? 0;
+  const observedWeeks = m.contribution?.observedWeeks ?? 0;
   return '<div class="podium-card ' + cls + '" data-tag="' + m.tag + '">' +
     '<div class="podium-rank-crest">' + crest + '</div>' +
     '<div class="podium-avatar-wrap">' + crown + '<span>' + (m.name || 'W').slice(0, 2).toUpperCase() + '</span></div>' +
     '<div class="podium-name">' + m.name + '</div>' +
     '<div class="podium-meta">' + m.roleLabel + ' · <span class="tag-mono">' + m.tag + '</span></div>' +
-    '<div class="podium-fame-Main">💎 ' + tot.toLocaleString() + ' Fame</div>' +
-    '<div class="podium-metrics"><span class="podium-metric-pill">⚡ ' + Math.round(m.score || 0) + '/100 đ</span><span class="podium-metric-pill">⚔️ ' + (m.warParticipation ?? 100) + '% War</span><span class="podium-metric-pill">🎁 ' + (m.donations || 0) + ' Donate</span></div></div>';
+    '<div class="podium-fame-Main">⚔️ ' + recentDecks + '/' + (observedWeeks * 16) + ' Deck · ' + observedWeeks + ' kỳ War</div>' +
+    '<div class="podium-metrics"><span class="podium-metric-pill">⭐ ' + m.score + '/100 điểm hoạt động</span><span class="podium-metric-pill">⚔️ ' + (m.warParticipation ?? '—') + '% War</span><span class="podium-metric-pill">🎁 ' + m.donations + ' Donate</span></div></div>';
 }
 
 function renderTop3Podium(clan) {
@@ -583,8 +589,8 @@ function renderTop3Podium(clan) {
     const ref = document.getElementById('cw2-clan-panel') || document.getElementById('cw2-history-panel') || document.querySelector('.toolbar-bento');
     if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref);
   }
-  const top = clan.members.slice().sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((b.warFame || 0) - (a.warFame || 0)));
-  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME HALL OF FAME ★</span><h2 class="podium-title">Top 3 Cống Hiến Xuất Sắc Nhất Clan</h2></div><div class="podium-stage">' +
+  const top = window.WintertimeContribution.rankMembers(clan.members).slice(0, 3);
+  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME ACTIVITY SCORE ★</span><h2 class="podium-title">Top 3 Đóng Góp · Điểm Hoạt Động Nội Bộ</h2><p class="meta-decks-sub">40% tham gia War · 40% Deck 4 kỳ gần nhất · 10% Deck tuần này · 10% Donate · Trừ điểm offline. Không phải bảng xếp hạng chính thức.</p></div><div class="podium-stage">' +
     buildPodiumCard(top[1], 'podium-2nd', '🥈 2ND · Á QUÂN', '') +
     buildPodiumCard(top[0], 'podium-1st', '🏆 1ST · MVP CHỦ LỰC', '<span class="podium-crown">👑</span>') +
     buildPodiumCard(top[2], 'podium-3rd', '🥉 3RD · HẠNG BA', '') + '</div>';
@@ -646,7 +652,7 @@ const _prevTop3 = renderTop3Podium;
 renderTop3Podium = function(clan) {
   _prevTop3(clan);
   const t = document.querySelector('#top3-podium-section .podium-title');
-  if (t) t.textContent = 'Top 3 C?ng Hi?n Xu?t S?c Nh?t Clan';
+  if (t) t.textContent = 'Top 3 Đóng Góp · Điểm Hoạt Động Nội Bộ';
 };
 document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-trigger')?.addEventListener('click', () => {
   const inp = document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-search');
@@ -668,7 +674,7 @@ renderMetaDecks();
 renderTop3Podium = function(clan) {
   _prevTop3(clan);
   const t = document.querySelector('#top3-podium-section .podium-title');
-  if (t) t.textContent = 'Top 3 Cống Hiến Xuất Sắc Nhất Clan';
+  if (t) t.textContent = 'Top 3 Đóng Góp · Điểm Hoạt Động Nội Bộ';
 };
 renderTop3Podium(currentClan);
 const mhTitle = document.querySelector('#meta-decks-section .meta-decks-title');
@@ -732,46 +738,36 @@ function renderClanCW2Panel(clan) {
   const limit = Number(rangeSel?.value) || 5;
   const fullHist = Array.isArray(clan.cw2ClanHistory) ? clan.cw2ClanHistory : [];
   const slice = fullHist.slice(0, limit);
-  const latest = slice[0] || { season: '137-4', fame: 60500, decks: 355, participants: 37, movingAvg: 61981, rank: 1 };
-  const totalFame = slice.reduce((s, x) => s + (Number(x.fame) || 0), 0);
+  const latest = slice[0] || { season: '—', decks: 0, participants: 0, observed: 0, rank: null };
   const totalDecks = slice.reduce((s, x) => s + (Number(x.decks) || 0), 0);
-  const avgFame = slice.length ? Math.round(totalFame / slice.length) : 0;
-  const rank1Count = slice.filter(x => Number(x.rank) === 1).length;
-  const maxPossibleDecks = Math.max(1, slice.length * (clan.members?.length || 46) * 16);
-  const partPct = Math.min(100, Math.round((totalDecks / maxPossibleDecks) * 100));
+  const observedSlots = slice.reduce((s, x) => s + (Number(x.observed) || 0), 0);
+  const partPct = observedSlots ? Math.min(100, Math.round(totalDecks / (observedSlots * 16) * 100)) : null;
+  const eligibleCount = window.WintertimeContribution.rankMembers(clan.members).length;
 
   const meta = document.getElementById('cw2-clan-meta');
   if (meta) {
     meta.innerHTML =
       '<strong>🏰 Toàn Clan ' + (clan.name || 'WinterTime') + '</strong> ' +
       '<span class="tag-mono">' + (clan.tag || '#GYQJL9GV') + '</span> ' +
-      '<span class="role-badge">🏆 Gold League · ' + (clan.clanWarTrophies || 2369).toLocaleString('en-US') + ' Cúp War</span> ' +
+      '<span class="role-badge">🏆 Gold League · ' + (clan.clanWarTrophies == null ? '— (chưa xác minh)' : clan.clanWarTrophies.toLocaleString('en-US')) + ' Cúp War</span> ' +
       '<span class="badge badge-good">' + (latest.rank == null ? 'Chưa có hạng xác thực' : 'Hạng #' + latest.rank + ' River Race') + '</span>';
   }
 
   const bd = document.getElementById('cw2-clan-breakdown');
   if (bd) {
     const cards = [
-      [
-        'Điểm Cống Hiến Toàn Clan',
-        Math.round(clan.avgScore || 84) + '/100',
-        'Thắng Hạng #1: ' + rank1Count + '/' + slice.length + ' mùa (' + (clan.counts?.good || 0) + ' TV Ưu tú)'
-      ],
-      [
-        'Điểm War Fame Toàn Clan (Chuẩn 50,000+)',
-        (latest.fame || 0).toLocaleString('en-US') + ' Fame/tuần',
-        'TB ' + slice.length + ' mùa: ' + avgFame.toLocaleString('en-US') + ' Fame/tuần'
-      ],
-      [
-        'Chuyên Cần Sử Dụng Deck Toàn Clan',
-        partPct + '% (' + totalDecks.toLocaleString('en-US') + ' deck/' + slice.length + ' mùa)',
-        'Mùa ' + (latest.season || '137-4') + ': ' + (latest.decks || 0) + ' deck · ' + (latest.participants || 0) + '/' + (clan.members?.length || 46) + ' TV tham chiến'
-      ],
-      [
-        'Moving Avg (4 mùa gần nhất) & Tổng Donate',
-        (latest.movingAvg || latest.fame || 0).toLocaleString('en-US') + ' Fame · Tặng ' + (clan.totalDonations || 0).toLocaleString('en-US'),
-        'Tổng Fame ' + slice.length + ' mùa: ' + totalFame.toLocaleString('en-US') + ' Fame'
-      ]
+      ['Điểm hoạt động nội bộ toàn Clan',
+        clan.avgScore == null ? 'Chưa đủ dữ liệu' : clan.avgScore + '/100',
+        eligibleCount + '/' + clan.members.length + ' thành viên đủ dữ liệu · ' + (clan.counts?.good || 0) + ' thành viên Ưu tú'],
+      ['Deck War của thành viên hiện tại',
+        totalDecks.toLocaleString('en-US') + ' Deck',
+        'Số Deck quan sát được trên ' + observedSlots + ' lượt người-kỳ · Không phải tổng War chính thức'],
+      ['Chuyên cần sử dụng Deck',
+        partPct == null ? 'Chưa đủ dữ liệu' : partPct + '%',
+        'Trong các kỳ có dữ liệu Deck · ' + (latest.participants || 0) + ' thành viên đã đánh kỳ gần nhất'],
+      ['Fame và hạng War chính thức',
+        'Chưa có dữ liệu xác thực',
+        'Không cộng Fame ước tính, không tự gán hạng 1 hoặc 2. Donate: ' + (clan.totalDonations || 0).toLocaleString('en-US')]
     ];
     bd.innerHTML = cards.map(x =>
       '<div class="cw2-stat-card"><div class="cw2-stat-title">' + x[0] + '</div><div class="cw2-stat-value">' + x[1] + '</div><div class="cw2-stat-sub">' + x[2] + '</div></div>'
@@ -783,29 +779,24 @@ function renderClanCW2Panel(clan) {
     const hist = slice.slice().reverse();
     const W = 760, H = 230, padL = 46, padR = 20, padT = 30, padB = 40;
     const chartW = W - padL - padR, chartH = H - padT - padB;
-    const maxFame = 75000;
-    const y = f => padT + chartH - (Math.min(f, maxFame) / maxFame) * chartH;
-    const n = hist.length || 1;
-    const bw = chartW / n;
-    let bars = '', labels = '', pts = [];
+    const maxDecks = Math.max(1, ...hist.map(h => Math.max(h.decks || 0, (h.observed || 0) * 16)));
+    const y = decks => padT + chartH - (Math.min(decks, maxDecks) / maxDecks) * chartH;
+    const bw = chartW / (hist.length || 1);
+    let bars = '', labels = '';
     hist.forEach((h, i) => {
       const x = padL + i * bw + bw * 0.15;
       const w = bw * 0.7;
-      const fame = Number(h.fame) || 0;
-      const top = y(fame);
-      const color = fame < 50000 ? '#f472b6' : '#38bdf8';
-      bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' + (padT + chartH - top) + '" fill="' + color + '" rx="3"/>';
-      bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) + '" fill="#e2e8f0" font-size="10" font-weight="600" text-anchor="middle">' + fame.toLocaleString('en-US') + '</text>';
-      labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) + '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + ' (' + (h.rank == null ? '?' : '#' + h.rank) + ')</text>';
-      const ma = Number(h.movingAvg) || fame;
-      pts.push((x + w / 2) + ',' + y(ma));
+      const decks = Number(h.decks) || 0;
+      const top = y(decks);
+      bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' +
+        (padT + chartH - top) + '" fill="#38bdf8" rx="3"/>';
+      bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) +
+        '" fill="#e2e8f0" font-size="10" text-anchor="middle">' + decks + ' Deck</text>';
+      labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
+        '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
     });
-    const warnTop = y(50000);
-    const warn = '<rect x="' + padL + '" y="' + warnTop + '" width="' + chartW + '" height="' + (padT + chartH - warnTop) + '" fill="#f472b6" opacity="0.08"/>';
-    const ref1 = '<line x1="' + padL + '" y1="' + y(50000) + '" x2="' + (W - padR) + '" y2="' + y(50000) + '" stroke="#f472b6" stroke-dasharray="4 4" stroke-width="1"/>';
-    const ref2 = '<line x1="' + padL + '" y1="' + y(60000) + '" x2="' + (W - padR) + '" y2="' + y(60000) + '" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="1"/>';
-    const poly = pts.length ? '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3b82f6" stroke-width="2.2"/>' : '';
-    chartBox.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + warn + ref1 + ref2 + bars + poly + labels + '</svg>';
+    chartBox.innerHTML = '<p class="meta-decks-sub">Deck của các thành viên hiện tại theo từng kỳ War (dữ liệu quan sát được, không phải Fame chính thức)</p>' +
+      '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + bars + labels + '</svg>';
   }
 
   const tbody = document.getElementById('cw2-clan-history-tbody');
@@ -815,14 +806,14 @@ function renderClanCW2Panel(clan) {
         '<td>' + (h.season || '') + '</td>' +
         '<td>' + (h.date || '') + '</td>' +
         '<td>' + (h.rank == null ? '—' : Number(h.rank) === 1 ? '🥇 1' : ('#' + h.rank)) + '</td>' +
-        '<td>🏆 Gold</td>' +
+        '<td>—</td>' +
         '<td>' + (h.clan || 'WinterTime') + '</td>' +
         '<td>' + (h.participants || 0) + '/' + (h.membersCount || 46) + ' TV</td>' +
         '<td>' + (h.decks || 0).toLocaleString('en-US') + '</td>' +
-        '<td><strong>' + (h.fame || 0).toLocaleString('en-US') + '</strong></td>' +
-        '<td>' + (h.avgPerParticipant || 0).toLocaleString('en-US') + '</td>' +
+        '<td><strong>' + (h.fame == null ? '—' : h.fame.toLocaleString('en-US')) + '</strong></td>' +
+        '<td>' + (h.avgPerParticipant == null ? '—' : h.avgPerParticipant.toLocaleString('en-US')) + '</td>' +
         '<td>' + (h.raceTarget || 'Colosseum') + '</td>' +
-        '<td><strong>' + (h.total || h.fame || 0).toLocaleString('en-US') + '</strong></td>' +
+        '<td><strong>' + (h.total == null ? '—' : h.total.toLocaleString('en-US')) + '</strong></td>' +
       '</tr>'
     ).join('');
   }
@@ -864,7 +855,7 @@ renderMetaDecks = function() {
   const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
   const px = 'https://wsrv.nl/?url=cdns3.royaleapi.com/static/img/cards/v11-a8e42334/';
   const syncTime = lastUpdated instanceof Date ? (' · Cập nhật ' + lastUpdated.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })) : '';
-  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Meta Season</h2><div class="meta-decks-sub">Nguồn: RoyaleAPI Live Meta' + syncTime + '</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
+  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Meta Season</h2><div class="meta-decks-sub">Nguồn: RoyaleTrack Meta (cập nhật theo cache nguồn)' + syncTime + '</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
     decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">Rating ' + d.rating + '</span><span class="meta-pill">Usage ' + (d.usage || '1.0%') + '</span><span class="meta-pill meta-pill-win">Wins ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">💧 ' + d.elixir + ' · Cycle ' + d.cycle + '</span>' + (d.copyUrl ? '<a class="meta-pill" href="' + d.copyUrl + '" target="_blank" rel="noopener">Copy Deck ↗</a>' : '') + '<a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div><div class="meta-cards-row">' +
       d.cards.map((c, idx) => {
         const imgSrc = (Array.isArray(d.cardImages) && d.cardImages[idx]) ? d.cardImages[idx] : (px + c + '.png&w=150&output=png');
@@ -876,13 +867,13 @@ renderSummary = function(clan) {
   const el = document.getElementById('clan-summary');
   if (!el) return;
   const avg = Math.round(clan?.avgScore || 0);
-  const cScore = (clan?.rawClanScore || 130593).toLocaleString('en-US');
-  const wTrophies = (clan?.clanWarTrophies || 2369).toLocaleString('en-US');
+  const cScore = (clan?.rawClanScore == null ? '—' : clan.rawClanScore.toLocaleString('en-US'));
+  const wTrophies = (clan?.clanWarTrophies == null ? '—' : clan.clanWarTrophies.toLocaleString('en-US'));
   el.innerHTML =
     '<div class="hero-stats">' +
-      '<div><span class="kpi-label">Điểm Clan</span><strong>' + cScore + '</strong></div>' +
+      '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong>' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
-      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 };
@@ -948,14 +939,14 @@ renderSummary = function(clan) {
   const avg = Math.round(clan?.avgScore || 0);
   const cnt = clan?.counts || { good: 0, warning: 0, kick: 0 };
   const total = clan?.members?.length || 0;
-  const cScore = (clan?.rawClanScore || 130593).toLocaleString('en-US');
-  const wTrophies = (clan?.clanWarTrophies || 2369).toLocaleString('en-US');
+  const cScore = (clan?.rawClanScore == null ? '—' : clan.rawClanScore.toLocaleString('en-US'));
+  const wTrophies = (clan?.clanWarTrophies == null ? '—' : clan.clanWarTrophies.toLocaleString('en-US'));
   document.querySelectorAll('.kpi-grid').forEach(g => { g.style.display = 'none'; });
   el.innerHTML =
     '<div class="hero-stats hero-stats-unified">' +
-      '<div><span class="kpi-label">Điểm Clan</span><strong id="kpi-clan-score">' + cScore + '</strong></div>' +
+      '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong id="kpi-clan-score">' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong id="kpi-war-trophies">' + wTrophies + '</strong></div>' +
-      '<div><span class="kpi-label">Điểm TB</span><strong>' + avg + '/100</strong></div>' +
+      '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members" style="color:#38bdf8">' + total + '/50</strong></div>' +
       '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good" style="color:#10b981">' + (cnt.good || 0) + '</strong></div>' +
       '<div><span class="kpi-label">Mức Trung Bình</span><strong id="kpi-warning" style="color:#f59e0b">' + (cnt.warning || 0) + '</strong></div>' +
@@ -993,7 +984,7 @@ fetchClan = async function() {
           const stale = !isLatestCompletedWarWeek(warDate);
           updateLastUpdatedUI(lastUpdated, {
             warDate, fallback, stale,
-            estimated: Boolean(d.warHistoryQuality?.fame?.includes('estimated'))
+            estimated: Boolean(d.warHistoryQuality?.fame && d.warHistoryQuality.fame !== 'verified')
           });
           updateLiveIndicator(!fallback && !stale);
           return;
