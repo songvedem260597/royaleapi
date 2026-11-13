@@ -29,7 +29,8 @@ test('all observed members use only source Deck, participation, donation, inacti
 test('official clan race values exist while unknown player Fame remains null', () => {
   const clan = analyzeSnapshot();
   assert.equal(clan.cw2ClanHistory[0].rank, 1);
-  assert.equal(clan.cw2ClanHistory[0].fame, 10000);
+  assert.equal(clan.cw2ClanHistory[0].fame, 63750);
+  assert.equal(clan.cw2ClanHistory[0].riverProgress, 10000);
   assert.equal(clan.cw2ClanHistory[0].decks, 412);
   assert.equal(clan.cw2ClanHistory[0].league, 'Vàng II');
   assert.ok(clan.cw2ClanHistory.every(h => h.verified && h.rank != null && h.fame != null));

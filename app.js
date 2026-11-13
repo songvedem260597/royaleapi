@@ -763,9 +763,9 @@ function renderClanCW2Panel(clan) {
       ['Điểm hoạt động nội bộ',
         clan.avgScore == null ? 'Chưa đủ dữ liệu' : clan.avgScore + '/100',
         eligibleCount + '/' + clan.members.length + ' thành viên đủ dữ liệu · ' + (clan.counts?.good || 0) + ' thành viên Ưu tú'],
-      ['Fame Clan đã xác minh',
+      ['Fame đóng góp toàn Clan',
         latest.fame == null ? 'Chưa có số liệu' : latest.fame.toLocaleString('en-US') + ' Fame',
-        verifiedWars + '/' + slice.length + ' kỳ War có log API · TB ' +
+        verifiedWars + '/' + slice.length + ' kỳ War · Cộng Fame từ người tham chiến (không phải mốc thuyền 10.000) · TB ' +
         (latest.avgPerParticipant == null ? '—' : latest.avgPerParticipant.toLocaleString('en-US')) + ' Fame/người đã tham chiến'],
       ['Deck War toàn Clan',
         totalDecks.toLocaleString('en-US') + ' Deck',
@@ -774,7 +774,7 @@ function renderClanCW2Panel(clan) {
       ['Hạng War · Cúp hiện tại',
         (latest.rank == null ? '—' : '#' + latest.rank) + ' · ' +
         (clan.clanWarTrophies == null ? '—' : clan.clanWarTrophies.toLocaleString('en-US') + ' Cúp'),
-        'Đổi cúp kỳ gần nhất: ' + (latest.trophyChange == null ? '—' :
+        'Tiến độ thuyền/Colosseum: ' + (latest.raceTarget || '—') + ' · Đổi cúp kỳ gần nhất: ' + (latest.trophyChange == null ? '—' :
           (latest.trophyChange >= 0 ? '+' : '') + latest.trophyChange) +
         ' · Nguồn: WarStats (bộ nhớ đệm Clash Royale API)']
     ];
@@ -815,9 +815,9 @@ function renderClanCW2Panel(clan) {
     note.textContent = verifiedWars + '/' + slice.length +
       ' kỳ có kết quả từ Clash Royale API qua WarStats (bộ nhớ đệm; cập nhật nguồn: ' + lastSourceSync + ')' +
       (clan.warLogStale ? ' · ĐANG DÙNG BẢN ĐỆM CŨ' : '') +
-      '. Fame/Deck/Hạng là số toàn Clan trong log. Cột Tham gia tính theo các thành viên hiện tại;' +
+      '. Fame đóng góp = tổng fame của tất cả người tham chiến trong War Log, không bị giới hạn ở mốc thuyền 10.000. Cột Đích War dùng tiến độ thuyền (Colosseum là tuần cuối mùa). Cột Tham gia tính theo các thành viên hiện tại;' +
       ' TB/TV chia theo toàn bộ người đã tham chiến (có thể gồm người đã rời Clan).' +
-      ' Fame từng người trong lịch sử chưa được nguồn RoyaleTrack cung cấp.';
+      ' Fame từng người trong bảng riêng chưa được đồng bộ từ nguồn War Log.';
   }
 
   const tbody = document.getElementById('cw2-clan-history-tbody');
@@ -831,10 +831,10 @@ function renderClanCW2Panel(clan) {
         '<td>' + (h.clan || 'WinterTime') + '</td>' +
         '<td title="Số người thuộc Clan hiện tại đã đánh Deck. Tổng người tham chiến trong log: ' + (h.officialParticipants == null ? '—' : h.officialParticipants) + ' (có thể gồm thành viên đã rời Clan)">' + h.participants + '/' + h.membersCount + ' TV</td>' +
         '<td title="' + (h.officialDecks ? 'Tổng Deck lấy từ River Race Log' : 'Deck của thành viên hiện tại') + '">' + (h.decks || 0).toLocaleString('en-US') + '</td>' +
-        '<td><strong>' + (h.fame == null ? '—' : h.fame.toLocaleString('en-US')) + '</strong></td>' +
+        '<td title="Tổng Fame cộng từ participants[].fame của River Race Log (không phải tiến độ thuyền)"><strong>' + (h.fame == null ? '—' : h.fame.toLocaleString('en-US')) + '</strong></td>' +
         '<td>' + (h.avgPerParticipant == null ? '—' : h.avgPerParticipant.toLocaleString('en-US')) + '</td>' +
-        '<td>' + (h.raceTarget || 'Colosseum') + '</td>' +
-        '<td title="Tổng Fame + Repair ghi nhận trong War Log; thay đổi cúp sau kỳ War"><strong>' + (h.total == null ? '—' : h.total.toLocaleString('en-US')) + '</strong>' + (h.trophyChange == null ? '' : ' <small>(' + (h.trophyChange >= 0 ? '+' : '') + h.trophyChange + ' 🏆)</small>') + '</td>' +
+        '<td title="Tiến độ thuyền River Race (giới hạn 10.000) hoặc tuần Colosseum">' + (h.raceTarget || 'Chưa xác minh') + '</td>' +
+        '<td title="Thay đổi cúp War sau khi kết thúc kỳ"><strong>' + (h.trophyChange == null ? '—' : (h.trophyChange >= 0 ? '+' : '') + h.trophyChange + ' 🏆') + '</strong></td>' +
       '</tr>'
     ).join('');
   }

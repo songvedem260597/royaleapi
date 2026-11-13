@@ -25,7 +25,10 @@
     const r = roster || {};
     const verified = meta?.aggregatesVerified === true
       && Boolean(meta.warResultSource && meta.warResultSource !== 'unavailable');
-    const fame = verified ? numeric(meta.clanFame) : null;
+    // In normal River Races clan.fame is capped at 10,000 movement points.
+    // Use the uncapped sum of the official participants[].fame for Clan Medals.
+    const riverProgress = verified ? numeric(meta.clanFame) : null;
+    const fame = verified && meta.clanMedalsVerified === true ? numeric(meta.clanMedals) : null;
     const repair = verified ? numeric(meta.repairPoints) : null;
     const officialDecks = verified ? numeric(meta.clanDecks) : null;
     const historicalCount = verified ? numeric(meta.warParticipants) : null;
@@ -33,10 +36,14 @@
     const warTrophiesAtRace = verified ? numeric(meta.warTrophiesAtRace) : null;
     const avgPerParticipant = fame != null && historicalCount > 0
       ? Math.round(fame / historicalCount) : null;
-    const total = fame != null && repair != null ? fame + repair : null;
-    const raceTarget = fame == null ? 'Chưa xác minh'
-      : fame > 10000 ? 'Colosseum'
-        : fame.toLocaleString('en-US') + '/10,000';
+    const total = fame;
+    const date = verified && /^\d{4}-\d{2}-\d{2}$/.test(meta.date || '')
+      ? new Date(meta.date + 'T00:00:00Z') : null;
+    // Colosseum is the final week, closing on the first Monday of the next month.
+    const isColosseum = Boolean(date && date.getUTCDay() === 1 && date.getUTCDate() <= 7);
+    const raceTarget = riverProgress == null ? 'Chưa xác minh'
+      : isColosseum ? 'Colosseum'
+        : Math.min(riverProgress, 10000).toLocaleString('en-US') + '/10,000';
     return {
       season: meta?.season || null,
       date: meta?.date || null,
@@ -51,6 +58,10 @@
       officialDecks: officialDecks != null,
       rosterDecks: numeric(r.decks) ?? 0,
       fame,
+      riverProgress,
+      isColosseum,
+      medalsVerified: fame != null,
+      medalSource: fame != null ? 'sum of official participants Fame' : 'unavailable',
       repair,
       boatAttacks: null,
       avgPerParticipant,
