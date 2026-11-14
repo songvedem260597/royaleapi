@@ -206,7 +206,7 @@ function renderKPIs(clan) {
 }
 
 function statusBadge(s) {
-  const map = { good: ['badge-good', 'Tốt'], warning: ['badge-warning', 'Cảnh báo'], kick: ['badge-kick', 'Kick'] };
+  const map = { good: ['badge-good', 'Ưu tú'], warning: ['badge-warning', 'Cảnh báo'], kick: ['badge-kick', 'Kick'] };
   const [cls, label] = map[s] || ['badge-warning', s];
   return '<span class="badge ' + cls + '">' + label + '</span>';
 }
@@ -223,8 +223,13 @@ function renderCW2Panel(member) {
   }
   const meta = document.getElementById('cw2-player-meta');
   if (meta) {
+    const personalAverage = member.warEvaluation?.averageFame;
+    const averageSummary = personalAverage == null ? 'Chưa đủ Fame xác minh' :
+      'Fame TB ' + Math.round(personalAverage).toLocaleString('en-US') + ' · ' +
+      member.warEvaluation.averagedWarWeeks + ' kỳ xác minh';
     meta.innerHTML = '<strong>' + member.name + '</strong> <span class="tag-mono">' + member.tag + '</span> ' +
-      '<span class="role-badge">' + member.roleLabel + '</span> ' + statusBadge(member.status);
+      '<span class="role-badge">' + member.roleLabel + '</span> ' + statusBadge(member.status) +
+      ' <span class="cw2-personal-average" title="Lịch sử War cá nhân hiện có; chưa xác minh ngày gia nhập Clan">' + averageSummary + '</span>';
   }
   const link = document.getElementById('cw2-royaleapi-link');
   if (link) link.href = 'https://royaleapi.com/player/' + member.tag.replace('#', '');
@@ -518,7 +523,10 @@ function renderTable(clan) {
       '<td><strong>🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame kỳ ' + (m.warEvaluation?.latestSeason || '—') + '</strong> <small>(' + observedDecks + ' Deck đã xác minh / ' + (m.verifiedWarWeeks || 0) + ' kỳ · War ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + (pct == null ? 0 : pct) + '%"></div></div><small>' + (pct == null ? '—' : pct + '/100') + '</small></td>' +
-      '<td><div class="cell-eval">' + statusBadge(m.status) + '<button type="button" class="btn btn-ghost btn-sm" aria-label="Xem chi tiết War của thành viên">Chi tiết War</button></div><span class="sr-only">' + (m.reason || '') + '</span></td>' +
+      '<td><div class="cell-eval">' + statusBadge(m.status) +
+        '<span class="member-average" title="Fame trung bình từ mọi kỳ War cá nhân đã xác minh; chưa xác minh ngày gia nhập Clan">TB ' +
+        (m.warEvaluation?.averageFame == null ? '—' : Math.round(m.warEvaluation.averageFame).toLocaleString('en-US') + ' Fame / ' + m.warEvaluation.averagedWarWeeks + ' kỳ') +
+        '</span><button type="button" class="btn btn-ghost btn-sm" aria-label="Xem chi tiết War của thành viên">Chi tiết War</button></div><span class="sr-only">' + (m.reason || '') + '</span></td>' +
       '</tr>';
   }).join('');
   tbody.querySelectorAll('.member-row-clickable').forEach(tr => {
@@ -535,7 +543,7 @@ renderTable(currentClan);
 
 function statusBadge(s) {
   const map = {
-    good: ['badge-good', 'Tốt'],
+    good: ['badge-good', 'Ưu tú'],
     warning: ['badge-warning', 'Cảnh báo'],
     average: ['badge-average', 'Trung bình'],
     unknown: ['badge-unknown', 'Chưa đủ dữ liệu'],
@@ -551,7 +559,7 @@ function statusBadge(s) {
     const optGood = filterSel.querySelector('option[value="good"]');
     const optWarn = filterSel.querySelector('option[value="warning"]');
     const optKick = filterSel.querySelector('option[value="kick"]');
-    if (optGood) optGood.textContent = 'Tốt';
+    if (optGood) optGood.textContent = 'Ưu tú';
     if (optWarn) optWarn.textContent = 'Cảnh báo (≤400 Fame)';
     if (optKick) optKick.textContent = 'Đề xuất xét Kick';
     upgradeCustomSelects();
@@ -562,7 +570,7 @@ function statusBadge(s) {
       else if (m.status === 'average') m.statusLabel = 'Trung bình';
       else if (m.status === 'unknown') m.statusLabel = 'Chưa đủ dữ liệu';
       else if (m.status === 'kick') m.statusLabel = 'Đề xuất xét Kick';
-      else if (m.status === 'good') m.statusLabel = 'Tốt';
+      else if (m.status === 'good') m.statusLabel = 'Ưu tú';
     });
     render();
   }

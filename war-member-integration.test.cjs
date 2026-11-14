@@ -11,17 +11,27 @@ const context={window:{WintertimeContribution:scorer,WintertimeWarHistory:warHis
 vm.runInNewContext(fs.readFileSync('clan-analytics.js','utf8'),context,{filename:'clan-analytics.js'});
 const clan=context.window.ClanAnalytics.analyzeClan(snapshot);
 
-test('50 actual WinterTime members classify by verified latest weekly Fame and never by internal score',()=>{
+test('50 WinterTime members classify by all personally verified War Fame, not latest-only',()=>{
  assert.equal(clan.members.length,50);
- assert.equal(clan.counts.good,19);
- assert.equal(clan.counts.average,14);
- assert.equal(clan.counts.warning,12);
+ assert.equal(clan.counts.good,21);
+ assert.equal(clan.counts.average,17);
+ assert.equal(clan.counts.warning,7);
  assert.equal(clan.counts.kick,1);
  assert.equal(clan.counts.unknown,4);
  assert.equal(Object.values(clan.counts).reduce((s,n)=>s+n,0)-clan.counts.total,50);
- assert.ok(clan.members.filter(m=>m.status==='good').every(m=>m.latestFame>=1600));
- assert.ok(clan.members.filter(m=>m.status==='average').every(m=>m.latestFame>400&&m.latestFame<1600));
- assert.ok(clan.members.filter(m=>m.status==='warning').every(m=>m.latestFame<=400));
+ assert.ok(clan.members.filter(m=>m.status==='good').every(m=>m.warEvaluation.averageFame>=1600));
+ assert.ok(clan.members.filter(m=>m.status==='average').every(m=>m.warEvaluation.averageFame>400&&m.warEvaluation.averageFame<1600));
+ assert.ok(clan.members.filter(m=>m.status==='warning').every(m=>m.warEvaluation.averageFame<=400));
+});
+test('Hoàng qualifies as Ưu tú on all five logged verified individual Wars, not by only his latest',()=>{
+ const hoang=clan.members.find(m=>m.tag==='#JGG22QP99');
+ assert.ok(hoang);
+ assert.equal(hoang.status,'good');
+ assert.equal(hoang.warEvaluation.averageFame,1795);
+ assert.equal(hoang.warEvaluation.averagedWarWeeks,5);
+ assert.equal(hoang.latestFame,1400);
+ assert.equal(hoang.warEvaluation.firstVerifiedSeason,'137-1');
+ assert.equal(hoang.warEvaluation.latestVerifiedSeason,'138-1');
 });
 test('Hung alone is flagged for officer review on two verified zero-deck War weeks',()=>{
  const kicks=clan.members.filter(m=>m.status==='kick');
