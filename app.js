@@ -573,15 +573,20 @@ function statusBadge(s) {
 
 function buildPodiumCard(m, cls, crest, crown) {
   if (!m) return '';
-  const recentDecks = m.warEvaluation?.latestDecks ?? null;
-  const observedWeeks = m.warEvaluation?.verifiedWeeks ?? 0;
+  const ranking = m.eliteRanking;
+  if (!ranking?.qualified) return '';
   return '<div class="podium-card ' + cls + '" data-tag="' + m.tag + '">' +
     '<div class="podium-rank-crest">' + crest + '</div>' +
     '<div class="podium-avatar-wrap">' + crown + '<span>' + (m.name || 'W').slice(0, 2).toUpperCase() + '</span></div>' +
     '<div class="podium-name">' + m.name + '</div>' +
     '<div class="podium-meta">' + m.roleLabel + ' · <span class="tag-mono">' + m.tag + '</span></div>' +
-    '<div class="podium-fame-Main">🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame · ' + (recentDecks == null ? '—' : recentDecks) + ' Deck</div>' +
-    '<div class="podium-metrics"><span class="podium-metric-pill">⚔️ ' + (m.warEvaluation?.latestSeason || '—') + '</span><span class="podium-metric-pill">📋 ' + observedWeeks + ' kỳ có Fame xác minh</span><span class="podium-metric-pill">⭐ ' + (m.score == null ? '—' : m.score + '/100') + ' điểm nội bộ</span></div></div>';
+    '<div class="podium-fame-Main">⭐ ' + ranking.score.toFixed(1) + '/100 điểm tổng hợp</div>' +
+    '<div class="podium-metrics">' +
+    '<span class="podium-metric-pill">⚔️ War TB ' + Math.round(ranking.avgWarFame).toLocaleString('en-US') +
+      ' Fame · ' + ranking.verifiedWeeks + '/' + ranking.windowWeeks + ' kỳ</span>' +
+    '<span class="podium-metric-pill">🎁 ' + ranking.donations.toLocaleString('en-US') + ' Donate</span>' +
+    '<span class="podium-metric-pill">🏆 ' + ranking.trophies.toLocaleString('en-US') + ' cúp</span>' +
+    '</div></div>';
 }
 
 function renderTop3Podium(clan) {
@@ -594,8 +599,8 @@ function renderTop3Podium(clan) {
     const ref = document.getElementById('cw2-clan-panel') || document.getElementById('cw2-history-panel') || document.querySelector('.toolbar-bento');
     if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref);
   }
-  const top = window.WintertimeWarEvaluation.rankByLatestWar(clan.members).slice(0, 3);
-  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME ACTIVITY SCORE ★</span><h2 class="podium-title">Top 3 Đóng Góp War · Fame Đã Xác Minh</h2><p class="meta-decks-sub">Xếp theo Fame cá nhân thực của kỳ War đã kết thúc gần nhất (WarStats, bản đệm Clash Royale API). Điểm hoạt động nội bộ hiển thị riêng để tham khảo.</p></div><div class="podium-stage">' +
+  const top = window.WintertimeEliteRanking.rankMembers(clan.members).slice(0, 3);
+  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME ELITE · TỔNG HỢP ★</span><h2 class="podium-title">Top 3 Thành Viên Ưu Tú</h2></div><div class="podium-stage">' +
     buildPodiumCard(top[1], 'podium-2nd', '🥈 2ND · Á QUÂN', '') +
     buildPodiumCard(top[0], 'podium-1st', '🏆 1ST · MVP CHỦ LỰC', '<span class="podium-crown">👑</span>') +
     buildPodiumCard(top[2], 'podium-3rd', '🥉 3RD · HẠNG BA', '') + '</div>';
@@ -603,6 +608,54 @@ function renderTop3Podium(clan) {
     selectedMemberTag = c.dataset.tag;
     const m = currentClan.members.find(x => x.tag === selectedMemberTag);
     if (m) { renderCW2Panel(m); renderTable(currentClan); document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' }); }
+  }));
+}
+
+function buildWeeklyWarCard(m, cls, crest, crown) {
+  if (!m || !Number.isFinite(m.warEvaluation?.latestFame)) return '';
+  const week = m.warEvaluation;
+  return '<div class="podium-card ' + cls + '" data-tag="' + m.tag + '">' +
+    '<div class="podium-rank-crest">' + crest + '</div>' +
+    '<div class="podium-avatar-wrap">' + crown + '<span>' + (m.name || 'W').slice(0, 2).toUpperCase() + '</span></div>' +
+    '<div class="podium-name">' + m.name + '</div>' +
+    '<div class="podium-meta">' + m.roleLabel + ' · <span class="tag-mono">' + m.tag + '</span></div>' +
+    '<div class="podium-fame-Main">🏅 ' + week.latestFame.toLocaleString('en-US') + ' Fame</div>' +
+    '<div class="podium-metrics">' +
+    '<span class="podium-metric-pill">⚔️ ' + (week.latestDecks == null ? '—' : week.latestDecks) + ' Deck</span>' +
+    '<span class="podium-metric-pill">📅 ' + (week.latestSeason || 'War gần nhất') + '</span>' +
+    '</div></div>';
+}
+
+function renderWeeklyWarPodium(clan) {
+  if (!clan || !Array.isArray(clan.members)) return;
+  let sec = document.getElementById('top3-weekly-section');
+  if (!sec) {
+    sec = document.createElement('section');
+    sec.id = 'top3-weekly-section';
+    sec.className = 'podium-section';
+    const eliteSection = document.getElementById('top3-podium-section');
+    if (eliteSection?.parentNode) eliteSection.parentNode.insertBefore(sec, eliteSection.nextSibling);
+    else document.querySelector('main')?.prepend(sec);
+  }
+  const top = window.WintertimeWarEvaluation.rankByLatestWar(clan.members).slice(0, 3);
+  const week = clan.warSeasons?.[0] || clan.cw2ClanHistory?.[0] || {};
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(week.date || '')
+    ? week.date.slice(8, 10) + '/' + week.date.slice(5, 7) + '/' + week.date.slice(0, 4) : '—';
+  sec.innerHTML = '<div class="podium-header"><span class="podium-eyebrow">★ WINTERTIME · WAR TUẦN ★</span>' +
+    '<h2 class="podium-title">Top 3 Thành Viên War của Tuần</h2>' +
+    '<p class="meta-decks-sub">Kỳ War đã kết thúc gần nhất: ' + (week.season || '—') + ' · ' + date + '</p></div>' +
+    '<div class="podium-stage">' +
+    buildWeeklyWarCard(top[1], 'podium-2nd', '🥈 2ND · Á QUÂN', '') +
+    buildWeeklyWarCard(top[0], 'podium-1st', '🏆 1ST · WAR MVP', '<span class="podium-crown">👑</span>') +
+    buildWeeklyWarCard(top[2], 'podium-3rd', '🥉 3RD · HẠNG BA', '') + '</div>';
+  sec.querySelectorAll('.podium-card').forEach(card => card.addEventListener('click', () => {
+    selectedMemberTag = card.dataset.tag;
+    const member = currentClan.members.find(x => x.tag === selectedMemberTag);
+    if (member) {
+      renderCW2Panel(member);
+      renderTable(currentClan);
+      document.getElementById('cw2-history-panel')?.scrollIntoView({ behavior: 'smooth' });
+    }
   }));
 }
 
@@ -614,6 +667,7 @@ render = function() {
   if (optGood) optGood.textContent = 'Ưu tú';
   _origRenderFn();
   renderTop3Podium(currentClan);
+  renderWeeklyWarPodium(currentClan);
 };
 render();
 
@@ -657,7 +711,7 @@ const _prevTop3 = renderTop3Podium;
 renderTop3Podium = function(clan) {
   _prevTop3(clan);
   const t = document.querySelector('#top3-podium-section .podium-title');
-  if (t) t.textContent = 'Top 3 Đóng Góp War · Fame Đã Xác Minh';
+  if (t) t.textContent = 'Top 3 Thành Viên Ưu Tú';
 };
 document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-trigger')?.addEventListener('click', () => {
   const inp = document.querySelector('#cw2-member-select')?.closest('.custom-dropdown')?.querySelector('.custom-dropdown-search');
@@ -679,7 +733,7 @@ renderMetaDecks();
 renderTop3Podium = function(clan) {
   _prevTop3(clan);
   const t = document.querySelector('#top3-podium-section .podium-title');
-  if (t) t.textContent = 'Top 3 Đóng Góp War · Fame Đã Xác Minh';
+  if (t) t.textContent = 'Top 3 Thành Viên Ưu Tú';
 };
 renderTop3Podium(currentClan);
 const mhTitle = document.querySelector('#meta-decks-section .meta-decks-title');

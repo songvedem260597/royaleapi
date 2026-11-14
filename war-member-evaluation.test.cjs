@@ -44,7 +44,7 @@ test('one zero and one played War is warning, not Kick',()=>{
 test('high Fame is not penalized solely for low donations or offline time',()=>{
  assert.equal(evaluate({...mk(1600),donations:0,daysOffline:30}).status,'good');
 });
-test('Top 3 contributions rank actual Fame, not internal score',()=>{
+test('latest-week Fame helper ranks actual Fame independently of overall Top 3',()=>{
  const members=[mk(900),mk(2200),mk(1600),mk(null)].map((m,i)=>({
   ...m,tag:'#'+i,score:100-i*20,warEvaluation:evaluate(m)
  }));

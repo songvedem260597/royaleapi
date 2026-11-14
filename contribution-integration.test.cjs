@@ -5,10 +5,11 @@ const vm = require('node:vm');
 const scorer = require('./contribution-score.js');
 const races = require('./war-history.js');
 const evalWar = require('./war-member-evaluation.js');
+const elite = require('./elite-ranking.js');
 const fixture = require('./wintertime-data.json');
 
 function analyzeSnapshot() {
-  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races, WintertimeWarEvaluation: evalWar } };
+  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races, WintertimeWarEvaluation: evalWar, WintertimeEliteRanking: elite } };
   vm.runInNewContext(fs.readFileSync('clan-analytics.js', 'utf8'), context, { filename: 'clan-analytics.js' });
   return context.window.ClanAnalytics.analyzeClan(fixture);
 }
@@ -20,7 +21,7 @@ test('all observed members use only source Deck, participation, donation, inacti
   const ranked = scorer.rankMembers(clan.members);
   assert.ok(ranked.length >= 3);
   assert.ok(ranked.every(m => m.score >= 0 && m.score <= 100 && m.contribution.complete));
-  assert.equal(clan.mvpName, evalWar.rankByLatestWar(clan.members)[0].name);
+  assert.equal(clan.mvpName, elite.rankMembers(clan.members)[0].name);
   const sum = ranked.reduce((s, m) => s + m.score, 0);
   assert.equal(clan.avgScore, Math.round(sum / ranked.length));
   assert.ok(clan.members.some(m => m.warFame === null));
@@ -51,7 +52,7 @@ test('missing data is not marked elite or automatic kick', () => {
       cw2History: []
     }]
   };
-  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races, WintertimeWarEvaluation: evalWar } };
+  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races, WintertimeWarEvaluation: evalWar, WintertimeEliteRanking: elite } };
   vm.runInNewContext(fs.readFileSync('clan-analytics.js', 'utf8'), context, { filename: 'clan-analytics.js' });
   const clan = context.window.ClanAnalytics.analyzeClan(data);
   assert.equal(clan.members[0].score, null);
