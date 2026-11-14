@@ -11,6 +11,20 @@ function getFilters() {
   };
 }
 
+function formatSelectedDropdownLabel(sel, opt) {
+  if (!opt) return '';
+  const full = opt.textContent.trim();
+  if (sel.id === 'cw2-clan-range-select') {
+    return full.replace(/\s*\(#[^)]+\)/, '').replace(/\s*—\s*(\d+)\s*mùa(?:\s+gần nhất)?/, ' · $1 mùa');
+  }
+  if (sel.id === 'cw2-member-select') {
+    const [identity, score] = full.split(/\s+—\s+/);
+    const name = identity.replace(/\s*\(#[^)]+\)/, '').trim();
+    return name + (score ? ' · ' + score.replace(/\s+đ$/, 'đ') : '');
+  }
+  return full;
+}
+
 function upgradeCustomSelects() {
   ['filter-status', 'sort-by', 'cw2-member-select', 'cw2-clan-range-select'].forEach(id => {
     const sel = document.getElementById(id);
@@ -77,7 +91,10 @@ function upgradeCustomSelects() {
         });
         item.classList.add('selected');
         item.setAttribute('aria-selected', 'true');
-        label.textContent = opt.textContent;
+        label.textContent = formatSelectedDropdownLabel(sel, opt);
+        label.title = opt.textContent;
+        const selectedTrigger = wrap.querySelector('.custom-dropdown-trigger');
+        if (selectedTrigger) selectedTrigger.title = opt.textContent;
         wrap.classList.remove('open');
         const trg = wrap.querySelector('.custom-dropdown-trigger');
         if (trg) trg.setAttribute('aria-expanded', 'false');
@@ -87,7 +104,8 @@ function upgradeCustomSelects() {
       menu.appendChild(item);
     });
     const cur = sel.options[sel.selectedIndex];
-    label.textContent = cur ? cur.textContent : '';
+    label.textContent = formatSelectedDropdownLabel(sel, cur);
+    label.title = cur?.textContent || '';
     const trigger = wrap.querySelector('.custom-dropdown-trigger');
     if (trigger) {
       trigger.setAttribute('aria-expanded', wrap.classList.contains('open') ? 'true' : 'false');
@@ -246,7 +264,7 @@ function renderCW2Chart(member) {
       '" class="cw2-bar-label" font-size="10" text-anchor="middle">' +
       (h.decksVerified ? h.decks + ' Deck' : '—') + '</text>';
   });
-  box.innerHTML = '<p class="meta-decks-sub">🏅 Fame cá nhân từng kỳ (WarStats · bản đệm Clash Royale API) · Dòng dưới: Deck đã xác minh · — nghĩa là chưa có bản ghi</p>' +
+  box.innerHTML = '<p class="meta-decks-sub">🏅 Fame cá nhân từng kỳ</p>' +
     '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' +
     bars + labels + '</svg>';
 }

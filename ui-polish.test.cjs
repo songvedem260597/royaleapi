@@ -65,6 +65,25 @@ test('every Meta deck shows exactly eight cards in one row with no oversized bla
   assert.match(css, /\.meta-card-slot \{[\s\S]*?background: transparent;/);
 });
 
+test('custom War dropdown selections stay one line while preserving full option text', () => {
+  const source = app.match(/function formatSelectedDropdownLabel\(sel, opt\) \{[\s\S]*?\n\}/)?.[0];
+  assert.ok(source, 'selected-label formatter exists');
+  const format = new Function(source + '\nreturn formatSelectedDropdownLabel;')();
+  assert.equal(format({ id: 'cw2-member-select' }, { textContent: 'Độc cô cầu bại (#2LL9V9088) — 32 đ' }), 'Độc cô cầu bại · 32đ');
+  assert.equal(format({ id: 'cw2-clan-range-select' }, { textContent: 'Toàn Clan WinterTime (#GYQJL9GV) — 5 mùa gần nhất' }), 'Toàn Clan WinterTime · 5 mùa');
+  assert.match(app, /txt\.textContent = opt\.textContent/);
+  assert.match(app, /label\.textContent = formatSelectedDropdownLabel\(sel, opt\)/);
+  assert.match(css, /\.custom-dropdown-label \{[\s\S]*?white-space: nowrap;[\s\S]*?text-overflow: ellipsis;/);
+});
+
+test('clan rule wording and personal War chart note match requested concise copy', () => {
+  assert.match(html, /Tích cực Donate thẻ bài hằng ngày\./);
+  assert.doesNotMatch(html, /Ae là 1 BiG Familie/);
+  assert.doesNotMatch(html, /Thiếu bản ghi không đồng nghĩa 0 Deck/);
+  assert.match(app, /Fame cá nhân từng kỳ/);
+  assert.doesNotMatch(app, /WarStats · bản đệm Clash Royale API/);
+});
+
 test('Clan rules are permanently visible with no expand control or duplicated overview', () => {
   assert.match(html, /<div class="rules-details rules-always-open"/);
   assert.doesNotMatch(html, /<details class="rules-details">/);
@@ -72,5 +91,5 @@ test('Clan rules are permanently visible with no expand control or duplicated ov
   assert.doesNotMatch(html, /class="rules-overview"/);
   assert.match(css, /\.clan-info-grid \{ align-items: start; \}/);
   assert.match(css, /\.clan-info-grid > \.info-card \{ align-self: start; height: auto; \}/);
-  assert.match(html, /không đồng nghĩa 0 Deck/);
+  assert.doesNotMatch(html, /Thiếu bản ghi không đồng nghĩa 0 Deck/);
 });
