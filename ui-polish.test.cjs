@@ -106,7 +106,7 @@ test('War controls remain one horizontal row and rank glow honors reduced motion
 
 test('WINTERTIME letters contain snow and podium cards have gentle border and float', () => {
   assert.match(html, /id="hero-title" data-snow-title="WINTERTIME">WINTERTIME<\/h1>/);
-  assert.match(html, /styles\.css\?v=20261115-rotating-border-v8/);
+  assert.match(html, /styles\.css\?v=20261115-thin-glow-border-v9/);
   assert.match(css, /\.hero-title::after \{[\s\S]*?animation: wintertime-letter-snow 13s linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /\.podium-stage \.podium-card \{[\s\S]*?animation: wintertime-cloud-float/);
@@ -114,5 +114,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.ok(css.includes('@property --wintertime-border-angle {'));
   assert.ok(css.includes('background: conic-gradient(from var(--wintertime-border-angle)'));
   assert.ok(css.includes('to { --wintertime-border-angle: 360deg; }'));
+  assert.match(css, /\.podium-stage \.podium-card::after \{[\s\S]*?filter: blur\(5px\);[\s\S]*?opacity: \.2;/);
+  assert.match(css, /\.podium-stage \.podium-card::before \{[\s\S]*?padding: 1px;/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.hero-title::after,[\s\S]*?animation: none !important;/);
 });
