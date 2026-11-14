@@ -1456,6 +1456,21 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
   transition: border-color 0.16s ease, background 0.16s ease;
 }
 
+/* Selected values fit on one line; full option text remains in the menu. */
+.custom-dropdown-trigger {
+  min-width: 0;
+  white-space: nowrap;
+}
+.custom-dropdown-label {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cw2-actions .custom-dropdown { flex: 0 1 330px; }
+
 .custom-dropdown-trigger:hover { border-color: var(--border-3); }
 .custom-dropdown.open .custom-dropdown-trigger {
   border-color: var(--accent-line);
