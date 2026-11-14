@@ -103,3 +103,14 @@ test('War controls remain one horizontal row and rank glow honors reduced motion
   assert.match(css, /@keyframes cw2-rank-shimmer/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.cw2-clan-panel \.cw2-meta \.badge-good \{ animation: none; \}/);
 });
+
+test('WINTERTIME letters contain snow and podium cards have gentle border and float', () => {
+  assert.match(html, /id="hero-title" data-snow-title="WINTERTIME">WINTERTIME<\/h1>/);
+  assert.match(html, /styles\.css\?v=20261115-snow-cloud-v7/);
+  assert.match(css, /\.hero-title::after \{[\s\S]*?animation: wintertime-letter-snow 13s linear infinite;/);
+  assert.match(css, /@keyframes wintertime-letter-snow/);
+  assert.match(css, /\.podium-stage \.podium-card \{[\s\S]*?animation: wintertime-cloud-float/);
+  assert.match(css, /\.podium-stage \.podium-card::before \{[\s\S]*?padding: 1px;[\s\S]*?mask-composite: exclude;/);
+  assert.match(css, /@keyframes wintertime-border-flow/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.hero-title::after,[\s\S]*?animation: none !important;/);
+});
