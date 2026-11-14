@@ -1863,6 +1863,66 @@ body { font-size: 16px; }
   .member-table { font-size: 14px; }
 }
 
+/* ---------- 23. Roster first-row visibility and compact one-row Meta decks ---------- */
+/* Keep rank and all column headings on one line without stretching the page. */
+#clan-roster .member-table thead th {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  letter-spacing: 0.02em;
+}
+#clan-roster .member-table th:nth-child(1) { width: 6%; }
+#clan-roster .member-table th:nth-child(5) { width: 22%; }
+#clan-roster .member-table th:nth-child(6) { width: 12%; }
+#clan-roster .member-table th:nth-child(8) { width: 18%; }
+
+/* The roster header was being painted over the first member on page navigation.
+   Keep its column names in normal table flow so rank #1 is never covered. */
+#clan-roster .member-table thead th {
+  position: static;
+  top: auto;
+}
+#clan-roster .member-table tbody tr:first-child { display: table-row; }
+
+/* Eight cards always share one line. A slot follows the card art's 5:6
+   proportions instead of showing a tall black placeholder around it. */
+.meta-deck-card { min-width: 0; }
+.meta-cards-row {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+  align-items: start;
+  width: 100%;
+  max-width: 538px;
+}
+.meta-card-slot {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  aspect-ratio: 5 / 6;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  overflow: hidden;
+}
+.meta-card-slot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (max-width: 640px) {
+  .meta-cards-row {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .meta-card-slot {
+    width: 100%;
+    height: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .wt-marquee-track { animation: none; }

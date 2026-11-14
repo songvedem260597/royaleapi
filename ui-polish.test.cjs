@@ -48,6 +48,23 @@ test('KPI labels wrap rather than truncating; War chart distinguishes recent rac
   assert.match(app, /cw2-bar-current/);
 });
 
+test('roster always exposes the first ranked member instead of sticky header covering it', () => {
+  assert.match(html, /<tbody id="member-tbody"><\/tbody>/);
+  assert.match(app, /rows\.map\(\(m, i\) =>/);
+  assert.match(app, /'<td>' \+ \(i \+ 1\) \+ '<\/td>'/);
+  assert.match(css, /#clan-roster \.member-table thead th \{[\s\S]*?position: static;/);
+  assert.match(css, /#clan-roster \.member-table thead th \{[\s\S]*?white-space: nowrap;/);
+  assert.match(css, /#clan-roster \.member-table th:nth-child\(1\) \{ width: 6%; \}/);
+  assert.match(html, /aria-label="Điểm hoạt động nội bộ">Điểm hoạt động<\/th>/);
+});
+
+test('every Meta deck shows exactly eight cards in one row with no oversized black slot', () => {
+  assert.match(app, /d\.cards\.map\(c =>/);
+  assert.match(css, /\.meta-cards-row \{[\s\S]*?grid-template-columns: repeat\(8, minmax\(0, 1fr\)\);/);
+  assert.match(css, /\.meta-card-slot \{[\s\S]*?aspect-ratio: 5 \/ 6;/);
+  assert.match(css, /\.meta-card-slot \{[\s\S]*?background: transparent;/);
+});
+
 test('Clan rules are permanently visible with no expand control or duplicated overview', () => {
   assert.match(html, /<div class="rules-details rules-always-open"/);
   assert.doesNotMatch(html, /<details class="rules-details">/);
