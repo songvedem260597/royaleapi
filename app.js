@@ -238,12 +238,12 @@ function renderCW2Chart(member) {
     if (present) bars += '<rect x="' + x + '" y="' + y + '" width="' + w +
       '" height="' + Math.max(2, topPad + chartH - y) + '" fill="' + color + '" rx="3"/>';
     bars += '<text x="' + (x + w / 2) + '" y="' + (present ? y - 8 : topPad + chartH - 8) +
-      '" class="cw2-bar-value" font-size="11" text-anchor="middle">' +
+      '" class="cw2-bar-value" font-size="12" text-anchor="middle">' +
       (value == null ? '—' : value.toLocaleString('en-US')) + '</text>';
     labels += '<text x="' + (x + w / 2) + '" y="' + (H - 23) +
-      '" class="cw2-bar-label" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+      '" class="cw2-bar-label" font-size="11" text-anchor="middle">' + (h.season || '') + '</text>';
     labels += '<text x="' + (x + w / 2) + '" y="' + (H - 8) +
-      '" class="cw2-bar-label" font-size="9" text-anchor="middle">' +
+      '" class="cw2-bar-label" font-size="10" text-anchor="middle">' +
       (h.decksVerified ? h.decks + ' Deck' : '—') + '</text>';
   });
   box.innerHTML = '<p class="meta-decks-sub">🏅 Fame cá nhân từng kỳ (WarStats · bản đệm Clash Royale API) · Dòng dưới: Deck đã xác minh · — nghĩa là chưa có bản ghi</p>' +
@@ -833,9 +833,9 @@ function renderClanCW2Panel(clan) {
       bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' +
         (padT + chartH - top) + '" rx="3" class="cw2-bar"/>';
       bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) +
-        '" class="cw2-bar-value" font-size="10" text-anchor="middle">' + decks + ' Deck</text>';
+        '" class="cw2-bar-value" font-size="11" text-anchor="middle">' + decks + ' Deck</text>';
       labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
-        '" class="cw2-bar-label" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+        '" class="cw2-bar-label" font-size="11" text-anchor="middle">' + (h.season || '') + '</text>';
     });
     chartBox.innerHTML = '<p class="meta-decks-sub">Tổng Deck theo từng kỳ River Race Log (WarStats · bộ nhớ đệm Clash Royale API); kỳ thiếu nguồn sẽ chỉ dùng Deck quan sát được</p>' +
       '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + bars + labels + '</svg>';
