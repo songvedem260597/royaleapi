@@ -500,7 +500,7 @@ function renderTable(clan) {
       '<td><strong>🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame kỳ ' + (m.warEvaluation?.latestSeason || '—') + '</strong> <small>(' + observedDecks + ' Deck đã xác minh / ' + (m.verifiedWarWeeks || 0) + ' kỳ · War ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + (pct == null ? 0 : pct) + '%"></div></div><small>' + (pct == null ? '—' : pct + '/100') + '</small></td>' +
-      '<td><div class="cell-eval">' + statusBadge(m.status) + '<button class="btn btn-ghost btn-sm">📊 CW2</button></div><small>' + (m.reason || '') + '</small></td>' +
+      '<td><div class="cell-eval">' + statusBadge(m.status) + '<button type="button" class="btn btn-ghost btn-sm" aria-label="Xem chi tiết War của thành viên">Chi tiết War</button></div><span class="sr-only">' + (m.reason || '') + '</span></td>' +
       '</tr>';
   }).join('');
   tbody.querySelectorAll('.member-row-clickable').forEach(tr => {
@@ -580,7 +580,7 @@ function buildPodiumCard(m, cls, crest, crown) {
     '<div class="podium-avatar-wrap">' + crown + '<span>' + (m.name || 'W').slice(0, 2).toUpperCase() + '</span></div>' +
     '<div class="podium-name">' + m.name + '</div>' +
     '<div class="podium-meta">' + m.roleLabel + ' · <span class="tag-mono">' + m.tag + '</span></div>' +
-    '<div class="podium-fame-Main">⭐ ' + ranking.score.toFixed(1) + '/100 điểm tổng hợp</div>' +
+    '<div class="podium-fame-Main" aria-label="' + ranking.score.toFixed(1) + ' trên 100 điểm tổng hợp"><span class="podium-score-value">' + ranking.score.toFixed(1) + '</span><span class="podium-score-unit">/100 điểm tổng hợp</span></div>' +
     '<div class="podium-metrics">' +
     '<span class="podium-metric-pill">⚔️ War TB ' + Math.round(ranking.avgWarFame).toLocaleString('en-US') +
       ' Fame · ' + ranking.verifiedWeeks + '/' + ranking.windowWeeks + ' kỳ</span>' +
@@ -819,26 +819,26 @@ function renderClanCW2Panel(clan) {
   const chartBox = document.getElementById('cw2-clan-chart-box');
   if (chartBox) {
     const hist = slice.slice().reverse();
-    const W = 760, H = 230, padL = 46, padR = 20, padT = 30, padB = 40;
+    const W = 760, H = 184, padL = 46, padR = 20, padT = 26, padB = 34;
     const chartW = W - padL - padR, chartH = H - padT - padB;
     const maxDecks = Math.max(1, ...hist.map(h => Number(h.decks) || 0));
     const y = decks => padT + chartH - (Math.min(decks, maxDecks) / maxDecks) * chartH;
     const bw = chartW / (hist.length || 1);
     let bars = '', labels = '';
     hist.forEach((h, i) => {
-      const x = padL + i * bw + bw * 0.15;
-      const w = bw * 0.7;
+      const x = padL + i * bw + bw * 0.28;
+      const w = bw * 0.44;
       const decks = Number(h.decks) || 0;
       const top = y(decks);
       bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' +
-        (padT + chartH - top) + '" rx="3" class="cw2-bar"/>';
+        (padT + chartH - top) + '" rx="5" class="cw2-bar ' + (i === hist.length - 1 ? 'cw2-bar-current' : 'cw2-bar-prior') + '"/>';
       bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) +
         '" class="cw2-bar-value" font-size="10" text-anchor="middle">' + decks + ' Deck</text>';
       labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
         '" class="cw2-bar-label" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
     });
     chartBox.innerHTML = '<p class="meta-decks-sub">Tổng Deck theo từng kỳ River Race Log (WarStats · bộ nhớ đệm Clash Royale API); kỳ thiếu nguồn sẽ chỉ dùng Deck quan sát được</p>' +
-      '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + bars + labels + '</svg>';
+      '<svg class="cw2-clan-chart" role="img" aria-label="Tổng Deck của các kỳ War đã xác minh" width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet"><line class="cw2-grid-line" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + (padT + chartH) + '" y2="' + (padT + chartH) + '"/>' + bars + labels + '</svg>';
   }
 
   const note = document.getElementById('clan-war-source-note');
@@ -850,7 +850,7 @@ function renderClanCW2Panel(clan) {
       (clan.warLogStale ? ' · ĐANG DÙNG BẢN ĐỆM CŨ' : '') +
       '. Fame đóng góp = tổng fame của tất cả người tham chiến trong War Log, không bị giới hạn ở mốc thuyền 10.000. Cột Đích War dùng tiến độ thuyền (Colosseum là tuần cuối mùa). Cột Tham gia tính theo các thành viên hiện tại;' +
       ' TB/TV chia theo toàn bộ người đã tham chiến (có thể gồm người đã rời Clan).' +
-      ' Fame từng người trong bảng riêng chưa được đồng bộ từ nguồn War Log.';
+      ' Fame cá nhân chỉ hiển thị khi có bản ghi xác minh cho từng thành viên; thiếu bản ghi không được tính là 0.';
   }
 
   const tbody = document.getElementById('cw2-clan-history-tbody');
