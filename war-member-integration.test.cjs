@@ -5,8 +5,9 @@ const fs=require('node:fs');
 const scorer=require('./contribution-score.js');
 const warHistory=require('./war-history.js');
 const evalWar=require('./war-member-evaluation.js');
+const elite=require('./elite-ranking.js');
 const snapshot=require('./wintertime-data.json');
-const context={window:{WintertimeContribution:scorer,WintertimeWarHistory:warHistory,WintertimeWarEvaluation:evalWar}};
+const context={window:{WintertimeContribution:scorer,WintertimeWarHistory:warHistory,WintertimeWarEvaluation:evalWar,WintertimeEliteRanking:elite}};
 vm.runInNewContext(fs.readFileSync('clan-analytics.js','utf8'),context,{filename:'clan-analytics.js'});
 const clan=context.window.ClanAnalytics.analyzeClan(snapshot);
 
@@ -39,6 +40,16 @@ test('unknown recent history is not treated as 0 and not included in Top 3',()=>
  const top=evalWar.rankByLatestWar(clan.members).slice(0,3);
  assert.deepEqual(top.map(x=>x.latestFame),[3200,2950,2775]);
  assert.equal(top[0].name,'Trịnh Lam');
+ assert.equal(clan.mvpName,elite.rankMembers(clan.members)[0].name);
+});
+test('Top 3 all-round elite ranks by ten-war verified average, current Donate and trophies',()=>{
+ const top=elite.rankMembers(clan.members).slice(0,3);
+ assert.deepEqual(top.map(x=>x.name),['Tobi','Mr.chien','Trịnh Lam']);
+ assert.deepEqual(top.map(x=>x.eliteRanking.score),[94.7,92.5,88.8]);
+ assert.deepEqual(top.map(x=>x.eliteRanking.verifiedWeeks),[6,10,5]);
+ assert.equal(Math.round(top[0].eliteRanking.avgWarFame),2733);
+ assert.equal(top[0].eliteRanking.donations,527);
+ assert.equal(top[0].eliteRanking.trophies,14000);
  assert.equal(clan.mvpName,top[0].name);
 });
 test('individual verified Fame, Decks and source history are preserved across 10 completed races',()=>{

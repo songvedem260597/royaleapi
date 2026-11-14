@@ -115,6 +115,7 @@ function analyzeMember(m) {
   const cw2History = buildCw2FromMember(src);
   const contribution = computeContribution(src, cw2History);
   const score = contribution.score;
+  const eliteRanking = window.WintertimeEliteRanking.calculate({ ...src, cw2History });
   const warEvaluation = window.WintertimeWarEvaluation.evaluate({ ...src, cw2History });
   const status = warEvaluation.status;
   const statusLabel = warEvaluation.statusLabel;
@@ -122,7 +123,7 @@ function analyzeMember(m) {
     (score == null ? '—' : score + '/100') + ' · Donate: ' + donations +
     ' · Offline: ' + daysOffline + ' ngày';
 
-  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, decksThisWeek, warDecksHistory, trackerStatus, cw2History, contribution, score, warEvaluation, latestFame: warEvaluation.latestFame, latestWarDecks: warEvaluation.latestDecks, warDecksVerifiedHistory: src.warDecksVerifiedHistory || [], verifiedWarWeeks: src.verifiedWarWeeks ?? 0, status, statusLabel, reason };
+  return { tag, name, role, roleLabel, trophies, donations, donationsReceived, daysOffline, warParticipation, warFame, decksThisWeek, warDecksHistory, trackerStatus, cw2History, contribution, score, eliteRanking, warEvaluation, latestFame: warEvaluation.latestFame, latestWarDecks: warEvaluation.latestDecks, warDecksVerifiedHistory: src.warDecksVerifiedHistory || [], verifiedWarWeeks: src.verifiedWarWeeks ?? 0, status, statusLabel, reason };
 }
 
 function analyzeClan(clanData) {
@@ -206,7 +207,7 @@ window.ClanAnalytics.analyzeClan = function(d) {
     totalDonations += Number(x.donations) || 0;
     totalDonationsReceived += Number(x.donationsReceived) || 0;
   });
-  c.mvpName = window.WintertimeWarEvaluation.rankByLatestWar(c.members)[0]?.name || '';
+  c.mvpName = window.WintertimeEliteRanking.rankMembers(c.members)[0]?.name || '';
   c.totalDonations = totalDonations;
   c.totalDonationsReceived = totalDonationsReceived;
   c.rawClanScore = d?.clanScore == null ? null : Number(d.clanScore);
