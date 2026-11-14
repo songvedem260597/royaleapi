@@ -93,3 +93,13 @@ test('Clan rules are permanently visible with no expand control or duplicated ov
   assert.match(css, /\.clan-info-grid > \.info-card \{ align-self: start; height: auto; \}/);
   assert.doesNotMatch(html, /Thiếu bản ghi không đồng nghĩa 0 Deck/);
 });
+
+test('War controls remain one horizontal row and rank glow honors reduced motion', () => {
+  assert.match(css, /\/\* The War controls belong side by side/);
+  assert.match(css, /\.cw2-actions \{[\s\S]*?flex-wrap: nowrap;/);
+  assert.match(css, /\.cw2-actions > \.btn \{ flex: 0 0 auto; white-space: nowrap; \}/);
+  assert.match(css, /@media \(max-width: 640px\) \{\s*\.cw2-actions \{ flex-wrap: nowrap;/);
+  assert.match(css, /\.cw2-clan-panel \.cw2-meta \.badge-good \{[\s\S]*?linear-gradient\(/);
+  assert.match(css, /@keyframes cw2-rank-shimmer/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.cw2-clan-panel \.cw2-meta \.badge-good \{ animation: none; \}/);
+});

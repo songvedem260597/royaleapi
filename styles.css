@@ -1938,6 +1938,80 @@ body { font-size: 16px; }
   }
 }
 
+/* The War controls belong side by side; the Clan details may wrap independently. */
+.cw2-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+}
+.cw2-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: auto;
+  min-width: 0;
+  gap: 10px;
+  margin-left: 0;
+}
+.cw2-actions .custom-dropdown {
+  flex: 0 1 300px;
+  width: 300px;
+  min-width: 0;
+  max-width: 100%;
+}
+.cw2-actions > .btn { flex: 0 0 auto; white-space: nowrap; }
+.cw2-meta { min-width: 0; }
+
+/* Soft animated rank glow: jade-to-gold, with no abrupt motion. */
+.cw2-clan-panel .cw2-meta .badge-good {
+  border-color: rgba(157, 226, 115, .55);
+  background: linear-gradient(110deg, rgba(39, 107, 54, .80) 0%,
+    rgba(77, 166, 66, .60) 36%, rgba(196, 158, 62, .45) 53%,
+    rgba(39, 107, 54, .80) 100%);
+  background-size: 240% 100%;
+  color: #e8ffd9;
+  box-shadow: 0 0 0 1px rgba(107, 219, 100, .12), 0 0 14px rgba(91, 194, 84, .18);
+  animation: cw2-rank-shimmer 7s ease-in-out infinite;
+}
+@keyframes cw2-rank-shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 0 1px rgba(107, 219, 100, .10), 0 0 10px rgba(91, 194, 84, .11);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 0 1px rgba(107, 219, 100, .22), 0 0 18px rgba(91, 194, 84, .25);
+  }
+}
+@media (max-width: 1160px) {
+  .cw2-header { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .cw2-actions { width: 100%; margin-left: 0; justify-content: flex-start; }
+  .cw2-actions .custom-dropdown { flex: 1 1 0; width: auto; max-width: 330px; }
+}
+@media (max-width: 640px) {
+  .cw2-actions { flex-wrap: nowrap; width: 100%; gap: 8px; }
+  .cw2-actions .custom-dropdown {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    max-width: none;
+  }
+  .cw2-actions > .btn {
+    flex: 0 1 auto;
+    max-width: 48%;
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: 11.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cw2-clan-panel .cw2-meta .badge-good { animation: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .wt-marquee-track { animation: none; }
