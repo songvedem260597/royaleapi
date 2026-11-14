@@ -1,14 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" aria-hidden="true">
-  <!-- Six-fold snow crystal: six arms, bifurcated tips, and a hexagonal core. -->
-  <g transform="translate(128 128)" fill="none" stroke="#176FA6" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M0 -7 L6 -3.5 L6 3.5 L0 7 L-6 3.5 L-6 -3.5 Z" stroke-width="4.5"/>
-    <g>
-      <path d="M0 -6 V-19 M0 -13 L-5 -18 M0 -13 L5 -18"/>
-      <path d="M0 -6 V-19 M0 -13 L-5 -18 M0 -13 L5 -18" transform="rotate(60)"/>
-      <path d="M0 -6 V-19 M0 -13 L-5 -18 M0 -13 L5 -18" transform="rotate(120)"/>
-      <path d="M0 -6 V-19 M0 -13 L-5 -18 M0 -13 L5 -18" transform="rotate(180)"/>
-      <path d="M0 -6 V-19 M0 -13 L-5 -18 M0 -13 L5 -18" transform="rotate(240)"/>
-      <path d="M0 -6 V-19 M0 -13 L-5 -18 M0 -13 L5 -18" transform="rotate(300)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="144" viewBox="0 0 320 144" aria-hidden="true">
+  <!-- Compact six-arm snowflakes with varied seeded size, shade and opacity. -->
+  <defs>
+    <g id="six-arm-flake" fill="none" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 -4.5 L3.9 -2.25 L3.9 2.25 L0 4.5 L-3.9 2.25 L-3.9 -2.25 Z" stroke-width="1.9"/>
+      <path d="M0 -4 V-13 M0 -9 L-3.2 -12.5 M0 -9 L3.2 -12.5"/>
+      <path d="M0 -4 V-13 M0 -9 L-3.2 -12.5 M0 -9 L3.2 -12.5" transform="rotate(60)"/>
+      <path d="M0 -4 V-13 M0 -9 L-3.2 -12.5 M0 -9 L3.2 -12.5" transform="rotate(120)"/>
+      <path d="M0 -4 V-13 M0 -9 L-3.2 -12.5 M0 -9 L3.2 -12.5" transform="rotate(180)"/>
+      <path d="M0 -4 V-13 M0 -9 L-3.2 -12.5 M0 -9 L3.2 -12.5" transform="rotate(240)"/>
+      <path d="M0 -4 V-13 M0 -9 L-3.2 -12.5 M0 -9 L3.2 -12.5" transform="rotate(300)"/>
     </g>
-  </g>
+  </defs>
+  <g transform="translate(27 25) rotate(14) scale(0.2000)" stroke="#176C9E" opacity="0.42"><use href="#six-arm-flake"/></g>
+  <g transform="translate(114 73) rotate(40) scale(0.3423)" stroke="#16618B" opacity="0.76"><use href="#six-arm-flake"/></g>
+  <g transform="translate(213 34) rotate(11) scale(0.4346)" stroke="#4F9DCA" opacity="0.67"><use href="#six-arm-flake"/></g>
+  <g transform="translate(286 107) rotate(28) scale(0.2615)" stroke="#0B6D9E" opacity="0.88"><use href="#six-arm-flake"/></g>
+  <g transform="translate(74 123) rotate(52) scale(0.3731)" stroke="#277CA9" opacity="0.58"><use href="#six-arm-flake"/></g>
+  <g transform="translate(253 77) rotate(5) scale(0.1731)" stroke="#75B6D3" opacity="0.81"><use href="#six-arm-flake"/></g>
+  <g transform="translate(165 121) rotate(33) scale(0.2923)" stroke="#125D8B" opacity="0.52"><use href="#six-arm-flake"/></g>
 </svg>

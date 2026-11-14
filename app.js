@@ -1161,3 +1161,18 @@ document.addEventListener('visibilitychange', () => {
     init();
   }
 })();
+
+/* Randomized once per page view: independent snow layers fall at different
+   speeds and start from different horizontal offsets / animation phases.
+   Crystal sizes, blue shades and opacities vary inside their shared SVG. */
+(function randomizeTitleSnow() {
+  const layers = document.querySelectorAll('#hero-title .hero-snow-layer');
+  const durationBands = [[7, 9], [9.5, 12.5], [13, 16], [17, 21]];
+  layers.forEach((layer, index) => {
+    const band = durationBands[index] || [10, 19];
+    const duration = band[0] + Math.random() * (band[1] - band[0]);
+    layer.style.setProperty('--snow-duration', duration.toFixed(2) + 's');
+    layer.style.setProperty('--snow-delay', (-Math.random() * duration).toFixed(2) + 's');
+    layer.style.setProperty('--snow-x', Math.floor(Math.random() * 320) + 'px');
+  });
+})();

@@ -2034,26 +2034,31 @@ body { font-size: 16px; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-/* Icy-blue flakes stand out against the pale lettering; movement is clipped to glyphs. */
-.hero-title::after {
-  content: attr(data-snow-title);
+/* Individually varied 6-arm flakes, four independently drifting text-clipped layers. */
+.hero-snow-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image:
-    url("./snowflake-six.svg?v=mini-v2"),
-    url("./snowflake-six.svg?v=mini-v2"),
-    url("./snowflake-six.svg?v=mini-v2");
-  background-size: 48px 48px, 64px 64px, 80px 80px;
+  white-space: nowrap;
+  font: inherit;
+  letter-spacing: inherit;
+  color: transparent;
+  background-image: url("./snowflake-six.svg?v=variety-v3");
+  background-size: 320px 144px;
   background-repeat: repeat;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: wintertime-letter-snow 10s linear infinite;
+  animation: wintertime-letter-snow var(--snow-duration, 11s) linear infinite;
+  animation-delay: var(--snow-delay, 0s);
 }
+.hero-snow-layer:nth-of-type(1) { --snow-x: 0px; --snow-duration: 7.5s; opacity: .90; }
+.hero-snow-layer:nth-of-type(2) { --snow-x: 69px; --snow-duration: 10.5s; opacity: .86; }
+.hero-snow-layer:nth-of-type(3) { --snow-x: 147px; --snow-duration: 14s; opacity: .73; }
+.hero-snow-layer:nth-of-type(4) { --snow-x: 228px; --snow-duration: 19s; opacity: .68; }
 @keyframes wintertime-letter-snow {
-  from { background-position: 0 -48px, 19px -64px, 37px -80px; }
-  to   { background-position: 0 96px, 19px 128px, 37px 160px; }
+  from { background-position: var(--snow-x, 0px) 0px; }
+  to   { background-position: var(--snow-x, 0px) 144px; }
 }
 
 /* Each podium gently drifts with a different cadence, independent of hover. */
@@ -2160,7 +2165,7 @@ body { font-size: 16px; }
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-title::after,
+  .hero-snow-layer,
   .podium-stage .podium-card,
   .podium-stage .podium-card::before,
   .podium-stage .podium-card::after {
