@@ -106,10 +106,10 @@ test('War controls remain one horizontal row and rank glow honors reduced motion
 
 test('WINTERTIME letters contain snow and podium cards have gentle border and float', () => {
   assert.match(html, /id="hero-title" data-snow-title="WINTERTIME">WINTERTIME<\/h1>/);
-  assert.match(html, /styles\.css\?v=20261115-sixflake-tenure-v12/);
+  assert.match(html, /styles\.css\?v=20261115-small-snowflakes-v13/);
   assert.match(css, /\.hero-title::after \{[\s\S]*?animation: wintertime-letter-snow 10s linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
-  assert.match(css, /url\("\.\/snowflake-six\.svg"\)/);
+  assert.match(css, /url\("\.\/snowflake-six\.svg\?v=mini-v2"\)/);
   assert.match(css, /\.podium-stage \.podium-card \{[\s\S]*?animation: wintertime-cloud-float/);
   assert.match(css, /\.podium-stage \.podium-card::before \{[\s\S]*?padding: 1px;[\s\S]*?mask-composite: exclude;/);
   assert.ok(css.includes('@property --wintertime-border-angle {'));
@@ -122,13 +122,17 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
 
 test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots', () => {
   const snow = fs.readFileSync('snowflake-six.svg', 'utf8');
-  assert.match(snow, /<svg[^>]+viewBox="0 0 64 64"/);
+  assert.match(snow, /<svg[^>]+viewBox="0 0 256 256"/);
   assert.equal((snow.match(/<path d="M0 -6 V-19/g) || []).length, 6);
+  assert.match(snow, /transform="translate\(128 128\)"/);
+  assert.match(css, /background-size: 48px 48px, 64px 64px, 80px 80px;/);
+  // The 38-unit glyph is rendered at approximately 7–12px, not a 20–60px icon.
+  assert.ok(38 * 80 / 256 < 12);
   for (const deg of [60, 120, 180, 240, 300]) {
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /snowflake-six|sixflake-tenure-v12/);
+  assert.match(html, /snowflake-six|small-snowflakes-v13/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
   assert.match(html, /app\.js\?v=20261115-personal-avg-v6/);
   assert.match(app, /Fame TB /);
