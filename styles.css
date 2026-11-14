@@ -2041,10 +2041,10 @@ body { font-size: 16px; }
   inset: 0;
   pointer-events: none;
   background-image:
-    url("./snowflake-six.svg"),
-    url("./snowflake-six.svg"),
-    url("./snowflake-six.svg");
-  background-size: 56px 56px, 78px 78px, 104px 104px;
+    url("./snowflake-six.svg?v=mini-v2"),
+    url("./snowflake-six.svg?v=mini-v2"),
+    url("./snowflake-six.svg?v=mini-v2");
+  background-size: 48px 48px, 64px 64px, 80px 80px;
   background-repeat: repeat;
   background-clip: text;
   -webkit-background-clip: text;
@@ -2052,8 +2052,8 @@ body { font-size: 16px; }
   animation: wintertime-letter-snow 10s linear infinite;
 }
 @keyframes wintertime-letter-snow {
-  from { background-position: 0 -56px, 21px -78px, 43px -104px; }
-  to   { background-position: 0 56px, 21px 78px, 43px 104px; }
+  from { background-position: 0 -48px, 19px -64px, 37px -80px; }
+  to   { background-position: 0 96px, 19px 128px, 37px 160px; }
 }
 
 /* Each podium gently drifts with a different cadence, independent of hover. */
