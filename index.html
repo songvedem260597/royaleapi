@@ -4,52 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WinterTime #GYQJL9GV · Clan Command Center</title>
+<meta name="description" content="Bảng điều khiển nội bộ Clan WinterTime (#GYQJL9GV): cúp War, mức độ tham gia, xếp hạng thành viên và lịch sử River Race.">
+<meta name="theme-color" content="#0B0F14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261113-member-v5">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=20261114-premium-v1">
 </head>
 <body>
-<header class="bento-nav">
-  <div class="brand-block">
-    <h1 class="brand-title"><span class="brand-snowflake"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/><polyline points="9 4 12 7 15 4"/><polyline points="9 20 12 17 15 20"/><polyline points="4 9 7 12 4 15"/><polyline points="20 9 17 12 20 15"/></svg></span><span class="brand-title-grad">WINTERTIME · #GYQJL9GV</span></h1>
-  </div>
+<a class="skip-link" href="#clan-roster">Bỏ qua tới danh sách thành viên</a>
 
-</header>
-<main class="bento-main">
-  <section class="bento-hero">
-    <div id="clan-summary" class="clan-summary">
-      <p class="hero-hint">Đang tự động đồng bộ dữ liệu Clan WinterTime (#GYQJL9GV)...</p>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#top" aria-label="WinterTime — về đầu trang">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/><polyline points="9 4 12 7 15 4"/><polyline points="9 20 12 17 15 20"/><polyline points="4 9 7 12 4 15"/><polyline points="20 9 17 12 20 15"/></svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-title">WINTERTIME</span>
+        <span class="brand-sub">Clan Command Center · #GYQJL9GV</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="Điều hướng chính">
+      <a href="#top3-podium-section">Ưu tú</a>
+      <a href="#top3-weekly-section">War tuần</a>
+      <a href="#cw2-clan-panel">Lịch sử War</a>
+      <a href="#clan-roster">Thành viên</a>
+      <a href="#meta-decks-section">Deck Meta</a>
+    </nav>
+
+    <div class="header-status" id="live-indicator" title="Trạng thái đồng bộ dữ liệu">
+      <span class="status-dot live-dot" aria-hidden="true"></span>
+      <span id="auto-sync-text">Đang đồng bộ dữ liệu</span>
     </div>
-    <div id="error-box" class="error-box" hidden></div>
-    <div class="kpi-grid">
-      <article class="kpi-card"><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members">0/50</strong></article>
-      <article class="kpi-card kpi-good"><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good">0</strong></article>
-      <article class="kpi-card kpi-warning"><span class="kpi-label">Mức Trung Bình</span><strong id="kpi-warning">0</strong></article>
-      <article class="kpi-card kpi-kick"><span class="kpi-label">Cảnh Báo</span><strong id="kpi-kick">0</strong></article>
+  </div>
+</header>
+
+<main class="bento-main" id="top">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-media" aria-hidden="true"></div>
+    <div class="hero-veil" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> River Race · War Analytics · Clan Roster</p>
+      <h1 class="hero-title" id="hero-title">WINTERTIME</h1>
+      <p class="hero-lead">Trung tâm điều phối Clan <strong>#GYQJL9GV</strong> — theo dõi cúp War, mức độ tham gia River Race và xếp hạng nội bộ của từng thành viên.</p>
+
+      <div id="clan-summary" class="clan-summary">
+        <p class="hero-hint">Đang tự động đồng bộ dữ liệu Clan WinterTime (#GYQJL9GV)…</p>
+      </div>
+      <div id="error-box" class="error-box" hidden></div>
+
+      <div class="kpi-grid">
+        <article class="kpi-card"><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members">0/50</strong></article>
+        <article class="kpi-card kpi-good"><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good">0</strong></article>
+        <article class="kpi-card kpi-warning"><span class="kpi-label">Mức Trung Bình</span><strong id="kpi-warning">0</strong></article>
+        <article class="kpi-card kpi-kick"><span class="kpi-label">Cảnh Báo</span><strong id="kpi-kick">0</strong></article>
+      </div>
     </div>
   </section>
+
   <section id="clan-info-grid" class="clan-info-grid">
     <article class="info-card notice-card">
-      <div class="info-card-head"><span class="info-card-title">📢 Thông Báo Clan</span><span class="info-badge">Bảng tin</span></div>
+      <div class="info-card-head"><span class="info-card-title">Thông báo Clan</span><span class="info-badge">Bảng tin</span></div>
       <ul id="clan-notice-box" class="clan-rules-list">
         <li>Mục tiêu 2k5 cúp Hội Chiến.</li>
       </ul>
     </article>
     <article class="info-card rules-card">
-      <div class="info-card-head"><span class="info-card-title">📜 Nội Quy Clan WinterTime</span><span class="info-badge info-badge-gold">Bắt buộc</span></div>
+      <div class="info-card-head"><span class="info-card-title">Nội quy Clan WinterTime</span><span class="info-badge info-badge-gold">Bắt buộc</span></div>
       <ul class="clan-rules-list">
-        <li><strong>⚔️ Mức điểm War (River Race):</strong> Đạt <strong>trên 400 điểm War</strong> tính mức <em>Trung bình</em>; từ <strong>1,600+ điểm</strong> đạt mức <em>Ưu tú</em>; từ 400 điểm trở xuống vào diện <em>Cảnh báo</em>.</li>
-        <li><strong>📊 Điểm hoạt động nội bộ:</strong> Chỉ số tham khảo riêng (40% tham gia War, 40% Deck 4 kỳ, 10% Deck tuần này, 10% Donate, trừ điểm offline). <strong>Phân loại Ưu tú/Trung bình/Cảnh báo dựa vào Fame thật của kỳ War đã kết thúc gần nhất</strong>, không dựa vào điểm tham khảo.</li>
-        <li><strong>🤝 Tương trợ đồng đội:</strong> Tích cực Donate thẻ bài hằng ngày - <em>Ae là 1 BiG Familie</em>.</li>
-        <li><strong>📝 Báo nghỉ phép:</strong> Báo trước cho Leader / Co-leader nếu bạn không thể tham gia War.</li>
-        <li><strong>⚠️ Xét Kick:</strong> Nếu có 2 kỳ War đã kết thúc liên tiếp được xác minh 0 Deck, hệ thống chỉ <em>đề xuất xét Kick</em>. Leader/Co-leader cần kiểm tra báo nghỉ phép và thời điểm gia nhập trước khi quyết định. Không có bản ghi không đồng nghĩa 0 Deck.</li>
+        <li><strong>Mức điểm War (River Race):</strong> Đạt <strong>trên 400 điểm War</strong> tính mức <em>Trung bình</em>; từ <strong>1,600+ điểm</strong> đạt mức <em>Ưu tú</em>; từ 400 điểm trở xuống vào diện <em>Cảnh báo</em>.</li>
+        <li><strong>Điểm hoạt động nội bộ:</strong> Chỉ số tham khảo riêng (40% tham gia War, 40% Deck 4 kỳ, 10% Deck tuần này, 10% Donate, trừ điểm offline). <strong>Phân loại Ưu tú/Trung bình/Cảnh báo dựa vào Fame thật của kỳ War đã kết thúc gần nhất</strong>, không dựa vào điểm tham khảo.</li>
+        <li><strong>Tương trợ đồng đội:</strong> Tích cực Donate thẻ bài hằng ngày — <em>Ae là 1 BiG Familie</em>.</li>
+        <li><strong>Báo nghỉ phép:</strong> Báo trước cho Leader / Co-leader nếu bạn không thể tham gia War.</li>
+        <li><strong>Xét Kick:</strong> Nếu có 2 kỳ War đã kết thúc liên tiếp được xác minh 0 Deck, hệ thống chỉ <em>đề xuất xét Kick</em>. Leader/Co-leader cần kiểm tra báo nghỉ phép và thời điểm gia nhập trước khi quyết định. Không có bản ghi không đồng nghĩa 0 Deck.</li>
       </ul>
     </article>
   </section>
+
   <section id="cw2-clan-panel" class="cw2-panel cw2-clan-panel">
     <div class="cw2-header">
-      <div id="cw2-clan-meta"></div>
+      <div id="cw2-clan-meta" class="cw2-meta"></div>
       <div class="cw2-actions">
         <select id="cw2-clan-range-select" aria-label="Chọn số mùa War Toàn Clan">
           <option value="5" selected>Toàn Clan WinterTime (#GYQJL9GV) — 5 mùa gần nhất</option>
@@ -60,8 +97,9 @@
     </div>
 
     <div id="cw2-clan-chart-box" class="cw2-chart-wrap"></div>
-    <p id="clan-war-source-note" class="meta-decks-sub" style="padding:12px 16px;line-height:1.6"></p>
-    <div class="cw2-table-wrap">
+    <p id="clan-war-source-note" class="cw2-note"></p>
+
+    <div class="table-scroll">
       <table class="cw2-table">
         <thead>
           <tr>
@@ -82,16 +120,18 @@
       </table>
     </div>
   </section>
+
   <section id="cw2-history-panel" class="cw2-panel">
     <div class="cw2-header">
-      <div id="cw2-player-meta"></div>
+      <div id="cw2-player-meta" class="cw2-meta"></div>
       <div class="cw2-actions">
         <select id="cw2-member-select" aria-label="Chọn thành viên xem CW2"></select>
       </div>
     </div>
 
     <div id="cw2-chart-box" class="cw2-chart-wrap"></div>
-    <div class="cw2-table-wrap">
+
+    <div class="table-scroll">
       <table class="cw2-table">
         <thead>
           <tr>
@@ -111,49 +151,80 @@
       </table>
     </div>
   </section>
+
   <section id="meta-decks-section" class="meta-decks-section"></section>
-  <section class="toolbar-bento">
-    <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag..." aria-label="Tìm thành viên">
-    <select id="filter-status" aria-label="Lọc trạng thái">
-      <option value="all">Tất cả trạng thái</option>
-      <option value="good">Ưu tú (≥1.600 Fame)</option>
-      <option value="average">Trung bình (401–1.599)</option>
-      <option value="warning">Cảnh báo (≤400)</option>
-      <option value="kick">Đề xuất xét Kick</option>
-      <option value="unknown">Chưa có dữ liệu</option>
-    </select>
-    <select id="sort-by" aria-label="Sắp xếp">
-      <option value="latestFame">Fame War gần nhất</option>
-      <option value="score">Điểm hoạt động nội bộ</option>
-      <option value="trophies">Cúp 🏆</option>
-      <option value="donations">Donate</option>
-    </select>
+
+  <section class="toolbar-bento" aria-label="Tìm kiếm và bộ lọc thành viên">
+    <div class="toolbar-field toolbar-search">
+      <label class="sr-only" for="search-member">Tìm thành viên</label>
+      <input id="search-member" type="search" placeholder="Tìm thành viên WinterTime hoặc #tag…" autocomplete="off">
+    </div>
+    <div class="toolbar-field">
+      <label class="sr-only" for="filter-status">Lọc trạng thái</label>
+      <select id="filter-status" aria-label="Lọc trạng thái">
+        <option value="all">Tất cả trạng thái</option>
+        <option value="good">Ưu tú (≥1.600 Fame)</option>
+        <option value="average">Trung bình (401–1.599)</option>
+        <option value="warning">Cảnh báo (≤400)</option>
+        <option value="kick">Đề xuất xét Kick</option>
+        <option value="unknown">Chưa có dữ liệu</option>
+      </select>
+    </div>
+    <div class="toolbar-field">
+      <label class="sr-only" for="sort-by">Sắp xếp</label>
+      <select id="sort-by" aria-label="Sắp xếp">
+        <option value="latestFame">Fame War gần nhất</option>
+        <option value="score">Điểm hoạt động nội bộ</option>
+        <option value="trophies">Cúp 🏆</option>
+        <option value="donations">Donate</option>
+      </select>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <div class="kick-actions">
+      <button id="btn-export-kick" class="btn btn-ghost" type="button">Xem đề xuất xét Kick</button>
+    </div>
   </section>
-  <div class="kick-actions" style="margin: 12px 0 18px"><button id="btn-export-kick" class="btn btn-ghost" type="button">🛡️ Xem đề xuất xét Kick</button></div>
-  <section class="table-card">
-    <table class="member-table">
-      <thead>
-        <tr>
-          <th>Hạng</th>
-          <th>Thành viên</th>
-          <th>Chức vụ</th>
-          <th>Cúp 🏆</th>
-          <th>Deck War · Fame kỳ gần nhất</th>
-          <th>Donate Cho/Nhận</th>
-          <th>Điểm hoạt động nội bộ</th>
-          <th>Đánh giá &amp; CW2</th>
-        </tr>
-      </thead>
-      <tbody id="member-tbody"></tbody>
-    </table>
+
+  <section class="table-card" id="clan-roster">
+    <div class="roster-head">
+      <div>
+        <h2 class="roster-title">Danh sách thành viên</h2>
+        <p class="roster-sub">Bảng quản lý đội hình · nhấn vào một dòng để xem chi tiết War của thành viên.</p>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table class="member-table">
+        <thead>
+          <tr>
+            <th>Hạng</th>
+            <th>Thành viên</th>
+            <th>Chức vụ</th>
+            <th>Cúp 🏆</th>
+            <th>Deck War · Fame kỳ gần nhất</th>
+            <th>Donate Cho/Nhận</th>
+            <th>Điểm hoạt động nội bộ</th>
+            <th>Đánh giá &amp; CW2</th>
+          </tr>
+        </thead>
+        <tbody id="member-tbody"></tbody>
+      </table>
+    </div>
   </section>
+
   <div id="kick-output" class="kick-output" hidden></div>
+
+  <footer class="site-footer">
+    <span>WinterTime · #GYQJL9GV</span>
+    <span class="footer-sep" aria-hidden="true">·</span>
+    <span>Dữ liệu: RoyaleTrack / WarStats mirror Clash Royale API</span>
+  </footer>
 </main>
-<script src="contribution-score.js?v=20261113-score-v2"></script>
-<script src="war-history.js?v=20261113-medals-v4"></script>
-<script src="war-member-evaluation.js?v=20261113-member-v5"></script>
-<script src="elite-ranking.js?v=20261114-elite-v1"></script>
-<script src="clan-analytics.js?v=20261114-elite-v1"></script>
-<script src="app.js?v=20261114-elite-v1"></script>
+
+<script src="contribution-score.js?v=20261114-premium-v1"></script>
+<script src="war-history.js?v=20261114-premium-v1"></script>
+<script src="war-member-evaluation.js?v=20261114-premium-v1"></script>
+<script src="elite-ranking.js?v=20261114-premium-v1"></script>
+<script src="clan-analytics.js?v=20261114-premium-v1"></script>
+<script src="app.js?v=20261114-premium-v1"></script>
 </body>
 </html>

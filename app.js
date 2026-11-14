@@ -234,16 +234,16 @@ function renderCW2Chart(member) {
     const present = h.fameVerified && Number.isFinite(h.fame);
     const value = present ? h.fame : null;
     const y = value == null ? topPad + chartH : scale(value);
-    const color = value >= 1600 ? '#10b981' : value > 400 ? '#38bdf8' : '#f59e0b';
+    const color = value >= 1600 ? 'var(--accent)' : value > 400 ? '#C3CEC8' : 'var(--warn)';
     if (present) bars += '<rect x="' + x + '" y="' + y + '" width="' + w +
       '" height="' + Math.max(2, topPad + chartH - y) + '" fill="' + color + '" rx="3"/>';
     bars += '<text x="' + (x + w / 2) + '" y="' + (present ? y - 8 : topPad + chartH - 8) +
-      '" fill="#e2e8f0" font-size="11" text-anchor="middle">' +
+      '" class="cw2-bar-value" font-size="11" text-anchor="middle">' +
       (value == null ? '—' : value.toLocaleString('en-US')) + '</text>';
     labels += '<text x="' + (x + w / 2) + '" y="' + (H - 23) +
-      '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+      '" class="cw2-bar-label" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
     labels += '<text x="' + (x + w / 2) + '" y="' + (H - 8) +
-      '" fill="#94a3b8" font-size="9" text-anchor="middle">' +
+      '" class="cw2-bar-label" font-size="9" text-anchor="middle">' +
       (h.decksVerified ? h.decks + ' Deck' : '—') + '</text>';
   });
   box.innerHTML = '<p class="meta-decks-sub">🏅 Fame cá nhân từng kỳ (WarStats · bản đệm Clash Royale API) · Dòng dưới: Deck đã xác minh · — nghĩa là chưa có bản ghi</p>' +
@@ -351,7 +351,7 @@ function updateLastUpdatedUI(dt, details = {}) {
 }
 function updateLiveIndicator(isLive) {
   const dot = document.querySelector('.auto-sync-dot, .sync-dot, .live-dot');
-  if (dot) dot.style.background = isLive ? '#10b981' : '#f59e0b';
+  if (dot) dot.style.background = isLive ? 'var(--accent)' : 'var(--warn)';
 }
 
 async function fetchClan() {
@@ -500,7 +500,7 @@ function renderTable(clan) {
       '<td><strong>🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame kỳ ' + (m.warEvaluation?.latestSeason || '—') + '</strong> <small>(' + observedDecks + ' Deck đã xác minh / ' + (m.verifiedWarWeeks || 0) + ' kỳ · War ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
       '<td><div class="score-bar"><div class="score-fill" style="width:' + (pct == null ? 0 : pct) + '%"></div></div><small>' + (pct == null ? '—' : pct + '/100') + '</small></td>' +
-      '<td>' + statusBadge(m.status) + ' <small>' + (m.reason || '') + '</small> <button class="btn btn-ghost btn-sm">📊 CW2</button></td>' +
+      '<td><div class="cell-eval">' + statusBadge(m.status) + '<button class="btn btn-ghost btn-sm">📊 CW2</button></div><small>' + (m.reason || '') + '</small></td>' +
       '</tr>';
   }).join('');
   tbody.querySelectorAll('.member-row-clickable').forEach(tr => {
@@ -831,11 +831,11 @@ function renderClanCW2Panel(clan) {
       const decks = Number(h.decks) || 0;
       const top = y(decks);
       bars += '<rect x="' + x + '" y="' + top + '" width="' + w + '" height="' +
-        (padT + chartH - top) + '" fill="#38bdf8" rx="3"/>';
+        (padT + chartH - top) + '" rx="3" class="cw2-bar"/>';
       bars += '<text x="' + (x + w / 2) + '" y="' + (top - 6) +
-        '" fill="#e2e8f0" font-size="10" text-anchor="middle">' + decks + ' Deck</text>';
+        '" class="cw2-bar-value" font-size="10" text-anchor="middle">' + decks + ' Deck</text>';
       labels += '<text x="' + (x + w / 2) + '" y="' + (H - 12) +
-        '" fill="#94a3b8" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
+        '" class="cw2-bar-label" font-size="10" text-anchor="middle">' + (h.season || '') + '</text>';
     });
     chartBox.innerHTML = '<p class="meta-decks-sub">Tổng Deck theo từng kỳ River Race Log (WarStats · bộ nhớ đệm Clash Royale API); kỳ thiếu nguồn sẽ chỉ dùng Deck quan sát được</p>' +
       '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + bars + labels + '</svg>';
@@ -953,7 +953,9 @@ render();
   bar.id = 'wt-marquee-bar';
   bar.className = 'wt-marquee-bar';
   bar.innerHTML = '<div class="wt-marquee-track">' + row + row + '</div>';
-  main.prepend(bar);
+  const hero = main.querySelector('.hero');
+  if (hero && hero.nextSibling) main.insertBefore(bar, hero.nextSibling);
+  else main.prepend(bar);
 })();
 (function updateMarqueeText() {
   const track = document.querySelector('#wt-marquee-bar .wt-marquee-track');
@@ -967,26 +969,7 @@ render();
   const row = items.map(t => '<span class="wt-marquee-item">' + t + '</span>').join('');
   track.innerHTML = row + row;
 })();
-(function initBrandAndSnowEffect() {
-  const bt = document.querySelector('.brand-title');
-  if (bt) bt.innerHTML = '<span class="brand-snowflake"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/><polyline points="9 4 12 7 15 4"/><polyline points="9 20 12 17 15 20"/><polyline points="4 9 7 12 4 15"/><polyline points="20 9 17 12 20 15"/></svg></span><span class="brand-title-grad">WINTERTIME · #GYQJL9GV</span>';
-  if (document.getElementById('wt-snow-layer')) return;
-  const layer = document.createElement('div');
-  layer.id = 'wt-snow-layer';
-  layer.className = 'wt-snow-layer';
-  const glyphs = ['❄', '❅', '❆', '•'];
-  let html = '';
-  for (let i = 0; i < 14; i++) {
-    const left = (i * 7.2 + 3).toFixed(1);
-    const dur = (13 + (i % 5) * 2.4).toFixed(1);
-    const delay = (-1.5 * i).toFixed(1);
-    const size = (0.65 + (i % 4) * 0.16).toFixed(2);
-    const op = (0.26 + (i % 4) * 0.11).toFixed(2);
-    html += '<span class="wt-snow-flake" style="left:' + left + '%;animation-duration:' + dur + 's;animation-delay:' + delay + 's;font-size:' + size + 'rem;opacity:' + op + '">' + glyphs[i % glyphs.length] + '</span>';
-  }
-  layer.innerHTML = html;
-  document.body.appendChild(layer);
-})();
+/* brand markup is static in index.html; falling-snow layer removed */
 renderSummary = function(clan) {
   const el = document.getElementById('clan-summary');
   if (!el) return;
@@ -1001,11 +984,11 @@ renderSummary = function(clan) {
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong id="kpi-clan-score">' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong id="kpi-war-trophies">' + wTrophies + '</strong></div>' +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
-      '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members" style="color:#38bdf8">' + total + '/50</strong></div>' +
-      '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good" style="color:#10b981">' + (cnt.good || 0) + '</strong></div>' +
-      '<div><span class="kpi-label">Trung bình</span><strong id="kpi-average" style="color:#f59e0b">' + (cnt.average || 0) + '</strong></div>' +
-      '<div><span class="kpi-label">Cảnh báo</span><strong id="kpi-warning" style="color:#f97316">' + (cnt.warning || 0) + '</strong></div>' +
-      '<div><span class="kpi-label">Đề xuất xét Kick</span><strong id="kpi-kick" style="color:#ef4444">' + (cnt.kick || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members">' + total + '/50</strong></div>' +
+      '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good">' + (cnt.good || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Trung bình</span><strong id="kpi-average">' + (cnt.average || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Cảnh báo</span><strong id="kpi-warning">' + (cnt.warning || 0) + '</strong></div>' +
+      '<div><span class="kpi-label">Đề xuất xét Kick</span><strong id="kpi-kick">' + (cnt.kick || 0) + '</strong></div>' +
       '<div><span class="kpi-label">Chưa đủ dữ liệu</span><strong id="kpi-unknown">' + (cnt.unknown || 0) + '</strong></div>' +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
