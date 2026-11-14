@@ -783,6 +783,17 @@ em { font-style: normal; color: var(--text); }
   letter-spacing: -0.02em;
   color: var(--text);
 }
+.cw2-personal-average {
+  font-size: 12px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.member-average {
+  font-size: 11px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
 
 .cw2-actions {
   display: flex;
@@ -2030,20 +2041,19 @@ body { font-size: 16px; }
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(circle at 13px 18px, rgba(44, 123, 176, .95) 0 2.1px, transparent 3px),
-    radial-gradient(circle at 38px 42px, rgba(66, 146, 197, .87) 0 1.7px, transparent 2.7px),
-    radial-gradient(circle at 18px 35px, rgba(27, 105, 156, .78) 0 1.35px, transparent 2.4px),
-    radial-gradient(circle at 27px 14px, rgba(255, 255, 255, .98) 0 1.5px, transparent 2.5px);
-  background-size: 49px 66px, 71px 88px, 93px 104px, 113px 119px;
+    url("./snowflake-six.svg"),
+    url("./snowflake-six.svg"),
+    url("./snowflake-six.svg");
+  background-size: 56px 56px, 78px 78px, 104px 104px;
   background-repeat: repeat;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: wintertime-letter-snow 9.5s linear infinite;
+  animation: wintertime-letter-snow 10s linear infinite;
 }
 @keyframes wintertime-letter-snow {
-  from { background-position: 0 0, 23px 0, 8px 0, 17px 0; }
-  to   { background-position: 0 132px, 23px 176px, 8px 208px, 17px 238px; }
+  from { background-position: 0 -56px, 21px -78px, 43px -104px; }
+  to   { background-position: 0 56px, 21px 78px, 43px 104px; }
 }
 
 /* Each podium gently drifts with a different cadence, independent of hover. */
