@@ -1,7 +1,7 @@
-/* ==========================================================================
-   WinterTime · Clan Command Center
+﻿/* ==========================================================================
+   WinterTime Â· Clan Command Center
    Premium dark gaming design system
-   Tokens → base → layout → sections → components → responsive
+   Tokens â†’ base â†’ layout â†’ sections â†’ components â†’ responsive
    ========================================================================== */
 
 /* ---------- 1. Design tokens ---------- */
@@ -216,7 +216,7 @@ em { font-style: normal; color: var(--text); }
 }
 
 .brand-sub {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -234,7 +234,7 @@ em { font-style: normal; color: var(--text); }
 .site-nav a {
   padding: 8px 14px;
   border-radius: var(--r-sm);
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-2);
   transition: color 0.16s ease, background 0.16s ease;
@@ -252,7 +252,7 @@ em { font-style: normal; color: var(--text); }
   border-radius: var(--r-pill);
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.03);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-2);
   max-width: 360px;
@@ -336,7 +336,7 @@ em { font-style: normal; color: var(--text); }
   align-items: center;
   gap: 10px;
   margin-bottom: var(--s-3);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -399,7 +399,7 @@ em { font-style: normal; color: var(--text); }
 .hero-stats > div:first-child { border-left: none; }
 
 .hero-stats .kpi-label {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -487,7 +487,7 @@ em { font-style: normal; color: var(--text); }
   border: 1px solid var(--danger-line);
   background: var(--danger-soft);
   color: #F7B9BB;
-  font-size: 13.5px;
+  font-size: 14px;
 }
 
 /* ---------- 6. Info cards (notice / rules) ---------- */
@@ -529,7 +529,7 @@ em { font-style: normal; color: var(--text); }
   border-radius: var(--r-pill);
   border: 1px solid var(--border-2);
   background: rgba(255, 255, 255, 0.04);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -551,7 +551,7 @@ em { font-style: normal; color: var(--text); }
 .clan-rules-list li {
   position: relative;
   padding-left: 18px;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--text-2);
 }
@@ -652,7 +652,7 @@ em { font-style: normal; color: var(--text); }
   border: 1px solid var(--border-2);
   background: rgba(255, 255, 255, 0.04);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   color: var(--text-2);
@@ -705,7 +705,7 @@ em { font-style: normal; color: var(--text); }
 }
 
 .podium-meta {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-3);
   display: flex;
   align-items: center;
@@ -740,7 +740,7 @@ em { font-style: normal; color: var(--text); }
   border-radius: var(--r-pill);
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.03);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-2);
   white-space: nowrap;
@@ -809,7 +809,7 @@ em { font-style: normal; color: var(--text); }
 
 .cw2-note {
   padding: 0 0 var(--s-3);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.7;
   color: var(--text-3);
 }
@@ -872,7 +872,7 @@ thead th {
   top: 0;
   z-index: 2;
   background: #131B18;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -903,6 +903,11 @@ thead th {
 
 tbody tr:last-child td { border-bottom: none; }
 
+select option {
+  background: #131B18;
+  color: var(--text);
+}
+
 tbody tr { transition: background 0.14s ease; }
 tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 
@@ -917,7 +922,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 .cw2-table td:first-child { text-align: left; }
 .cw2-table tbody td strong { color: var(--text); font-weight: 600; }
 
-.member-table { font-size: 13.5px; }
+.member-table { font-size: 14px; }
 .member-table th:nth-child(1) { width: 56px; }
 .member-table th:nth-child(2) { width: 190px; }
 .member-table th:nth-child(3) { width: 100px; }
@@ -937,7 +942,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.45;
   color: var(--text-3);
   margin-top: 2px;
@@ -1020,7 +1025,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
   transition: border-color 0.16s ease, background 0.16s ease;
   appearance: none;
@@ -1108,7 +1113,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 .btn-sm {
   height: 30px;
   padding: 0 11px;
-  font-size: 11.5px;
+  font-size: 12px;
   border-radius: var(--r-xs);
 }
 
@@ -1118,7 +1123,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   border: 1px solid var(--danger-line);
   background: var(--danger-soft);
   color: #F0868A;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1132,7 +1137,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   padding: 4px 10px;
   border-radius: var(--r-pill);
   border: 1px solid transparent;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -1146,7 +1151,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 
 .badge-active { color: #8CF07F; background: var(--accent-soft); border-color: var(--accent-line); }
 
-.kick-icon { font-size: 10px; }
+.kick-icon { font-size: 11px; }
 
 .role-badge {
   display: inline-flex;
@@ -1155,7 +1160,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   border-radius: var(--r-xs);
   border: 1px solid var(--border-2);
   background: rgba(255, 255, 255, 0.04);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-2);
   white-space: nowrap;
@@ -1163,7 +1168,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 
 .tag-mono {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.01em;
   color: var(--text-3);
@@ -1203,7 +1208,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.04);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-2);
 }
@@ -1309,7 +1314,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   border-radius: var(--r-xs);
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.035);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text-2);
   white-space: nowrap;
@@ -1318,7 +1323,7 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 
 a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
 .meta-pill-win { color: #C3CEC8; }
-.meta-pill-elixir { color: #9FC3D8; }
+.meta-pill-elixir { color: var(--text-2); }
 
 .meta-cards-row {
   display: flex;
@@ -1357,7 +1362,7 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
   border: 1px solid var(--danger-line);
   background: var(--danger-soft);
   color: #F7C9CA;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.7;
 }
 
@@ -1400,7 +1405,7 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-3);
   white-space: nowrap;
@@ -1444,7 +1449,7 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   text-align: left;
@@ -1529,7 +1534,7 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 13px;
 }
 .custom-dropdown-search::placeholder { color: var(--text-3); }
 .custom-dropdown-search:focus {
@@ -1539,7 +1544,7 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
 
 .custom-dropdown-empty {
   padding: 14px 10px;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-3);
   text-align: center;
 }
@@ -1611,7 +1616,7 @@ a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
   .hero { min-height: 420px; }
   .hero-title { font-size: clamp(2.6rem, 15vw, 3.6rem); letter-spacing: -0.04em; }
   .hero-lead { font-size: 14.5px; margin-bottom: var(--s-4); }
-  .hero-eyebrow { font-size: 10px; letter-spacing: 0.12em; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.12em; }
 
   .hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hero-stats > div { border-left: 1px solid var(--border); }
