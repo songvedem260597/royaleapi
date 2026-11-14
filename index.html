@@ -10,6 +10,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=20261115-dropdown-v5">
+<style>
+/* CW2 header: controls on one horizontal row (desktop) */
+.cw2-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 1rem}
+.cw2-header .cw2-meta{flex:1 1 auto;min-width:0}
+.cw2-header .cw2-actions{display:flex;flex-wrap:nowrap;align-items:center;gap:.6rem;flex:0 0 auto}
+.cw2-header .cw2-actions select{max-width:min(46vw,420px)}
+@media (max-width:720px){
+  .cw2-header{flex-direction:column;align-items:stretch}
+  .cw2-header .cw2-actions{flex-wrap:wrap}
+  .cw2-header .cw2-actions select{max-width:100%;width:100%}
+  .cw2-header .cw2-actions .btn{width:100%;justify-content:center}
+}
+/* Subtle elegant animated gradient highlight for CW2 section/badge */
+@keyframes cw2GradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.cw2-panel{position:relative}
+.cw2-panel::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(120deg,rgba(120,200,255,.55),rgba(180,140,255,.45),rgba(120,255,200,.45),rgba(120,200,255,.55));background-size:300% 300%;animation:cw2GradientShift 14s ease-in-out infinite;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.85}
+.cw2-panel .info-badge,.cw2-panel .cw2-badge{background:linear-gradient(120deg,rgba(120,200,255,.22),rgba(180,140,255,.22),rgba(120,255,200,.22));background-size:300% 300%;animation:cw2GradientShift 12s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){
+  .cw2-panel::before,.cw2-panel .info-badge,.cw2-panel .cw2-badge{animation:none;background-position:50% 50%}
+}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#clan-roster">Bỏ qua tới danh sách thành viên</a>
