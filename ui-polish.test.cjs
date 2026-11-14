@@ -34,6 +34,13 @@ test('member status rows present concise badges and an accessible detail action'
   assert.match(css, /\.member-table tbody td:last-child \{ min-width: 0; \}/);
 });
 
+test('small typographic increase preserves readable desktop and mobile sizes', () => {
+  assert.match(css, /body \{ font-size: 16px; \}/);
+  assert.match(css, /\.clan-rules-list li \{ font-size: 15px;/);
+  assert.match(css, /\.member-table \{ font-size: 14\.5px; \}/);
+  assert.match(css, /@media \(max-width: 640px\) \{\s*body \{ font-size: 15\.5px; \}/);
+});
+
 test('KPI labels wrap rather than truncating; War chart distinguishes recent race', () => {
   assert.match(css, /\.hero-stats \.kpi-label \{[\s\S]*?white-space: normal/);
   assert.match(css, /\.cw2-clan-chart \.cw2-bar-prior/);
@@ -41,8 +48,12 @@ test('KPI labels wrap rather than truncating; War chart distinguishes recent rac
   assert.match(app, /cw2-bar-current/);
 });
 
-test('full clan rules are retained in expandable accessible details', () => {
-  assert.match(html, /<details class="rules-details">/);
-  assert.match(html, /Xem đầy đủ nội quy và tiêu chí đánh giá/);
+test('Clan rules are permanently visible with no expand control or duplicated overview', () => {
+  assert.match(html, /<div class="rules-details rules-always-open"/);
+  assert.doesNotMatch(html, /<details class="rules-details">/);
+  assert.doesNotMatch(html, /Xem đầy đủ nội quy và tiêu chí đánh giá/);
+  assert.doesNotMatch(html, /class="rules-overview"/);
+  assert.match(css, /\.clan-info-grid \{ align-items: start; \}/);
+  assert.match(css, /\.clan-info-grid > \.info-card \{ align-self: start; height: auto; \}/);
   assert.match(html, /không đồng nghĩa 0 Deck/);
 });
