@@ -2023,25 +2023,27 @@ body { font-size: 16px; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* Icy-blue flakes stand out against the pale lettering; movement is clipped to glyphs. */
 .hero-title::after {
   content: attr(data-snow-title);
   position: absolute;
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(circle at 13px 18px, rgba(255,255,255,.98) 0 1.8px, transparent 2.5px),
-    radial-gradient(circle at 38px 42px, rgba(244,251,255,.90) 0 1.2px, transparent 2px),
-    radial-gradient(circle at 18px 35px, rgba(255,255,255,.86) 0 1.4px, transparent 2px);
-  background-size: 61px 83px, 89px 107px, 127px 123px;
+    radial-gradient(circle at 13px 18px, rgba(44, 123, 176, .95) 0 2.1px, transparent 3px),
+    radial-gradient(circle at 38px 42px, rgba(66, 146, 197, .87) 0 1.7px, transparent 2.7px),
+    radial-gradient(circle at 18px 35px, rgba(27, 105, 156, .78) 0 1.35px, transparent 2.4px),
+    radial-gradient(circle at 27px 14px, rgba(255, 255, 255, .98) 0 1.5px, transparent 2.5px);
+  background-size: 49px 66px, 71px 88px, 93px 104px, 113px 119px;
   background-repeat: repeat;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: wintertime-letter-snow 13s linear infinite;
+  animation: wintertime-letter-snow 9.5s linear infinite;
 }
 @keyframes wintertime-letter-snow {
-  from { background-position: 0 -100px, 27px -140px, 8px -150px; }
-  to   { background-position: 0 172px, 27px 184px, 8px 142px; }
+  from { background-position: 0 0, 23px 0, 8px 0, 17px 0; }
+  to   { background-position: 0 132px, 23px 176px, 8px 208px, 17px 238px; }
 }
 
 /* Each podium gently drifts with a different cadence, independent of hover. */
@@ -2075,36 +2077,38 @@ body { font-size: 16px; }
   pointer-events: none;
   z-index: 1;
   background: conic-gradient(from var(--wintertime-border-angle),
-    rgba(148, 194, 208, .20) 0deg,
-    rgba(149, 222, 204, .75) 20deg,
-    rgba(208, 225, 186, .36) 45deg,
-    rgba(148, 194, 208, .13) 80deg,
-    rgba(148, 194, 208, .10) 280deg,
-    rgba(148, 194, 208, .20) 360deg);
+    rgba(140, 190, 204, .26) 0deg,
+    rgba(120, 235, 214, .98) 20deg,
+    rgba(229, 243, 202, .85) 45deg,
+    rgba(128, 213, 202, .45) 88deg,
+    rgba(140, 190, 204, .18) 142deg,
+    rgba(140, 190, 204, .18) 310deg,
+    rgba(140, 190, 204, .26) 360deg);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
-  animation: wintertime-border-flow 9s linear infinite;
+  animation: wintertime-border-flow 7.5s linear infinite;
 }
 .podium-stage .podium-card:nth-child(2)::before,
 .podium-stage .podium-card:nth-child(2)::after {
   animation-delay: -4s;
-  animation-duration: 10s;
+  animation-duration: 8.1s;
 }
 .podium-stage .podium-card:nth-child(3)::before,
 .podium-stage .podium-card:nth-child(3)::after {
   animation-delay: -6s;
-  animation-duration: 9.5s;
+  animation-duration: 7.9s;
 }
 .podium-stage .podium-1st::before {
   background: conic-gradient(from var(--wintertime-border-angle),
-    rgba(118, 207, 121, .26) 0deg,
-    rgba(161, 234, 141, .90) 20deg,
-    rgba(226, 205, 114, .44) 45deg,
-    rgba(118, 207, 121, .18) 80deg,
-    rgba(118, 207, 121, .14) 280deg,
-    rgba(118, 207, 121, .26) 360deg);
+    rgba(111, 204, 120, .32) 0deg,
+    rgba(162, 255, 152, 1) 20deg,
+    rgba(250, 226, 138, .9) 45deg,
+    rgba(130, 224, 132, .5) 88deg,
+    rgba(111, 204, 120, .2) 142deg,
+    rgba(111, 204, 120, .2) 310deg,
+    rgba(111, 204, 120, .32) 360deg);
 }
 /* Soft halo follows the moving color, without thickening the 1px edge. */
 .podium-stage .podium-card::after {
@@ -2125,9 +2129,9 @@ body { font-size: 16px; }
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
-  filter: blur(5px);
-  opacity: .2;
-  animation: wintertime-border-flow 9s linear infinite;
+  filter: blur(4px);
+  opacity: .38;
+  animation: wintertime-border-flow 7.5s linear infinite;
 }
 .podium-stage .podium-1st::after {
   background: conic-gradient(from var(--wintertime-border-angle),
