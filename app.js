@@ -1177,6 +1177,66 @@ document.addEventListener('visibilitychange', () => {
   });
 })();
 
+/* Small falling snow across desktop viewport (CodePen-style).
+   A single small DOM batch; CSS owns animation, zero JS animation loops. */
+(function initDesktopScreenSnow() {
+  const eligible = window.matchMedia(
+    '(min-width: 821px) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
+  );
+  const MAX_FLAKES = 36;
+  let field = null;
+  const random = (min, max) => min + Math.random() * (max - min);
+
+  const setPaused = () => {
+    if (field) field.classList.toggle('is-paused', document.hidden);
+  };
+  const create = () => {
+    if (field) return;
+    field = document.createElement('div');
+    field.id = 'wt-screen-snow';
+    field.className = 'wt-screen-snow';
+    field.setAttribute('aria-hidden', 'true');
+
+    const count = Math.min(MAX_FLAKES,
+      Math.max(16, Math.round(window.innerWidth * window.innerHeight / 34000)));
+    const fragments = document.createDocumentFragment();
+    for (let index = 0; index < count; index++) {
+      const flake = document.createElement('span');
+      flake.className = 'wt-screen-flake';
+      flake.style.setProperty('--snow-left', random(0, 100).toFixed(2) + '%');
+      flake.style.setProperty('--snow-size', random(0.9, 2.5).toFixed(2) + 'px');
+      flake.style.setProperty('--snow-opacity', random(0.24, 0.68).toFixed(2));
+      flake.style.setProperty('--snow-duration', random(10, 22).toFixed(2) + 's');
+      flake.style.setProperty('--snow-delay', random(-22, 0).toFixed(2) + 's');
+      flake.style.setProperty('--snow-drift', random(-65, 65).toFixed(1) + 'px');
+      flake.style.setProperty('--snow-color',
+        Math.random() > 0.6 ? '#cbe7f6' : '#f4fbff');
+      fragments.appendChild(flake);
+    }
+    field.appendChild(fragments);
+    document.body.appendChild(field);
+    setPaused();
+  };
+  const sync = () => {
+    if (!eligible.matches) {
+      if (field) {
+        field.remove();
+        field = null;
+      }
+      return;
+    }
+    create();
+  };
+
+  if (typeof eligible.addEventListener === 'function') {
+    eligible.addEventListener('change', sync);
+  } else if (typeof eligible.addListener === 'function') {
+    eligible.addListener(sync);
+  }
+  document.addEventListener('visibilitychange', setPaused);
+  sync();
+})();
+
 /* Mobile/tablet navigation: same five anchor destinations as desktop. */
 (function initMobileNavigation() {
   const button = document.getElementById('mobile-nav-toggle');
