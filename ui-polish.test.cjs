@@ -108,7 +108,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.match(html, /id="hero-title">WINTERTIME/);
   assert.equal((html.match(/class="hero-snow-layer"/g) || []).length, 4);
   assert.equal((html.match(/aria-hidden="true">WINTERTIME<\/span>/g) || []).length, 4);
-  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
+  assert.match(html, /styles\.css\?v=20261115-black-sidebar-v18/);
   assert.match(css, /\.hero-snow-layer \{[\s\S]*?animation: wintertime-letter-snow var\(--snow-duration, 11s\) linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /url\("\.\/snowflake-six\.svg\?v=variety-v3"\)/);
@@ -134,7 +134,7 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
+  assert.match(html, /styles\.css\?v=20261115-black-sidebar-v18/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
   assert.match(html, /app\.js\?v=20261115-sidebar-snow-v11/);
   assert.match(app, /Fame TB /);
@@ -184,8 +184,31 @@ test('phone menu is a full-height right sidebar occupying one-third of viewport'
   assert.match(app, /nav\.querySelectorAll\('a\[href\^="#"\]'\)/);
   assert.match(app, /event\.key === 'Escape'/);
   assert.match(app, /event\.key === 'Tab'/);
-  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
+  assert.match(html, /styles\.css\?v=20261115-black-sidebar-v18/);
   assert.match(html, /app\.js\?v=20261115-sidebar-snow-v11/);
+});
+
+test('mobile navigation uses a neutral black luxury theme and icon-only hamburger', () => {
+  const toggle = html.split('id="mobile-nav-toggle"')[1].split('</button>')[0];
+  assert.ok(toggle.includes('aria-label="Mở menu điều hướng"'));
+  assert.ok(toggle.includes('<svg viewBox="0 0 24 24"'));
+  assert.ok(!toggle.includes('<span>Menu</span>'));
+  assert.ok(css.includes('width: 42px;'));
+  assert.ok(css.includes('height: 42px;'));
+  assert.ok(css.includes('background: linear-gradient(165deg, #17181b 0%, #101114 52%, #090a0c 100%);'));
+  assert.ok(css.includes('color: #b6bac2;'));
+  assert.ok(css.includes('color: #ffffff;'));
+  assert.ok(!css.includes('background: linear-gradient(180deg, #182621'));
+  assert.ok(html.includes('styles.css?v=20261115-black-sidebar-v18'));
+  for (const [hash, name] of [
+    ['#top3-podium-section', 'BXH Ưu tú'],
+    ['#top3-weekly-section', 'BXH War tuần'],
+    ['#clan-roster', 'BXH Thành viên'],
+    ['#cw2-clan-panel', 'Lịch sử War'],
+    ['#meta-decks-section', 'Deck Meta']
+  ]) {
+    assert.equal(html.split('href="' + hash + '">' + name + '</a>').length - 1, 2);
+  }
 });
 
 test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled on mobile', () => {
@@ -205,7 +228,7 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   assert.match(app, /eligible\.addEventListener\('change', sync\)/);
   const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
   assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
-  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
+  assert.match(html, /styles\.css\?v=20261115-black-sidebar-v18/);
   assert.match(html, /app\.js\?v=20261115-sidebar-snow-v11/);
 });
 
