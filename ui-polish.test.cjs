@@ -136,7 +136,7 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
   assert.match(css, /background-clip: text/);
   assert.match(html, /snowflake-six|screen-snow-v16/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
-  assert.match(html, /app\.js\?v=20261115-screen-snow-v9/);
+  assert.match(html, /app\.js\?v=20261115-larger-snow-v10/);
   assert.match(app, /Fame TB /);
   assert.match(app, /averagedWarWeeks/);
 });
@@ -177,7 +177,7 @@ test('mobile header exposes all five section anchors via a keyboard-accessible m
   assert.match(app, /event\.key === 'Escape'/);
   assert.match(app, /!nav\.contains\(event\.target\)/);
   assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
-  assert.match(html, /app\.js\?v=20261115-screen-snow-v9/);
+  assert.match(html, /app\.js\?v=20261115-larger-snow-v10/);
 });
 
 test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled on mobile', () => {
@@ -190,7 +190,7 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   assert.match(app, /\(min-width: 821px\) and \(pointer: fine\) and \(prefers-reduced-motion: no-preference\)/);
   assert.match(app, /const MAX_FLAKES = 36;/);
   assert.match(app, /document\.createDocumentFragment\(\)/);
-  assert.match(app, /random\(0\.9, 2\.5\)/);
+  assert.match(app, /random\(1\.5, 3\.5\)/);
   assert.match(app, /random\(10, 22\)/);
   assert.match(app, /random\(-65, 65\)/);
   assert.match(app, /document\.addEventListener\('visibilitychange', setPaused\)/);
@@ -198,7 +198,7 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
   assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
   assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
-  assert.match(html, /app\.js\?v=20261115-screen-snow-v9/);
+  assert.match(html, /app\.js\?v=20261115-larger-snow-v10/);
 });
 
 test('phone screens hide all title snow layers, and marquee uses only the requested War reminder', () => {

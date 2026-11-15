@@ -1204,7 +1204,7 @@ document.addEventListener('visibilitychange', () => {
       const flake = document.createElement('span');
       flake.className = 'wt-screen-flake';
       flake.style.setProperty('--snow-left', random(0, 100).toFixed(2) + '%');
-      flake.style.setProperty('--snow-size', random(0.9, 2.5).toFixed(2) + 'px');
+      flake.style.setProperty('--snow-size', random(1.5, 3.5).toFixed(2) + 'px');
       flake.style.setProperty('--snow-opacity', random(0.24, 0.68).toFixed(2));
       flake.style.setProperty('--snow-duration', random(10, 22).toFixed(2) + 's');
       flake.style.setProperty('--snow-delay', random(-22, 0).toFixed(2) + 's');
