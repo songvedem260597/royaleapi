@@ -108,7 +108,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.match(html, /id="hero-title">WINTERTIME/);
   assert.equal((html.match(/class="hero-snow-layer"/g) || []).length, 4);
   assert.equal((html.match(/aria-hidden="true">WINTERTIME<\/span>/g) || []).length, 4);
-  assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
+  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
   assert.match(css, /\.hero-snow-layer \{[\s\S]*?animation: wintertime-letter-snow var\(--snow-duration, 11s\) linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /url\("\.\/snowflake-six\.svg\?v=variety-v3"\)/);
@@ -134,9 +134,9 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /snowflake-six|screen-snow-v16/);
+  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
-  assert.match(html, /app\.js\?v=20261115-larger-snow-v10/);
+  assert.match(html, /app\.js\?v=20261115-sidebar-snow-v11/);
   assert.match(app, /Fame TB /);
   assert.match(app, /averagedWarWeeks/);
 });
@@ -158,26 +158,34 @@ test('snow varies individual crystal scale, opacity and shade while each layer g
   assert.match(app, /--snow-x/);
 });
 
-test('mobile header exposes all five section anchors via a keyboard-accessible menu', () => {
+test('phone menu is a full-height right sidebar occupying one-third of viewport', () => {
   const destinations = [
     '#top3-podium-section', '#top3-weekly-section', '#cw2-clan-panel',
     '#clan-roster', '#meta-decks-section'
   ];
   assert.match(html, /id="mobile-nav-toggle"/);
-  assert.match(html, /aria-controls="site-nav" aria-expanded="false"/);
-  assert.match(html, /aria-label="Mở menu điều hướng"/);
+  assert.match(html, /aria-controls="mobile-side-panel" aria-expanded="false"/);
   assert.match(html, /<nav class="site-nav" id="site-nav" aria-label="Điều hướng chính">/);
-  destinations.forEach(href => assert.ok(html.includes('href="' + href + '"')));
+  assert.match(html, /<aside class="mobile-side-panel" id="mobile-side-panel" role="dialog"/);
+  assert.match(html, /aria-modal="true" aria-label="Menu WinterTime" aria-hidden="true" inert>/);
+  assert.match(html, /id="mobile-nav-backdrop" hidden/);
+  assert.match(html, /id="mobile-side-close" aria-label="Đóng menu"/);
+  assert.match(html, /<nav class="mobile-side-links" aria-label="Điều hướng điện thoại">/);
+  const mobileLinks = html.split('class="mobile-side-links"')[1].split('</nav>')[0];
+  destinations.forEach(href => assert.equal(mobileLinks.split('href="' + href + '"').length - 1, 1));
   assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.mobile-nav-toggle \{ display: inline-flex; margin-left: auto; \}/);
-  assert.match(css, /\.site-nav\.is-open \{ display: flex; \}/);
-  assert.match(css, /\.site-nav a \{[\s\S]*?min-height: 44px;/);
+  assert.match(css, /\.mobile-side-panel \{[\s\S]*?position: fixed;[\s\S]*?width: 33\.333333vw;[\s\S]*?height: 100dvh;/);
+  assert.match(css, /\.mobile-side-panel\.is-open \{[\s\S]*?transform: translateX\(0\);/);
+  assert.match(css, /\.mobile-side-links a \{[\s\S]*?min-height: 48px;/);
   assert.match(app, /function initMobileNavigation\(\)/);
+  assert.match(app, /panel\.inert = !open/);
+  assert.match(app, /backdrop\.hidden = !open/);
   assert.match(app, /setAttribute\('aria-expanded', String\(open\)\)/);
   assert.match(app, /nav\.querySelectorAll\('a\[href\^="#"\]'\)/);
   assert.match(app, /event\.key === 'Escape'/);
-  assert.match(app, /!nav\.contains\(event\.target\)/);
-  assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
-  assert.match(html, /app\.js\?v=20261115-larger-snow-v10/);
+  assert.match(app, /event\.key === 'Tab'/);
+  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
+  assert.match(html, /app\.js\?v=20261115-sidebar-snow-v11/);
 });
 
 test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled on mobile', () => {
@@ -197,8 +205,8 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   assert.match(app, /eligible\.addEventListener\('change', sync\)/);
   const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
   assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
-  assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
-  assert.match(html, /app\.js\?v=20261115-larger-snow-v10/);
+  assert.match(html, /styles\.css\?v=20261115-mobile-sidebar-v17/);
+  assert.match(html, /app\.js\?v=20261115-sidebar-snow-v11/);
 });
 
 test('phone screens hide all title snow layers, and marquee uses only the requested War reminder', () => {

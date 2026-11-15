@@ -1237,33 +1237,53 @@ document.addEventListener('visibilitychange', () => {
   sync();
 })();
 
-/* Mobile/tablet navigation: same five anchor destinations as desktop. */
+/* Full-height, one-third-width mobile sidebar outside the sticky header. */
 (function initMobileNavigation() {
   const button = document.getElementById('mobile-nav-toggle');
-  const nav = document.getElementById('site-nav');
-  if (!button || !nav) return;
+  const panel = document.getElementById('mobile-side-panel');
+  const closeButton = document.getElementById('mobile-side-close');
+  const backdrop = document.getElementById('mobile-nav-backdrop');
+  const nav = panel?.querySelector('.mobile-side-links');
+  if (!button || !panel || !closeButton || !backdrop || !nav) return;
 
-  const setOpen = open => {
-    nav.classList.toggle('is-open', open);
+  const isOpen = () => button.getAttribute('aria-expanded') === 'true';
+  const setOpen = (open, restoreFocus = false) => {
+    panel.classList.toggle('is-open', open);
+    panel.inert = !open;
+    panel.setAttribute('aria-hidden', String(!open));
+    backdrop.hidden = !open;
+    document.body.classList.toggle('mobile-menu-open', open);
     button.setAttribute('aria-expanded', String(open));
     button.setAttribute('aria-label', open ? 'Đóng menu điều hướng' : 'Mở menu điều hướng');
+    if (open) closeButton.focus();
+    else if (restoreFocus) button.focus();
   };
-  button.addEventListener('click', () => {
-    setOpen(button.getAttribute('aria-expanded') !== 'true');
-  });
+
+  button.addEventListener('click', () => setOpen(!isOpen()));
+  closeButton.addEventListener('click', () => setOpen(false, true));
+  backdrop.addEventListener('click', () => setOpen(false, true));
   nav.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', () => setOpen(false));
   });
-  document.addEventListener('pointerdown', event => {
-    if (!nav.contains(event.target) && !button.contains(event.target)) setOpen(false);
-  });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
-      setOpen(false);
-      button.focus();
+    if (!isOpen()) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setOpen(false, true);
+    } else if (event.key === 'Tab') {
+      const controls = [closeButton, ...nav.querySelectorAll('a')];
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 1024) setOpen(false);
+    if (window.innerWidth > 1024 && isOpen()) setOpen(false);
   });
 })();
