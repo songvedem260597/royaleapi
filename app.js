@@ -970,7 +970,7 @@ render();
   if (!main) return;
   const items = [
     '❄️ Đại gia đình WinterTime: <span class="wt-marquee-grad">Chúc anh em chơi game vui vẻ, leo rank vù vù, mở rương toàn thẻ ngon!</span>',
-    '⚔️ Nhắc nhở mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 từ Thủ lĩnh nha anh em!</span>',
+    '<span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War nhé anh em</span>',
     '👑 Tinh thần BiG Familie: <span class="wt-marquee-grad">Thắng không kiêu, bại không cay, thả emote HEHEHEHA văn minh lịch sự!</span>',
     '🎁 Góc đồng đội: <span class="wt-marquee-grad">Chăm chỉ xin thẻ và Donate đều tay để cả Clan cùng max bài lấy Top 1 War!</span>'
   ];
@@ -988,7 +988,7 @@ render();
   if (!track) return;
   const items = [
     '❄️ Đại gia đình WinterTime: <span class="wt-marquee-grad">Chúc anh em chơi game vui vẻ, leo rank vù vù, mở rương toàn thẻ ngon!</span>',
-    '⚔️ Nhắc nhở mỗi ngày: <span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War kẻo cuối tuần ăn chiếc giày 🥾 nhé anh em</span>',
+    '<span class="wt-marquee-grad">Nhớ đánh đủ 4 Deck War nhé anh em</span>',
     '👑 Tinh thần BiG Familie: <span class="wt-marquee-grad">Thắng không kiêu, bại không cay, thả emote HEHEHEHA văn minh lịch sự!</span>',
     '🎁 Góc đồng đội: <span class="wt-marquee-grad">Chăm chỉ xin thẻ và Donate đều tay để cả Clan cùng max bài lấy Top 1 War!</span>'
   ];
@@ -1174,5 +1174,36 @@ document.addEventListener('visibilitychange', () => {
     layer.style.setProperty('--snow-duration', duration.toFixed(2) + 's');
     layer.style.setProperty('--snow-delay', (-Math.random() * duration).toFixed(2) + 's');
     layer.style.setProperty('--snow-x', Math.floor(Math.random() * 320) + 'px');
+  });
+})();
+
+/* Mobile/tablet navigation: same five anchor destinations as desktop. */
+(function initMobileNavigation() {
+  const button = document.getElementById('mobile-nav-toggle');
+  const nav = document.getElementById('site-nav');
+  if (!button || !nav) return;
+
+  const setOpen = open => {
+    nav.classList.toggle('is-open', open);
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', open ? 'Đóng menu điều hướng' : 'Mở menu điều hướng');
+  };
+  button.addEventListener('click', () => {
+    setOpen(button.getAttribute('aria-expanded') !== 'true');
+  });
+  nav.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!nav.contains(event.target) && !button.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      button.focus();
+    }
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 1024) setOpen(false);
   });
 })();
