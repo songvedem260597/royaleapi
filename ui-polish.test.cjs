@@ -108,7 +108,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.match(html, /id="hero-title">WINTERTIME/);
   assert.equal((html.match(/class="hero-snow-layer"/g) || []).length, 4);
   assert.equal((html.match(/aria-hidden="true">WINTERTIME<\/span>/g) || []).length, 4);
-  assert.match(html, /styles\.css\?v=20261115-varied-snow-v14/);
+  assert.match(html, /styles\.css\?v=20261115-mobile-nav-v15/);
   assert.match(css, /\.hero-snow-layer \{[\s\S]*?animation: wintertime-letter-snow var\(--snow-duration, 11s\) linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /url\("\.\/snowflake-six\.svg\?v=variety-v3"\)/);
@@ -134,9 +134,9 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /snowflake-six|varied-snow-v14/);
+  assert.match(html, /snowflake-six|mobile-nav-v15/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
-  assert.match(html, /app\.js\?v=20261115-varied-snow-v7/);
+  assert.match(html, /app\.js\?v=20261115-mobile-nav-v8/);
   assert.match(app, /Fame TB /);
   assert.match(app, /averagedWarWeeks/);
 });
@@ -156,4 +156,33 @@ test('snow varies individual crystal scale, opacity and shade while each layer g
   assert.match(app, /--snow-duration/);
   assert.match(app, /--snow-delay/);
   assert.match(app, /--snow-x/);
+});
+
+test('mobile header exposes all five section anchors via a keyboard-accessible menu', () => {
+  const destinations = [
+    '#top3-podium-section', '#top3-weekly-section', '#cw2-clan-panel',
+    '#clan-roster', '#meta-decks-section'
+  ];
+  assert.match(html, /id="mobile-nav-toggle"/);
+  assert.match(html, /aria-controls="site-nav" aria-expanded="false"/);
+  assert.match(html, /aria-label="Mở menu điều hướng"/);
+  assert.match(html, /<nav class="site-nav" id="site-nav" aria-label="Điều hướng chính">/);
+  destinations.forEach(href => assert.ok(html.includes('href="' + href + '"')));
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.mobile-nav-toggle \{ display: inline-flex; margin-left: auto; \}/);
+  assert.match(css, /\.site-nav\.is-open \{ display: flex; \}/);
+  assert.match(css, /\.site-nav a \{[\s\S]*?min-height: 44px;/);
+  assert.match(app, /function initMobileNavigation\(\)/);
+  assert.match(app, /setAttribute\('aria-expanded', String\(open\)\)/);
+  assert.match(app, /nav\.querySelectorAll\('a\[href\^="#"\]'\)/);
+  assert.match(app, /event\.key === 'Escape'/);
+  assert.match(app, /!nav\.contains\(event\.target\)/);
+  assert.match(html, /styles\.css\?v=20261115-mobile-nav-v15/);
+  assert.match(html, /app\.js\?v=20261115-mobile-nav-v8/);
+});
+
+test('phone screens hide all title snow layers, and marquee uses only the requested War reminder', () => {
+  assert.match(css, /@media \(max-width: 820px\) \{[\s\S]*?\.hero-snow-layer \{[\s\S]*?display: none !important;[\s\S]*?animation: none !important;/);
+  assert.equal((app.match(/Nhớ đánh đủ 4 Deck War nhé anh em/g) || []).length, 2);
+  assert.doesNotMatch(app, /Nhắc nhở mỗi ngày:/);
+  assert.doesNotMatch(app, /kẻo cuối tuần ăn chiếc giày/);
 });
