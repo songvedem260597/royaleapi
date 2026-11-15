@@ -108,7 +108,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.match(html, /id="hero-title">WINTERTIME/);
   assert.equal((html.match(/class="hero-snow-layer"/g) || []).length, 4);
   assert.equal((html.match(/aria-hidden="true">WINTERTIME<\/span>/g) || []).length, 4);
-  assert.match(html, /styles\.css\?v=20261115-mobile-nav-v15/);
+  assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
   assert.match(css, /\.hero-snow-layer \{[\s\S]*?animation: wintertime-letter-snow var\(--snow-duration, 11s\) linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /url\("\.\/snowflake-six\.svg\?v=variety-v3"\)/);
@@ -134,9 +134,9 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /snowflake-six|mobile-nav-v15/);
+  assert.match(html, /snowflake-six|screen-snow-v16/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
-  assert.match(html, /app\.js\?v=20261115-mobile-nav-v8/);
+  assert.match(html, /app\.js\?v=20261115-screen-snow-v9/);
   assert.match(app, /Fame TB /);
   assert.match(app, /averagedWarWeeks/);
 });
@@ -176,8 +176,29 @@ test('mobile header exposes all five section anchors via a keyboard-accessible m
   assert.match(app, /nav\.querySelectorAll\('a\[href\^="#"\]'\)/);
   assert.match(app, /event\.key === 'Escape'/);
   assert.match(app, /!nav\.contains\(event\.target\)/);
-  assert.match(html, /styles\.css\?v=20261115-mobile-nav-v15/);
-  assert.match(html, /app\.js\?v=20261115-mobile-nav-v8/);
+  assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
+  assert.match(html, /app\.js\?v=20261115-screen-snow-v9/);
+});
+
+test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled on mobile', () => {
+  assert.match(css, /\.wt-screen-snow \{[\s\S]*?position: fixed;[\s\S]*?pointer-events: none;/);
+  assert.match(css, /\.wt-screen-flake \{[\s\S]*?animation: wt-screen-snow-fall/);
+  assert.match(css, /@keyframes wt-screen-snow-fall/);
+  assert.match(css, /@media \(max-width: 820px\), \(pointer: coarse\), \(prefers-reduced-motion: reduce\) \{/);
+  assert.match(css, /\.wt-screen-snow\.is-paused \.wt-screen-flake \{ animation-play-state: paused; \}/);
+  assert.match(app, /function initDesktopScreenSnow\(\)/);
+  assert.match(app, /\(min-width: 821px\) and \(pointer: fine\) and \(prefers-reduced-motion: no-preference\)/);
+  assert.match(app, /const MAX_FLAKES = 36;/);
+  assert.match(app, /document\.createDocumentFragment\(\)/);
+  assert.match(app, /random\(0\.9, 2\.5\)/);
+  assert.match(app, /random\(10, 22\)/);
+  assert.match(app, /random\(-65, 65\)/);
+  assert.match(app, /document\.addEventListener\('visibilitychange', setPaused\)/);
+  assert.match(app, /eligible\.addEventListener\('change', sync\)/);
+  const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
+  assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
+  assert.match(html, /styles\.css\?v=20261115-screen-snow-v16/);
+  assert.match(html, /app\.js\?v=20261115-screen-snow-v9/);
 });
 
 test('phone screens hide all title snow layers, and marquee uses only the requested War reminder', () => {
