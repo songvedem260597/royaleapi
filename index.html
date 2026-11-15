@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261115-screen-snow-v16">
+<link rel="stylesheet" href="styles.css?v=20261115-mobile-sidebar-v17">
 </head>
 <body>
 <a class="skip-link" href="#clan-roster">Bỏ qua tới danh sách thành viên</a>
@@ -27,7 +27,7 @@
     </a>
 
     <button class="mobile-nav-toggle" id="mobile-nav-toggle" type="button"
-      aria-label="Mở menu điều hướng" aria-controls="site-nav" aria-expanded="false">
+      aria-label="Mở menu điều hướng" aria-controls="mobile-side-panel" aria-expanded="false">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M4 6h16M4 12h16M4 18h16"/>
@@ -45,6 +45,23 @@
 
   </div>
 </header>
+
+<!-- Mobile navigation lives outside the blurred header, so it can reach the full viewport height. -->
+<div class="mobile-nav-backdrop" id="mobile-nav-backdrop" hidden></div>
+<aside class="mobile-side-panel" id="mobile-side-panel" role="dialog"
+  aria-modal="true" aria-label="Menu WinterTime" aria-hidden="true" inert>
+  <div class="mobile-side-head">
+    <strong>Menu</strong>
+    <button type="button" class="mobile-side-close" id="mobile-side-close" aria-label="Đóng menu">×</button>
+  </div>
+  <nav class="mobile-side-links" aria-label="Điều hướng điện thoại">
+    <a href="#top3-podium-section">Ưu tú</a>
+    <a href="#top3-weekly-section">War tuần</a>
+    <a href="#cw2-clan-panel">Lịch sử War</a>
+    <a href="#clan-roster">Thành viên</a>
+    <a href="#meta-decks-section">Deck Meta</a>
+  </nav>
+</aside>
 
 <main class="bento-main" id="top">
 
@@ -235,6 +252,6 @@
 <script src="war-member-evaluation.js?v=20261115-tenure-v2"></script>
 <script src="elite-ranking.js?v=20261114-premium-v1"></script>
 <script src="clan-analytics.js?v=20261114-premium-v1"></script>
-<script src="app.js?v=20261115-screen-snow-v9"></script>
+<script src="app.js?v=20261115-sidebar-snow-v11"></script>
 </body>
 </html>
