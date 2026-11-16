@@ -192,7 +192,8 @@ window.ClanAnalytics.analyzeMember = function(m) {
   if (!Array.isArray(m?.cw2History) && Array.isArray(m?.recentWars)) r.cw2History = r.cw2History.slice(0, m.recentWars.length);
 
   // No kick/elite decisions from zero-coerced or fabricated Fame.
-  // analyzeMember already grades observed Deck/participation/donate metrics.
+  // Rank review is independent of Kick/Fame; preserve raw Donate unknowns.
+  r.rankReview = window.WintertimeRankReview?.evaluate?.({ role: r.role, donations: m?.donations, cw2History: r.cw2History }) || { status: 'unknown', label: 'Chưa đủ dữ liệu', reason: 'Chưa tải bộ xét chức vụ.' };
   return r;
 };
 window.ClanAnalytics.analyzeClan = function(d) {

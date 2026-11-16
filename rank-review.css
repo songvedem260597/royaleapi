@@ -1,0 +1,73 @@
+/* WinterTime role-review: quiet, compact, and separate from Kick alerts. */
+.kick-actions { gap: 9px; flex-wrap: wrap; }
+.btn-rank-review {
+  background: rgba(245, 158, 11, .10);
+  color: #F8C36B;
+  border-color: rgba(245, 158, 11, .38);
+}
+.btn-rank-review:hover,
+.btn-rank-review:focus-visible {
+  background: rgba(245, 158, 11, .17);
+  border-color: #EFB350;
+  color: #FFE1A6;
+}
+.rank-mini {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 3px 7px;
+  border: 1px solid;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.rank-mini-promote { color: #B6EBB0; border-color: rgba(99, 184, 101, .3); background: rgba(75, 160, 77, .08); }
+.rank-mini-demote { color: #F5C18A; border-color: rgba(229, 149, 88, .32); background: rgba(229, 149, 88, .08); }
+.rank-review-output[hidden] { display: none; }
+.rank-review-output {
+  margin-bottom: var(--s-8);
+  padding: clamp(16px, 2.6vw, 28px);
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  color: var(--text);
+}
+.rank-review-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.rank-review-heading h2 { margin: 0 0 7px; font-size: 20px; font-weight: 700; }
+.rank-review-heading p { margin: 0; max-width: 750px; color: var(--text-2); line-height: 1.65; font-size: 14px; }
+.rank-review-stale {
+  padding: 10px 12px;
+  border-left: 3px solid #E7A34B;
+  background: rgba(231, 163, 75, .08);
+  color: #F7CCA0;
+  font-size: 13px;
+  margin: 18px 0;
+}
+.rank-review-stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+.rank-review-stats span {
+  padding: 7px 10px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--surface-inset);
+  color: var(--text-2); font-size: 12px;
+}
+.rank-review-stats strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.rank-review-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.rank-review-group { min-width: 0; padding: 15px; border: 1px solid var(--border); border-radius: var(--r-sm); }
+.rank-review-group h3 { margin: 0 0 12px; font-size: 15px; }
+.rank-review-up h3 { color: #A9DBA3; }
+.rank-review-down h3 { color: #F0B982; }
+.rank-review-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.rank-review-list li { border-top: 1px solid var(--border); padding-top: 11px; }
+.rank-review-person { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+.rank-review-person strong { font-size: 14px; }
+.rank-review-list p { font-size: 12px; color: var(--text-2); margin: 6px 0 0; line-height: 1.65; overflow-wrap: anywhere; }
+.rank-review-empty { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.rank-review-footnote { margin: 18px 0 0; color: var(--text-2); line-height: 1.7; font-size: 12px; }
+@media (max-width: 760px) {
+  .rank-review-groups { grid-template-columns: 1fr; }
+  .rank-review-heading { gap: 10px; }
+  .rank-review-heading h2 { font-size: 17px; }
+  .rank-review-output { margin-bottom: var(--s-6); }
+  .rank-review-heading button { flex: 0 0 auto; }
+  .kick-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .kick-actions .btn { min-width: 0; white-space: normal; height: auto; min-height: 42px; line-height: 1.3; padding: 7px; }
+}
