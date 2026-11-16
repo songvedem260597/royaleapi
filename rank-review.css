@@ -12,14 +12,25 @@
   color: #FFE1A6;
 }
 .rank-mini {
-  display: inline-block;
-  margin-top: 5px;
-  padding: 3px 7px;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+  padding: 3px 6px;
   border: 1px solid;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 10.5px;
+  line-height: 1.35;
   font-weight: 600;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+/* Keep rank tags entirely inside the Role column, never over the trophy value. */
+#clan-roster .member-table tbody td:nth-child(3) { overflow-wrap: normal; }
+#clan-roster .member-table tbody td:nth-child(3) .role-badge {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .rank-mini-promote { color: #B6EBB0; border-color: rgba(99, 184, 101, .3); background: rgba(75, 160, 77, .08); }
 .rank-mini-demote { color: #F5C18A; border-color: rgba(229, 149, 88, .32); background: rgba(229, 149, 88, .08); }

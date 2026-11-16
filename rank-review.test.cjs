@@ -15,23 +15,23 @@ const member = (role, decks, donations=20) => ({
   role, donations, cw2History: decks.map((n, i) => war('138-' + (2-i), n))
 });
 
-test('member: two verified 12/16 War + Donate yields promotion advisory', () => {
-  const result = review.evaluate(member('member', [12,12], 1));
+test('member: two verified 10/16 War + Donate yields promotion advisory', () => {
+  const result = review.evaluate(member('member', [10,10], 1));
   assert.equal(result.status, 'promote');
   assert.equal(result.warsVerified, 2);
-  assert.match(result.reason, /12\/16 Deck/);
+  assert.match(result.reason, /10\/16 Deck/);
 });
 test('elder: two verified War + Donate retains title', () => {
-  assert.equal(review.evaluate(member('elder', [16,12], 80)).status, 'retain');
+  assert.equal(review.evaluate(member('elder', [16,10], 80)).status, 'retain');
 });
-test('elder: an under-12 War or zero Donate warns about demotion only', () => {
-  assert.equal(review.evaluate(member('elder', [11, 16], 50)).status, 'demote');
+test('elder: an under-10 War or zero Donate warns about demotion only', () => {
+  assert.equal(review.evaluate(member('elder', [9, 16], 50)).status, 'demote');
   assert.equal(review.evaluate(member('elder', [16, 16], 0)).status, 'demote');
-  assert.equal(review.evaluate(member('member', [11, 16], 50)).status, 'not_eligible');
+  assert.equal(review.evaluate(member('member', [9, 16], 50)).status, 'not_eligible');
 });
-test('threshold is per War, not 24 decks across two War', () => {
-  assert.equal(review.evaluate(member('member', [16, 8], 100)).status, 'not_eligible');
-  assert.equal(review.evaluate(member('member', [12, 12], 100)).status, 'promote');
+test('threshold is per War, not 20 decks across two War', () => {
+  assert.equal(review.evaluate(member('member', [16, 4], 100)).status, 'not_eligible');
+  assert.equal(review.evaluate(member('member', [10, 10], 100)).status, 'promote');
 });
 test('do not borrow older good War when latest War is below threshold', () => {
   assert.equal(review.evaluate(member('elder', [5, 16, 16], 100)).status, 'demote');
@@ -58,6 +58,15 @@ test('leader and coleader are exempt from rank assessment', () => {
     assert.equal(review.evaluate(member(role,[0,0],0)).status,'excluded');
   }
 });
+test('rank warning sits below the role and cannot overlap the trophy column', () => {
+  const css=fs.readFileSync('rank-review.css','utf8');
+  const app=fs.readFileSync('app.js','utf8');
+  assert.match(css, /\.rank-mini \{[\s\S]*?display: block;[\s\S]*?max-width: 100%;[\s\S]*?white-space: normal;/);
+  assert.match(css, /#clan-roster \.member-table tbody td:nth-child\(3\) \{/);
+  assert.equal((app.match(/title="Cảnh báo xét giáng về Thành viên">↓ Xét giáng/g) || []).length, 2);
+  assert.equal((app.match(/title="Đề xuất thăng lên Trưởng lão">↑ Xét thăng/g) || []).length, 2);
+});
+
 test('existing Kick status remains separate; UI includes dedicated review controls', () => {
   const html=fs.readFileSync('index.html','utf8');
   const app=fs.readFileSync('app.js','utf8');
@@ -67,9 +76,9 @@ test('existing Kick status remains separate; UI includes dedicated review contro
   assert.match(html,/id="btn-export-kick"/);
   assert.match(html,/id="btn-rank-review"/);
   assert.match(html,/id="rank-review-output"/);
-  assert.match(html,/rank-review\.js\?v=20261117-role-review-v1/);
-  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v1/);
-  assert.match(html,/rank-review\.css\?v=20261117-role-review-v1/);
+  assert.match(html,/rank-review\.js\?v=20261117-role-review-v2/);
+  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v2/);
+  assert.match(html,/rank-review\.css\?v=20261117-role-review-v2/);
   assert.match(analytics,/r\.rankReview = window\.WintertimeRankReview\?\.evaluate\?\./);
   assert.match(app,/rank-mini-promote/);
   assert.match(app,/rank-mini-demote/);

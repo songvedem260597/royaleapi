@@ -315,7 +315,7 @@ function renderTable(clan) {
     return '<tr class="member-row-clickable" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
-      '<td><span class="role-badge">' + m.roleLabel + '</span>' + (m.rankReview?.status === 'promote' ? ' <span class="rank-mini rank-mini-promote">↑ Xét thăng hạng</span>' : m.rankReview?.status === 'demote' ? ' <span class="rank-mini rank-mini-demote">↓ Xét giáng cấp</span>' : '') + '</td>' +
+      '<td><span class="role-badge">' + m.roleLabel + '</span>' + (m.rankReview?.status === 'promote' ? ' <span class="rank-mini rank-mini-promote" title="Đề xuất thăng lên Trưởng lão">↑ Xét thăng</span>' : m.rankReview?.status === 'demote' ? ' <span class="rank-mini rank-mini-demote" title="Cảnh báo xét giáng về Thành viên">↓ Xét giáng</span>' : '') + '</td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
       '<td>' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ' · Fame TB ' + (m.warFame == null ? '—' : m.warFame) + '<div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
@@ -518,7 +518,7 @@ function renderTable(clan) {
     return '<tr class="member-row-clickable' + (m.tag === selectedMemberTag ? ' member-row-active' : '') + '" data-tag="' + m.tag + '">' +
       '<td>' + (i + 1) + '</td>' +
       '<td><strong>' + m.name + '</strong> <span class="tag-mono">' + m.tag + '</span></td>' +
-      '<td><span class="role-badge">' + m.roleLabel + '</span>' + (m.rankReview?.status === 'promote' ? ' <span class="rank-mini rank-mini-promote">↑ Xét thăng hạng</span>' : m.rankReview?.status === 'demote' ? ' <span class="rank-mini rank-mini-demote">↓ Xét giáng cấp</span>' : '') + '</td>' +
+      '<td><span class="role-badge">' + m.roleLabel + '</span>' + (m.rankReview?.status === 'promote' ? ' <span class="rank-mini rank-mini-promote" title="Đề xuất thăng lên Trưởng lão">↑ Xét thăng</span>' : m.rankReview?.status === 'demote' ? ' <span class="rank-mini rank-mini-demote" title="Cảnh báo xét giáng về Thành viên">↓ Xét giáng</span>' : '') + '</td>' +
       '<td>🏆 ' + m.trophies + '</td>' +
       '<td><strong>🏅 ' + (m.latestFame == null ? '—' : m.latestFame.toLocaleString('en-US')) + ' Fame kỳ ' + (m.warEvaluation?.latestSeason || '—') + '</strong> <small>(' + observedDecks + ' Deck đã xác minh / ' + (m.verifiedWarWeeks || 0) + ' kỳ · War ' + (m.warParticipation == null ? '—' : m.warParticipation + '%') + ')</small><div class="deck-mini-list">' + decks + '</div></td>' +
       '<td>' + m.donations + ' / ' + (m.donationsReceived || 0) + '</td>' +
