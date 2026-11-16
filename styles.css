@@ -1362,6 +1362,19 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 }
 
 a.meta-pill:hover { color: var(--accent); border-color: var(--accent-line); }
+a.meta-pill-copy-deck {
+  background: #F59E0B;
+  border-color: #F59E0B;
+  color: #1C1305;
+  font-weight: 700;
+  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+}
+a.meta-pill-copy-deck:hover,
+a.meta-pill-copy-deck:focus-visible {
+  background: #FDBA35;
+  border-color: #FDBA35;
+  color: #1C1305;
+}
 .meta-pill-win { color: #C3CEC8; }
 .meta-pill-elixir { color: var(--text-2); }
 
