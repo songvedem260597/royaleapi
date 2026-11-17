@@ -21,20 +21,30 @@ test('member: two verified 8/16 War + Donate yields promotion advisory', () => {
   assert.equal(result.warsVerified, 2);
   assert.match(result.reason, /8\/16 Deck/);
 });
-test('elder: two verified War + Donate retains title', () => {
-  assert.equal(review.evaluate(member('elder', [16,8], 80)).status, 'retain');
+test('elder: five verified War averaging at least 8/16 retains title', () => {
+  const result = review.evaluate(member('elder', [16, 8, 8, 8, 8], 80));
+  assert.equal(result.status, 'retain');
+  assert.equal(result.warsVerified, 5);
+  assert.equal(result.averageDecks, 9.6);
 });
-test('elder: an under-8 War or zero Donate warns about demotion only', () => {
-  assert.equal(review.evaluate(member('elder', [7, 16], 50)).status, 'demote');
-  assert.equal(review.evaluate(member('elder', [16, 16], 0)).status, 'demote');
+test('elder: average below 8/16 across five War or zero Donate warns about demotion', () => {
+  const below = review.evaluate(member('elder', [7, 8, 8, 8, 8], 50));
+  assert.equal(below.averageDecks, 7.8);
+  assert.equal(below.status, 'demote');
+  assert.equal(review.evaluate(member('elder', [8, 8, 8, 8, 8], 50)).status, 'retain');
+  assert.equal(review.evaluate(member('elder', [16, 16, 16, 16, 16], 0)).status, 'demote');
   assert.equal(review.evaluate(member('member', [7, 16], 50)).status, 'not_eligible');
 });
 test('threshold is per War, not just 16 decks across two War', () => {
   assert.equal(review.evaluate(member('member', [16, 0], 100)).status, 'not_eligible');
   assert.equal(review.evaluate(member('member', [8, 8], 100)).status, 'promote');
 });
-test('do not borrow older good War when latest War is below threshold', () => {
-  assert.equal(review.evaluate(member('elder', [5, 16, 16], 100)).status, 'demote');
+test('do not demote elders with fewer than five verified War weeks', () => {
+  assert.equal(review.evaluate(member('elder', [5, 16, 16], 100)).status, 'unknown');
+  assert.equal(review.evaluate(member('elder', [1, 1, 1, 1], 100)).status, 'unknown');
+  const result = review.evaluate(member('elder', [5, 16, 16, 3, 10], 100));
+  assert.equal(result.averageDecks, 10);
+  assert.equal(result.status, 'retain');
 });
 test('missing, unverified or out-of-range War never causes rank change', () => {
   for (const history of [
@@ -49,9 +59,27 @@ test('missing, unverified or out-of-range War never causes rank change', () => {
   }
 });
 test('missing Donate must be unknown rather than zero', () => {
-  assert.equal(review.evaluate(member('elder',[16,16],null)).status, 'unknown');
+  assert.equal(review.evaluate(member('elder',[16,16,16,16,16],null)).status, 'unknown');
   assert.equal(review.evaluate(member('member',[16,16],undefined)).status, 'promote'); // default donation = 20
   assert.equal(review.evaluate({role:'member',cw2History:member('member',[16,16]).cw2History}).status,'unknown');
+});
+test('newcomer with one verified latest War above 8 and Donate can get early promotion review', () => {
+  const r = review.evaluate(member('member', [8], 1));
+  assert.equal(r.status, 'promote');
+  assert.equal(r.newcomerReview, true);
+  assert.match(r.reason, /Leader xác nhận/);
+  assert.equal(review.evaluate(member('member', [7], 20)).status, 'unknown');
+  assert.equal(review.evaluate(member('member', [8], 0)).status, 'unknown');
+});
+test('no early promotion from an old War when latest is unverified or from a documented older failed War', () => {
+  const rows = [war('138-2', null, {decksVerified:false}), war('138-1', 16)];
+  assert.equal(review.evaluate({role:'member',donations:10,cw2History:rows}).status, 'unknown');
+  assert.equal(review.evaluate(member('member', [8, 0], 10)).status, 'not_eligible');
+});
+test('five-week demotion cannot average through missing recent War records', () => {
+  const rows = member('elder', [0, 0, 0, 0, 0, 0], 100).cw2History;
+  rows[1].decksVerified = false;
+  assert.equal(review.evaluate({role:'elder',donations:100,cw2History:rows}).status, 'unknown');
 });
 test('leader and coleader are exempt from rank assessment', () => {
   for (const role of ['leader','coLeader']) {
@@ -76,8 +104,8 @@ test('existing Kick status remains separate; UI includes dedicated review contro
   assert.match(html,/id="btn-export-kick"/);
   assert.match(html,/id="btn-rank-review"/);
   assert.match(html,/id="rank-review-output"/);
-  assert.match(html,/rank-review\.js\?v=20261117-role-review-v3/);
-  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v3/);
+  assert.match(html,/rank-review\.js\?v=20261117-role-review-v4/);
+  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v4/);
   assert.match(html,/rank-review\.css\?v=20261117-role-review-v2/);
   assert.match(analytics,/r\.rankReview = window\.WintertimeRankReview\?\.evaluate\?\./);
   assert.match(app,/rank-mini-promote/);
