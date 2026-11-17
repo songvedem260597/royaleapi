@@ -29,7 +29,7 @@
       Date.now() - lastRace > 8 * 86400000;
     panel.innerHTML =
       '<div class="rank-review-heading"><div><h2>Xét thăng / giáng hạng</h2>' +
-      '<p>2 kỳ War gần nhất được xác minh, mỗi kỳ ≥10/16 Deck và Donate hiện tại &gt; 0. ' +
+      '<p>2 kỳ War gần nhất được xác minh, mỗi kỳ ≥8/16 Deck và Donate hiện tại &gt; 0. ' +
       'Chỉ đề xuất để Leader/Co-leader xét duyệt, không tự đổi chức vụ.</p></div>' +
       '<button type="button" class="btn btn-ghost btn-sm" id="rank-review-close">Đóng</button></div>' +
       (stale ? '<p class="rank-review-stale">⚠️ War Log có thể đã cũ: cần đối chiếu các kỳ mới nhất trước khi quyết định.</p>' : '') +

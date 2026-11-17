@@ -4,7 +4,7 @@
   // Officer advisory only: no automatic promotions or demotions.
   // Compare the TWO MOST RECENT completed, individually documented War Logs.
   // Unknown entries are never interpreted as zero Decks or a failed War.
-  const MIN_DECKS = 10;
+  const MIN_DECKS = 8;
   const EXPECTED_DECKS = 16;
   const REQUIRED_WARS = 2;
 

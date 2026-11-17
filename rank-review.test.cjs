@@ -15,23 +15,23 @@ const member = (role, decks, donations=20) => ({
   role, donations, cw2History: decks.map((n, i) => war('138-' + (2-i), n))
 });
 
-test('member: two verified 10/16 War + Donate yields promotion advisory', () => {
-  const result = review.evaluate(member('member', [10,10], 1));
+test('member: two verified 8/16 War + Donate yields promotion advisory', () => {
+  const result = review.evaluate(member('member', [8,8], 1));
   assert.equal(result.status, 'promote');
   assert.equal(result.warsVerified, 2);
-  assert.match(result.reason, /10\/16 Deck/);
+  assert.match(result.reason, /8\/16 Deck/);
 });
 test('elder: two verified War + Donate retains title', () => {
-  assert.equal(review.evaluate(member('elder', [16,10], 80)).status, 'retain');
+  assert.equal(review.evaluate(member('elder', [16,8], 80)).status, 'retain');
 });
-test('elder: an under-10 War or zero Donate warns about demotion only', () => {
-  assert.equal(review.evaluate(member('elder', [9, 16], 50)).status, 'demote');
+test('elder: an under-8 War or zero Donate warns about demotion only', () => {
+  assert.equal(review.evaluate(member('elder', [7, 16], 50)).status, 'demote');
   assert.equal(review.evaluate(member('elder', [16, 16], 0)).status, 'demote');
-  assert.equal(review.evaluate(member('member', [9, 16], 50)).status, 'not_eligible');
+  assert.equal(review.evaluate(member('member', [7, 16], 50)).status, 'not_eligible');
 });
-test('threshold is per War, not 20 decks across two War', () => {
-  assert.equal(review.evaluate(member('member', [16, 4], 100)).status, 'not_eligible');
-  assert.equal(review.evaluate(member('member', [10, 10], 100)).status, 'promote');
+test('threshold is per War, not just 16 decks across two War', () => {
+  assert.equal(review.evaluate(member('member', [16, 0], 100)).status, 'not_eligible');
+  assert.equal(review.evaluate(member('member', [8, 8], 100)).status, 'promote');
 });
 test('do not borrow older good War when latest War is below threshold', () => {
   assert.equal(review.evaluate(member('elder', [5, 16, 16], 100)).status, 'demote');
@@ -76,8 +76,8 @@ test('existing Kick status remains separate; UI includes dedicated review contro
   assert.match(html,/id="btn-export-kick"/);
   assert.match(html,/id="btn-rank-review"/);
   assert.match(html,/id="rank-review-output"/);
-  assert.match(html,/rank-review\.js\?v=20261117-role-review-v2/);
-  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v2/);
+  assert.match(html,/rank-review\.js\?v=20261117-role-review-v3/);
+  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v3/);
   assert.match(html,/rank-review\.css\?v=20261117-role-review-v2/);
   assert.match(analytics,/r\.rankReview = window\.WintertimeRankReview\?\.evaluate\?\./);
   assert.match(app,/rank-mini-promote/);
