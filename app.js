@@ -1,5 +1,17 @@
 const CA = window.ClanAnalytics;
 
+// Distinct from Clan Score: local Clan War leaderboard, not a live API field.
+// Clan-reported snapshot on 17/11/2026. Do not label this number as live.
+const VIETNAM_WAR_RANK_REPORT = Object.freeze({ rank: 53, asOf: '17/11/2026' });
+function renderVietnamWarRankKpi() {
+  return '<div class="kpi-vietnam-war-rank" title="BXH Hội chiến Việt Nam: hạng ' +
+    VIETNAM_WAR_RANK_REPORT.rank + ' theo clan cập nhật ngày ' + VIETNAM_WAR_RANK_REPORT.asOf +
+    '. Chưa xác minh qua API xếp hạng realtime.">' +
+    '<span class="kpi-label">Hạng Hội chiến Việt Nam</span>' +
+    '<strong id="kpi-vietnam-war-rank">Top ' + VIETNAM_WAR_RANK_REPORT.rank + '</strong>' +
+    '<small class="kpi-source">Theo clan · 17/11</small></div>';
+}
+
 let currentClan = CA.analyzeClan(CA.generateDemoClan());
 let selectedMemberTag = '#2LL9V9088';
 
@@ -191,6 +203,7 @@ function renderSummary(clan) {
     '<div class="hero-stats">' +
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong>' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
+      renderVietnamWarRankKpi() +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Chủ lực MVP</span><strong>' + (clan.mvpName || '—') + '</strong></div>' +
     '</div>' +
@@ -953,6 +966,7 @@ renderSummary = function(clan) {
     '<div class="hero-stats">' +
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong>' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
+      renderVietnamWarRankKpi() +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
@@ -1009,6 +1023,7 @@ renderSummary = function(clan) {
     '<div class="hero-stats hero-stats-unified">' +
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong id="kpi-clan-score">' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong id="kpi-war-trophies">' + wTrophies + '</strong></div>' +
+      renderVietnamWarRankKpi() +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members">' + total + '/50</strong></div>' +
       '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good">' + (cnt.good || 0) + '</strong></div>' +
