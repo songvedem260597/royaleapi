@@ -57,3 +57,77 @@
       observed.length >= 2;
     const completedDecks = observed.reduce((sum, n) => sum + n, 0);
     const averageDecks = observed.length ? completedDecks / observed.length : null;
+    const breakdown = {
+      participationPoints: scaledPoints(participation, 100, WEIGHTS.participation),
+      historicalDeckPoints: scaledPoints(averageDecks, DECKS_PER_WAR, WEIGHTS.historicalDecks),
+      currentDeckPoints: scaledPoints(currentDecks, DECKS_PER_WAR, WEIGHTS.currentDecks),
+      donationPoints: scaledPoints(donations, DONATIONS_TARGET, WEIGHTS.donations),
+      offlinePenalty:
+        daysOffline == null
+          ? null
+          : Math.min(WEIGHTS.maxOfflinePenalty, Math.floor(Math.max(0, daysOffline)) * 2)
+    };
+
+    const score = complete
+      ? clamp(
+          breakdown.participationPoints +
+            breakdown.historicalDeckPoints +
+            breakdown.currentDeckPoints +
+            breakdown.donationPoints -
+            breakdown.offlinePenalty,
+          0,
+          100
+        )
+      : null;
+
+    const lastTwoZeroDecks =
+      Array.isArray(m.warDecksVerifiedHistory) &&
+      rawHistory.length >= 2 &&
+      optionalNumber(rawHistory[0]) === 0 &&
+      optionalNumber(rawHistory[1]) === 0;
+
+    const review = lastTwoZeroDecks; // Review only; never automatic removal
+    const excellent =
+      complete &&
+      score >= EXCELLENT_THRESHOLD &&
+      participation >= 75 &&
+      averageDecks >= 12 &&
+      daysOffline <= 3;
+
+    return {
+      score,
+      scoreSource: "internal-observed-activity-v1",
+      complete,
+      participation,
+      currentDecks,
+      donations,
+      daysOffline,
+      completedDecks,
+      observedWeeks: observed.length,
+      averageDecks,
+      lastTwoZeroDecks,
+      review,
+      excellent,
+      breakdown
+    };
+  }
+
+  /** Sorts scored members by score, then tie-breakers, then tag. */
+  function rankMembers(members) {
+    return (Array.isArray(members) ? members : [])
+      .filter((m) => Number.isFinite(m?.score) && m?.contribution?.complete)
+      .slice()
+      .sort(
+        (a, b) =>
+          b.score - a.score ||
+          b.contribution.completedDecks - a.contribution.completedDecks ||
+          b.warParticipation - a.warParticipation ||
+          b.donations - a.donations ||
+          String(a.tag).localeCompare(String(b.tag))
+      );
+  }
+
+  const api = { calculate, rankMembers };
+  root.WintertimeContribution = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof window === "undefined" ? globalThis : window);
