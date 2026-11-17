@@ -10,7 +10,7 @@ test('Copy Deck uses restrained amber styling without altering deck destination'
   assert.match(app, /class="meta-pill meta-pill-copy-deck" href=/);
   assert.match(css, /a\.meta-pill-copy-deck \{[\s\S]*?background: rgba\(179, 137, 76, 0\.12\);/);
   assert.match(css, /a\.meta-pill-copy-deck:hover,[\s\S]*?background: rgba\(179, 137, 76, 0\.21\);/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
   assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
 
@@ -116,7 +116,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.match(html, /id="hero-title">WINTERTIME/);
   assert.equal((html.match(/class="hero-snow-layer"/g) || []).length, 4);
   assert.equal((html.match(/aria-hidden="true">WINTERTIME<\/span>/g) || []).length, 4);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
   assert.match(css, /\.hero-snow-layer \{[\s\S]*?animation: wintertime-letter-snow var\(--snow-duration, 11s\) linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /url\("\.\/snowflake-six\.svg\?v=variety-v3"\)/);
@@ -142,7 +142,7 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
   assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
   assert.match(app, /Fame TB /);
@@ -166,7 +166,7 @@ test('snow varies individual crystal scale, opacity and shade while each layer g
   assert.match(app, /--snow-x/);
 });
 
-test('phone menu is a full-height right sidebar occupying one-third of viewport', () => {
+test('phone menu is a slightly wider, full-height right sidebar', () => {
   const destinations = [
     '#top3-podium-section', '#top3-weekly-section', '#cw2-clan-panel',
     '#clan-roster', '#meta-decks-section'
@@ -182,7 +182,7 @@ test('phone menu is a full-height right sidebar occupying one-third of viewport'
   const mobileLinks = html.split('class="mobile-side-links"')[1].split('</nav>')[0];
   destinations.forEach(href => assert.equal(mobileLinks.split('href="' + href + '"').length - 1, 1));
   assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.mobile-nav-toggle \{ display: inline-flex; margin-left: auto; \}/);
-  assert.match(css, /\.mobile-side-panel \{[\s\S]*?position: fixed;[\s\S]*?width: 33\.333333vw;[\s\S]*?height: 100dvh;/);
+  assert.match(css, /\.mobile-side-panel \{[\s\S]*?position: fixed;[\s\S]*?width: clamp\(176px, 40vw, 410px\);[\s\S]*?height: 100dvh;/);
   assert.match(css, /\.mobile-side-panel\.is-open \{[\s\S]*?transform: translateX\(0\);/);
   assert.match(css, /\.mobile-side-links a \{[\s\S]*?min-height: 48px;/);
   assert.match(app, /function initMobileNavigation\(\)/);
@@ -192,7 +192,7 @@ test('phone menu is a full-height right sidebar occupying one-third of viewport'
   assert.match(app, /nav\.querySelectorAll\('a\[href\^="#"\]'\)/);
   assert.match(app, /event\.key === 'Escape'/);
   assert.match(app, /event\.key === 'Tab'/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
   assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
 
@@ -207,12 +207,12 @@ test('mobile navigation uses a neutral black luxury theme and icon-only hamburge
   assert.ok(css.includes('color: #b6bac2;'));
   assert.ok(css.includes('border: 0;'));
   assert.ok(css.includes('background: transparent;'));
-  assert.ok(css.includes('padding: 12px 8px;'));
+  assert.ok(css.includes('padding: 12px 12px;'));
   assert.ok(css.includes('padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 18px 12px;'));
   assert.ok(html.includes('M4 6h16M4 12h11M4 18h16'));
   assert.ok(css.includes('color: #ffffff;'));
   assert.ok(!css.includes('background: linear-gradient(180deg, #182621'));
-  assert.ok(html.includes('styles.css?v=20261117-war-vn-rank-last-v23'));
+  assert.ok(html.includes('styles.css?v=20261117-mobile-sidebar-v24'));
   for (const [hash, name] of [
     ['#top3-podium-section', 'BXH Ưu tú'],
     ['#top3-weekly-section', 'BXH War tuần'],
@@ -241,7 +241,7 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   assert.match(app, /eligible\.addEventListener\('change', sync\)/);
   const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
   assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
   assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
 
