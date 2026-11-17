@@ -29,7 +29,7 @@
       Date.now() - lastRace > 8 * 86400000;
     panel.innerHTML =
       '<div class="rank-review-heading"><div><h2>Xét thăng / giáng hạng</h2>' +
-      '<p>Thăng: 2 War gần nhất mỗi kỳ ≥8/16 Deck và có Donate; thành viên mới được xét sớm khi 1 War đạt chuẩn (Leader cần xác nhận). Giáng: TB 5 War gần nhất &lt;8/16 Deck hoặc Donate bằng 0. ' +
+      '<p>Thăng: 2 War gần nhất mỗi kỳ ≥8/16 Deck và có Donate; chỉ xét người mới sau ít nhất 14 ngày ở clan; 1 War ≥8/16 chỉ xét sớm khi có ngày gia nhập xác minh. Leader phải xác nhận thời gian gia nhập. Giáng: TB 5 War gần nhất &lt;8/16 Deck hoặc Donate bằng 0. ' +
       'Chỉ đề xuất để Leader/Co-leader xét duyệt, không tự đổi chức vụ.</p></div>' +
       '<button type="button" class="btn btn-ghost btn-sm" id="rank-review-close">Đóng</button></div>' +
       (stale ? '<p class="rank-review-stale">⚠️ War Log có thể đã cũ: cần đối chiếu các kỳ mới nhất trước khi quyết định.</p>' : '') +
@@ -43,7 +43,7 @@
       rankList(demote, 'Không có Trưởng lão cần cảnh báo giáng hạng.') + '</article></div>' +
       '<p class="rank-review-footnote">Có ' + unknown.length + ' người chưa đủ bằng chứng; giáng hạng yêu cầu 5 kỳ War xác minh và không tính kỳ trống là 0; ' +
       retain.length + ' Trưởng lão đạt chuẩn giữ hạng. Donate là số hiện tại, không phải lịch sử từng kỳ War. ' +
-      'Thủ lĩnh / Phó thủ lĩnh không thuộc diện xét. Kiểm tra nghỉ phép và thời điểm gia nhập trước khi quyết định.</p>';
+      'Thủ lĩnh / Phó thủ lĩnh không thuộc diện xét. Lịch sử War không chứng minh gia nhập liên tục: Leader phải kiểm tra nghỉ phép và thời điểm gia nhập trước khi quyết định.</p>';
     panel.querySelector('#rank-review-close')?.addEventListener('click', () => {
       panel.hidden = true;
       button.setAttribute('aria-expanded', 'false');

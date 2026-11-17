@@ -11,8 +11,14 @@ const war = (season, decks, options={}) => ({
   warLogAvailable: true,
   ...options
 });
+const NOW = Date.parse('2026-11-17T12:00:00Z');
 const member = (role, decks, donations=20) => ({
-  role, donations, cw2History: decks.map((n, i) => war('138-' + (2-i), n))
+  role, donations,
+  // Test baseline has a verified member tenure exceeding 14 days.
+  joinedAt: '2026-10-01', joinedAtVerified: true,
+  cw2History: decks.map((n, i) => war('138-' + (2-i), n, {
+    date: new Date(NOW - (i * 7 + 1) * 86400000).toISOString().slice(0,10)
+  }))
 });
 
 test('member: two verified 8/16 War + Donate yields promotion advisory', () => {
@@ -71,6 +77,33 @@ test('newcomer with one verified latest War above 8 and Donate can get early pro
   assert.equal(review.evaluate(member('member', [7], 20)).status, 'unknown');
   assert.equal(review.evaluate(member('member', [8], 0)).status, 'unknown');
 });
+test('promotion requires full 14 days in clan, 13 days is never eligible', () => {
+  const recent = { ...member('member', [8, 8], 25), joinedAt: '2026-11-04' };
+  const enough = { ...recent, joinedAt: '2026-11-03' };
+  assert.equal(review.evaluate(recent, {nowMs: NOW}).status, 'unknown');
+  assert.match(review.evaluate(recent, {nowMs: NOW}).reason, /tối thiểu 14 ngày/);
+  assert.equal(review.evaluate(enough, {nowMs: NOW}).status, 'promote');
+  assert.equal(review.MIN_TENURE_DAYS, 14);
+  // Even a perfect one-week War cannot override a short membership duration.
+  assert.equal(review.evaluate({...recent, cw2History: recent.cw2History.slice(0, 1)}, {nowMs: NOW}).status, 'unknown');
+});
+
+test('without joinedAt, require 14-day-old documented clan War history and officer verification', () => {
+  const m = { ...member('member', [8, 8], 20), joinedAt: undefined, joinedAtVerified: false };
+  assert.equal(review.evaluate(m, {nowMs: NOW}).status, 'unknown'); // earliest War only 8 days ago
+  m.cw2History[1].date = '2026-11-02'; // 15 days ago
+  const result = review.evaluate(m, {nowMs: NOW});
+  assert.equal(result.status, 'promote');
+  assert.match(result.reason, /không rời rồi gia nhập lại/);
+  assert.equal(review.evaluate({...m,cw2History: m.cw2History.slice(0,1)}, {nowMs: NOW}).status,'unknown');
+});
+
+test('an unverified or future join date never authorizes an early promotion by itself', () => {
+  const m = member('member', [8], 20);
+  assert.equal(review.evaluate({...m, joinedAt:'2026-11-18'}, {nowMs:NOW}).status,'unknown');
+  assert.equal(review.evaluate({...m, joinedAt:'2026-11-03',joinedAtVerified:false}, {nowMs:NOW}).status,'unknown');
+});
+
 test('no early promotion from an old War when latest is unverified or from a documented older failed War', () => {
   const rows = [war('138-2', null, {decksVerified:false}), war('138-1', 16)];
   assert.equal(review.evaluate({role:'member',donations:10,cw2History:rows}).status, 'unknown');
@@ -104,8 +137,8 @@ test('existing Kick status remains separate; UI includes dedicated review contro
   assert.match(html,/id="btn-export-kick"/);
   assert.match(html,/id="btn-rank-review"/);
   assert.match(html,/id="rank-review-output"/);
-  assert.match(html,/rank-review\.js\?v=20261117-role-review-v4/);
-  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v4/);
+  assert.match(html,/rank-review\.js\?v=20261117-role-review-v5/);
+  assert.match(html,/rank-review-ui\.js\?v=20261117-role-review-v5/);
   assert.match(html,/rank-review\.css\?v=20261117-role-review-v2/);
   assert.match(analytics,/r\.rankReview = window\.WintertimeRankReview\?\.evaluate\?\./);
   assert.match(app,/rank-mini-promote/);

@@ -193,7 +193,7 @@ window.ClanAnalytics.analyzeMember = function(m) {
 
   // No kick/elite decisions from zero-coerced or fabricated Fame.
   // Rank review is independent of Kick/Fame; preserve raw Donate unknowns.
-  r.rankReview = window.WintertimeRankReview?.evaluate?.({ role: r.role, donations: m?.donations, cw2History: r.cw2History }) || { status: 'unknown', label: 'Chưa đủ dữ liệu', reason: 'Chưa tải bộ xét chức vụ.' };
+  r.rankReview = window.WintertimeRankReview?.evaluate?.({ role: r.role, donations: m?.donations, cw2History: r.cw2History, joinedAt: m?.joinedAt, joinedAtVerified: m?.joinedAtVerified }) || { status: 'unknown', label: 'Chưa đủ dữ liệu', reason: 'Chưa tải bộ xét chức vụ.' };
   return r;
 };
 window.ClanAnalytics.analyzeClan = function(d) {
