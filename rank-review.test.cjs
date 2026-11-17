@@ -148,3 +148,26 @@ test('existing Kick status remains separate; UI includes dedicated review contro
   assert.match(css,/\.rank-review-output\[hidden\] \{ display: none; \}/);
   assert.doesNotMatch(ui,/fetch\(|PUT|PATCH|POST/);
 });
+
+test('evaluate handles missing role and empty history gracefully', () => {
+  assert.equal(review.evaluate({}).status, 'unknown');
+  assert.equal(review.evaluate({role:'member',cw2History:[]}).status, 'unknown');
+  assert.equal(review.evaluate({role:'elder',donations:50,cw2History:[]}).status, 'unknown');
+});
+
+test('co-leader and leader roles are never auto-demoted', () => {
+  const co = review.evaluate(member('coLeader', [1,1,1,1,1], 0));
+  assert.notEqual(co.status, 'demote');
+  const lead = review.evaluate(member('leader', [1,1,1,1,1], 0));
+  assert.notEqual(lead.status, 'demote');
+});
+
+test('averageDecks rounds to one decimal and warsVerified counts only verified', () => {
+  const r = review.evaluate(member('elder', [16,8,8,8,9], 80));
+  assert.equal(r.warsVerified, 5);
+  assert.equal(r.averageDecks, 9.8);
+});
+
+test('MIN_TENURE_DAYS constant is exported and equals 14', () => {
+  assert.equal(review.MIN_TENURE_DAYS, 14);
+});
