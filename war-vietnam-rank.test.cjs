@@ -46,5 +46,5 @@ test('ranking snapshot is not represented as a verified live API field', () => {
   assert.match(css, /\.hero-stats-unified > div:last-child \{ grid-column: auto; \}/);
   assert.match(css, /\.hero-stats-unified \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
   assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
+  assert.match(html, /app\.js\?v=20261117-domain-wintertime-site-v17/);
 });

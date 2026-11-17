@@ -1037,7 +1037,7 @@ renderSummary = function(clan) {
 render();
 fetchClan = async function() {
   const ts = Date.now();
-  const isExternalHost = typeof location !== 'undefined' && (location.hostname === 'wintertime.muatenmien.store' || location.hostname.endsWith('.github.io'));
+  const isExternalHost = typeof location !== 'undefined' && (location.hostname === 'wintertime.site' || location.hostname === 'www.wintertime.site' || location.hostname === 'wintertime.muatenmien.store' || location.hostname.endsWith('.github.io'));
   const urls = isExternalHost
     ? [
         'https://codexpro.muatenmien.store/api/royale-proxy/clans/%23GYQJL9GV?t=' + ts,

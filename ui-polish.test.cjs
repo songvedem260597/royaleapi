@@ -11,7 +11,7 @@ test('Copy Deck uses restrained amber styling without altering deck destination'
   assert.match(css, /a\.meta-pill-copy-deck \{[\s\S]*?background: rgba\(179, 137, 76, 0\.12\);/);
   assert.match(css, /a\.meta-pill-copy-deck:hover,[\s\S]*?background: rgba\(179, 137, 76, 0\.21\);/);
   assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
+  assert.match(html, /app\.js\?v=20261117-domain-wintertime-site-v17/);
 });
 
 test('sync state remains internal; verbose RoyaleTrack banner is not rendered in header', () => {
@@ -144,7 +144,7 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
   assert.match(css, /background-clip: text/);
   assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
+  assert.match(html, /app\.js\?v=20261117-domain-wintertime-site-v17/);
   assert.match(app, /Fame TB /);
   assert.match(app, /averagedWarWeeks/);
 });
@@ -193,7 +193,7 @@ test('phone menu is a slightly wider, full-height right sidebar', () => {
   assert.match(app, /event\.key === 'Escape'/);
   assert.match(app, /event\.key === 'Tab'/);
   assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
+  assert.match(html, /app\.js\?v=20261117-domain-wintertime-site-v17/);
 });
 
 test('mobile navigation uses a neutral black luxury theme and icon-only hamburger', () => {
@@ -242,7 +242,7 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
   assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
   assert.match(html, /styles\.css\?v=20261117-mobile-sidebar-v24/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
+  assert.match(html, /app\.js\?v=20261117-domain-wintertime-site-v17/);
 });
 
 test('phone screens hide all title snow layers, and marquee uses only the requested War reminder', () => {
