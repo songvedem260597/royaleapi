@@ -72,9 +72,8 @@
     const nowMs = Number.isFinite(options.nowMs) ? options.nowMs : Date.now();
     const tenure = role === 'member' ? getTenureEvidence(member, history, nowMs) : null;
     const observed = decks.filter(d => d !== null).length;
-    const evidence = decks.map((d, i) => seasons[i] + ': ' + (d === null ? 'chưa xác minh' : d + '/16 Deck')).join(' · ');
-    const suffix = ' · Donate hiện tại: ' + (donations === null ? 'chưa xác minh' : donations) +
-      '. Leader/Co-leader phải đối chiếu nghỉ phép, thời điểm gia nhập và dữ liệu War mới nhất.';
+    const evidence = formatEvidence(seasons, decks);
+    const suffix = formatSuffix(donations);
 
     const unknown = reason => ({
       status: 'unknown', label: 'Chưa đủ dữ liệu', warsVerified: observed,
