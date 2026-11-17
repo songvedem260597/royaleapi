@@ -74,3 +74,23 @@ test('stable tie breaks use average War Fame then donations, trophies and tag',(
   const b=player([2000,2000,2000,2000,2000],250,7000,{tag:'#B'});
   assert.deepEqual(rankMembers([b,a].map(m=>({...m,eliteRanking:calculate(m)}))).map(m=>m.tag),['#A','#B']);
 });
+
+test('rankMembers ignores unqualified and null-score members', () => {
+  const good = player([2000,2000,2000,2000,2000],250,7000,{tag:'#G'});
+  const bad = player([1000,1000,1000,1000,1000],250,7000,{tag:'#B'});
+  const members = [good,bad].map(m => ({...m, eliteRanking: calculate(m)}));
+  const ranked = rankMembers(members);
+  assert.equal(ranked.length, 1);
+  assert.equal(ranked[0].tag, '#G');
+});
+
+test('calculate returns null score when no verified weeks present', () => {
+  const x = calculate(player([null,null,null,null,null],250,7000));
+  assert.equal(x.verifiedWeeks, 0);
+  assert.equal(x.score, null);
+  assert.equal(x.reason, 'insufficient-verified-wars');
+});
+
+test('rankMembers handles empty array gracefully', () => {
+  assert.deepEqual(rankMembers([]), []);
+});
