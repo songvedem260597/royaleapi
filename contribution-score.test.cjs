@@ -56,3 +56,59 @@ test('Top 3 ranking excludes incomplete candidates and uses verified score only'
    {...active(),tag:'#B',score:null,contribution:calculate(active({ warDecksHistory:[] }))}];
   assert.deepEqual(rankMembers(good).map(m=>m.tag), ['#A','#C']);
 });
+
+test('calculate handles non-object and empty input gracefully', () => {
+  assert.equal(calculate(null).score, null);
+  assert.equal(calculate(undefined).complete, false);
+  assert.equal(calculate({}).score, null);
+  assert.equal(calculate('string').complete, false);
+});
+
+test('breakdown fields are null when their inputs are unknown', () => {
+  const s = calculate({ warParticipation: 80, decksThisWeek: null, donations: null, daysOffline: null, warDecksHistory: [16, 16] });
+  assert.equal(s.breakdown.currentDeckPoints, null);
+  assert.equal(s.breakdown.donationPoints, null);
+  assert.equal(s.breakdown.offlinePenalty, null);
+  assert.equal(s.score, null);
+});
+
+test('offline penalty caps at 15 points', () => {
+  const s = calculate(active({ daysOffline: 100 }));
+  assert.equal(s.breakdown.offlinePenalty, 15);
+});
+
+test('score is clamped to 0 minimum', () => {
+  const s = calculate(active({ warParticipation: 0, warDecksHistory: [0, 0], decksThisWeek: 0, donations: 0, daysOffline: 30 }));
+  assert.equal(s.score, 0);
+});
+
+test('excellent requires participation, average decks and low offline', () => {
+  assert.equal(calculate(active({ warParticipation: 60 })).excellent, false);
+  assert.equal(calculate(active({ warDecksHistory: [8, 8, 8, 8] })).excellent, false);
+  assert.equal(calculate(active({ daysOffline: 10 })).excellent, false);
+});
+
+test('warDecksVerifiedHistory takes precedence over warDecksHistory', () => {
+  const s = calculate(active({ warDecksHistory: [0, 0, 0, 0], warDecksVerifiedHistory: [16, 16, 16, 16] }));
+  assert.equal(s.averageDecks, 16);
+  assert.equal(s.lastTwoZeroDecks, false);
+});
+
+test('rankMembers returns empty array for non-array input', () => {
+  assert.deepEqual(rankMembers(null), []);
+  assert.deepEqual(rankMembers(undefined), []);
+  assert.deepEqual(rankMembers([]), []);
+});
+
+test('rankMembers breaks ties by completedDecks then participation', () => {
+  const a = { tag: '#A', score: 80, warParticipation: 80, donations: 100, contribution: { complete: true, completedDecks: 40 } };
+  const b = { tag: '#B', score: 80, warParticipation: 90, donations: 100, contribution: { complete: true, completedDecks: 40 } };
+  const c = { tag: '#C', score: 80, warParticipation: 80, donations: 100, contribution: { complete: true, completedDecks: 50 } };
+  assert.deepEqual(rankMembers([a, b, c]).map(m => m.tag), ['#C', '#B', '#A']);
+});
+
+test('rankMembers excludes candidates with non-finite score', () => {
+  const ok = { tag: '#OK', score: 50, warParticipation: 50, donations: 0, contribution: { complete: true, completedDecks: 10 } };
+  const bad = { tag: '#BAD', score: NaN, warParticipation: 50, donations: 0, contribution: { complete: true, completedDecks: 10 } };
+  assert.deepEqual(rankMembers([ok, bad]).map(m => m.tag), ['#OK']);
+});
