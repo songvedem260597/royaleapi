@@ -60,3 +60,29 @@ test('missing data is not marked elite or automatic kick', () => {
   assert.equal(clan.members[0].statusLabel, 'Chưa đủ dữ liệu');
   assert.equal(scorer.rankMembers(clan.members).length, 0);
 });
+
+test('analyzeClan handles empty member list without throwing', () => {
+  const data = { ...fixture, members: [] };
+  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races, WintertimeWarEvaluation: evalWar, WintertimeEliteRanking: elite } };
+  vm.runInNewContext(fs.readFileSync('clan-analytics.js', 'utf8'), context, { filename: 'clan-analytics.js' });
+  const clan = context.window.ClanAnalytics.analyzeClan(data);
+  assert.equal(clan.members.length, 0);
+  assert.equal(clan.avgScore, 0);
+  assert.equal(clan.mvpName, null);
+});
+
+test('analyzeClan tolerates missing optional clan fields', () => {
+  const data = { members: fixture.members.slice(0, 5) };
+  const context = { window: { WintertimeContribution: scorer, WintertimeWarHistory: races, WintertimeWarEvaluation: evalWar, WintertimeEliteRanking: elite } };
+  vm.runInNewContext(fs.readFileSync('clan-analytics.js', 'utf8'), context, { filename: 'clan-analytics.js' });
+  const clan = context.window.ClanAnalytics.analyzeClan(data);
+  assert.equal(clan.members.length, 5);
+  assert.ok(Array.isArray(clan.cw2ClanHistory));
+});
+
+test('avgScore equals rounded mean of ranked member scores', () => {
+  const clan = analyzeSnapshot();
+  const ranked = scorer.rankMembers(clan.members);
+  const expected = ranked.length ? Math.round(ranked.reduce((s, m) => s + m.score, 0) / ranked.length) : 0;
+  assert.equal(clan.avgScore, expected);
+});
