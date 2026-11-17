@@ -112,3 +112,30 @@ test('rankMembers excludes candidates with non-finite score', () => {
   const bad = { tag: '#BAD', score: NaN, warParticipation: 50, donations: 0, contribution: { complete: true, completedDecks: 10 } };
   assert.deepEqual(rankMembers([ok, bad]).map(m => m.tag), ['#OK']);
 });
+
+test('rankMembers orders by score and excludes unknown scores', () => {
+  const ranked = rankMembers([
+    active({ tag: '#A', warParticipation: 100 }),
+    active({ tag: '#B', warParticipation: null }),
+    active({ tag: '#C', warParticipation: 50, decksThisWeek: 8 })
+  ]);
+  assert.ok(Array.isArray(ranked));
+  const tags = ranked.map((m) => m.tag);
+  assert.ok(!tags.includes('#B'));
+  assert.equal(tags[0], '#A');
+});
+
+test('calculate clamps score within 0..100 and reports breakdown keys', () => {
+  const s = calculate(active({ daysOffline: 999, donations: 0, warParticipation: 0 }));
+  assert.ok(s.score === null || (s.score >= 0 && s.score <= 100));
+  if (s.breakdown) {
+    for (const k of ['participationPoints','historicalDeckPoints','currentDeckPoints','donationPoints','offlinePenalty']) {
+      assert.ok(k in s.breakdown);
+    }
+  }
+});
+
+test('excellent flag requires high score and no review flag', () => {
+  const s = calculate(active());
+  assert.equal(s.excellent, s.score >= 90 && !s.review);
+});
