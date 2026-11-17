@@ -203,9 +203,9 @@ function renderSummary(clan) {
     '<div class="hero-stats">' +
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong>' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
-      renderVietnamWarRankKpi() +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Chủ lực MVP</span><strong>' + (clan.mvpName || '—') + '</strong></div>' +
+      renderVietnamWarRankKpi() +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 }
@@ -966,8 +966,8 @@ renderSummary = function(clan) {
     '<div class="hero-stats">' +
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong>' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong>' + wTrophies + '</strong></div>' +
-      renderVietnamWarRankKpi() +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
+      renderVietnamWarRankKpi() +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 };
@@ -1023,7 +1023,6 @@ renderSummary = function(clan) {
     '<div class="hero-stats hero-stats-unified">' +
       '<div><span class="kpi-label">Điểm Clan (ước tính)</span><strong id="kpi-clan-score">' + cScore + '</strong></div>' +
       '<div><span class="kpi-label">Cúp War</span><strong id="kpi-war-trophies">' + wTrophies + '</strong></div>' +
-      renderVietnamWarRankKpi() +
       '<div><span class="kpi-label">Điểm TB nội bộ</span><strong>' + avg + '/100</strong></div>' +
       '<div><span class="kpi-label">Thành viên WinterTime</span><strong id="kpi-members">' + total + '/50</strong></div>' +
       '<div><span class="kpi-label">Thành viên Ưu tú</span><strong id="kpi-good">' + (cnt.good || 0) + '</strong></div>' +
@@ -1031,6 +1030,7 @@ renderSummary = function(clan) {
       '<div><span class="kpi-label">Cảnh báo</span><strong id="kpi-warning">' + (cnt.warning || 0) + '</strong></div>' +
       '<div><span class="kpi-label">Đề xuất xét Kick</span><strong id="kpi-kick">' + (cnt.kick || 0) + '</strong></div>' +
       '<div><span class="kpi-label">Chưa đủ dữ liệu</span><strong id="kpi-unknown">' + (cnt.unknown || 0) + '</strong></div>' +
+      renderVietnamWarRankKpi() +
     '</div>' +
     '<div class="health-bar"><div class="health-fill" style="width:' + avg + '%"></div></div>';
 };

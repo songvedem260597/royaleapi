@@ -10,8 +10,8 @@ test('Copy Deck uses restrained amber styling without altering deck destination'
   assert.match(app, /class="meta-pill meta-pill-copy-deck" href=/);
   assert.match(css, /a\.meta-pill-copy-deck \{[\s\S]*?background: rgba\(179, 137, 76, 0\.12\);/);
   assert.match(css, /a\.meta-pill-copy-deck:hover,[\s\S]*?background: rgba\(179, 137, 76, 0\.21\);/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-v22/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-v15/);
+  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
 
 test('sync state remains internal; verbose RoyaleTrack banner is not rendered in header', () => {
@@ -116,7 +116,7 @@ test('WINTERTIME letters contain snow and podium cards have gentle border and fl
   assert.match(html, /id="hero-title">WINTERTIME/);
   assert.equal((html.match(/class="hero-snow-layer"/g) || []).length, 4);
   assert.equal((html.match(/aria-hidden="true">WINTERTIME<\/span>/g) || []).length, 4);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-v22/);
+  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
   assert.match(css, /\.hero-snow-layer \{[\s\S]*?animation: wintertime-letter-snow var\(--snow-duration, 11s\) linear infinite;/);
   assert.match(css, /@keyframes wintertime-letter-snow/);
   assert.match(css, /url\("\.\/snowflake-six\.svg\?v=variety-v3"\)/);
@@ -142,9 +142,9 @@ test('WINTERTIME snow uses a real six-arm SVG crystal, not round particle dots',
     assert.ok(snow.includes('rotate(' + deg + ')'));
   }
   assert.match(css, /background-clip: text/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-v22/);
+  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
   assert.match(html, /war-member-evaluation\.js\?v=20261115-tenure-v2/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-v15/);
+  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
   assert.match(app, /Fame TB /);
   assert.match(app, /averagedWarWeeks/);
 });
@@ -192,8 +192,8 @@ test('phone menu is a full-height right sidebar occupying one-third of viewport'
   assert.match(app, /nav\.querySelectorAll\('a\[href\^="#"\]'\)/);
   assert.match(app, /event\.key === 'Escape'/);
   assert.match(app, /event\.key === 'Tab'/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-v22/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-v15/);
+  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
 
 test('mobile navigation uses a neutral black luxury theme and icon-only hamburger', () => {
@@ -212,7 +212,7 @@ test('mobile navigation uses a neutral black luxury theme and icon-only hamburge
   assert.ok(html.includes('M4 6h16M4 12h11M4 18h16'));
   assert.ok(css.includes('color: #ffffff;'));
   assert.ok(!css.includes('background: linear-gradient(180deg, #182621'));
-  assert.ok(html.includes('styles.css?v=20261117-war-vn-rank-v22'));
+  assert.ok(html.includes('styles.css?v=20261117-war-vn-rank-last-v23'));
   for (const [hash, name] of [
     ['#top3-podium-section', 'BXH Ưu tú'],
     ['#top3-weekly-section', 'BXH War tuần'],
@@ -241,8 +241,8 @@ test('lightweight CodePen-style screen snow is capped, CSS-animated and disabled
   assert.match(app, /eligible\.addEventListener\('change', sync\)/);
   const implementation = app.slice(app.indexOf('function initDesktopScreenSnow()'));
   assert.doesNotMatch(implementation, /requestAnimationFrame\(|setInterval\(/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-v22/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-v15/);
+  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
 
 test('phone screens hide all title snow layers, and marquee uses only the requested War reminder', () => {

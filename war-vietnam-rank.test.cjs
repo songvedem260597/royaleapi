@@ -31,8 +31,11 @@ test('hero summary has ten KPI tiles including clan-reported Vietnam War Top 53'
   assert.match(el.innerHTML, /id="kpi-vietnam-war-rank">Top 53/);
   assert.match(el.innerHTML, /Theo clan · 17\/11/);
   assert.match(el.innerHTML, /Chưa xác minh qua API xếp hạng realtime/);
-  assert.ok(el.innerHTML.indexOf('Cúp War') < el.innerHTML.indexOf('Hạng Hội chiến Việt Nam'));
-  assert.ok(el.innerHTML.indexOf('Hạng Hội chiến Việt Nam') < el.innerHTML.indexOf('Điểm TB nội bộ'));
+  assert.ok(el.innerHTML.indexOf('Cúp War') < el.innerHTML.indexOf('Điểm TB nội bộ'));
+  assert.ok(el.innerHTML.indexOf('Chưa đủ dữ liệu') < el.innerHTML.indexOf('Hạng Hội chiến Việt Nam'),
+    'Vietnam War rank must be the LAST KPI tile');
+  assert.match(el.innerHTML, /Hạng Hội chiến Việt Nam[\s\S]*?Theo clan · 17\/11<\/small><\/div><\/div><div class="health-bar">/,
+    'Vietnam rank closes the KPI grid as the tenth card');
   assert.match(el.innerHTML, /133,154/);
   assert.match(el.innerHTML, /2,409/);
 });
@@ -42,6 +45,6 @@ test('ranking snapshot is not represented as a verified live API field', () => {
   assert.match(app, /not a live API field/);
   assert.match(css, /\.hero-stats-unified > div:last-child \{ grid-column: auto; \}/);
   assert.match(css, /\.hero-stats-unified \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
-  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-v22/);
-  assert.match(html, /app\.js\?v=20261117-war-vn-rank-v15/);
+  assert.match(html, /styles\.css\?v=20261117-war-vn-rank-last-v23/);
+  assert.match(html, /app\.js\?v=20261117-war-vn-rank-last-v16/);
 });
