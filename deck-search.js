@@ -133,6 +133,7 @@ const WintertimeDeckSearch = (() => {
     const modes = [...controls.querySelectorAll('[data-mode]')];
     let snapshot, loading = false, failed = false;
     let suggestions = [], active = -1;
+    let optionPointerType = '';
 
     function setActive(index) {
       active = index;
@@ -143,6 +144,7 @@ const WintertimeDeckSearch = (() => {
 
     function closeSuggestions() {
       suggestions = [];
+      optionPointerType = '';
       setActive(-1);
       list.hidden = true;
       input.setAttribute('aria-expanded', 'false');
@@ -164,11 +166,12 @@ const WintertimeDeckSearch = (() => {
       input.setAttribute('aria-expanded', String(!list.hidden));
     }
 
-    function chooseCard(index) {
+    function chooseCard(index, dismissKeyboard = false) {
       const card = suggestions[index];
       if (!card) return;
       input.value = card.name;
       closeSuggestions();
+      if (dismissKeyboard) input.blur();
       update();
     }
 
@@ -244,11 +247,19 @@ const WintertimeDeckSearch = (() => {
       }
     });
     list.addEventListener('pointerdown', event => {
-      if (event.target.closest('[role="option"]')) event.preventDefault();
+      if (!event.target.closest('[role="option"]')) return;
+      optionPointerType = event.pointerType;
+      // Keep the popup alive until the click commits the selection.
+      event.preventDefault();
+    });
+    list.addEventListener('pointercancel', () => {
+      optionPointerType = '';
     });
     list.addEventListener('click', event => {
       const option = event.target.closest('[data-index]');
-      if (option) chooseCard(Number(option.dataset.index));
+      const pointerType = event.pointerType || optionPointerType;
+      optionPointerType = '';
+      if (option) chooseCard(Number(option.dataset.index), pointerType === 'touch' || pointerType === 'pen');
     });
     controls.querySelectorAll('[data-query]').forEach(button => button.addEventListener('click', () => {
       input.value = button.dataset.query;
