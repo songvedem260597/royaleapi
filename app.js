@@ -941,19 +941,54 @@ window.handleCardImgErr = function(img, c) {
   else if (step === 1) { img.dataset.fb = '2'; img.src = 'https://cdn.jsdelivr.net/gh/RoyaleAPI/cr-api-assets@master/cards-150/' + base + '.png'; }
   else if (step === 2) { img.dataset.fb = '3'; img.src = 'https://raw.githubusercontent.com/RoyaleAPI/cr-api-assets/master/cards-150/' + base + '.png'; }
 };
+const metaDeckEscape = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+})[c]);
+
+function renderMetaDeckCards(decks, { searchMode = false, images } = {}) {
+  const px = 'https://wsrv.nl/?url=cdns3.royaleapi.com/static/img/cards/v11-a8e42334/';
+  return decks.filter(d => Array.isArray(d.cards) && d.cards.length === 8 && d.cards.every(c => /^[a-z0-9-]+$/.test(c))).map(d => {
+    const rank = !searchMode && d.rank != null ? '<span class="meta-deck-rank">#' + metaDeckEscape(d.rank) + '</span>' : '';
+    const copy = /^(?:\d{8};){7}\d{8}$/.test(d.copy || '') ? 'https://link.clashroyale.com/deck/en?deck=' + d.copy :
+      /^https:\/\/link\.clashroyale\.com\/deck\//.test(d.copyUrl || '') ? d.copyUrl : '';
+    return '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name">' + rank + metaDeckEscape(d.name) +
+      '</span><div class="meta-deck-badges">' +
+      (d.rating != null ? '<span class="meta-pill">Rating ' + metaDeckEscape(d.rating) + '</span>' : '') +
+      (d.usage ? '<span class="meta-pill">Usage ' + metaDeckEscape(d.usage) + '</span>' : '') +
+      (d.win != null ? '<span class="meta-pill meta-pill-win">Wins ' + metaDeckEscape(d.win) + '%</span>' : '') +
+      (d.elixir != null ? '<span class="meta-pill meta-pill-elixir">💧 ' + metaDeckEscape(d.elixir) +
+        (d.cycle != null ? ' · Cycle ' + metaDeckEscape(d.cycle) : '') + '</span>' : '') +
+      (copy ? '<a class="meta-pill meta-pill-copy-deck" href="' + metaDeckEscape(copy) + '" target="_blank" rel="noopener">Copy Deck ↗</a>' : '') +
+      '<a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div>' +
+      '<div class="meta-cards-row">' + d.cards.map((card, index) => {
+        const image = d.cardImages?.[index];
+        const imagePath = images?.[card];
+        const imgSrc = /^https:\/\//.test(image || '') ? image :
+          /^\/cards\/[\w-]+\.webp\?v=\d+$/.test(imagePath || '') ? 'https://royaletrack.com' + imagePath :
+          /^https:\/\/api-assets\.clashroyale\.com\/(?:cards|cardevolutions|cardheroes)\/\d+\/[\w-]+\.png$/.test(imagePath || '') ? imagePath :
+          px + card + '.png&w=150&output=png';
+        return '<div class="meta-card-slot" title="' + card + '"><img src="' + metaDeckEscape(imgSrc) + '" alt="' + card +
+          '" loading="lazy" referrerpolicy="no-referrer" decoding="async" onerror="window.handleCardImgErr(this,\'' + card + '\')"></div>';
+      }).join('') + '</div></div>';
+  }).join('');
+}
+
+let metaDeckSearchView;
 renderMetaDecks = function() {
   const sec = document.getElementById('meta-decks-section');
   const decks = CA.TOP_META_DECKS || [];
-  if (!sec || !decks.length) return;
+  if (!sec) return;
   const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
-  const px = 'https://wsrv.nl/?url=cdns3.royaleapi.com/static/img/cards/v11-a8e42334/';
   const syncTime = lastUpdated instanceof Date ? (' · Cập nhật ' + lastUpdated.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })) : '';
-  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Meta Season</h2><div class="meta-decks-sub">Nguồn: RoyaleTrack Meta (cập nhật theo cache nguồn)' + syncTime + '</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
-    decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">Rating ' + d.rating + '</span><span class="meta-pill">Usage ' + (d.usage || '1.0%') + '</span><span class="meta-pill meta-pill-win">Wins ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">💧 ' + d.elixir + ' · Cycle ' + d.cycle + '</span>' + (d.copyUrl ? '<a class="meta-pill meta-pill-copy-deck" href="' + d.copyUrl + '" target="_blank" rel="noopener">Copy Deck ↗</a>' : '') + '<a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div><div class="meta-cards-row">' +
-      d.cards.map((c, idx) => {
-        const imgSrc = (Array.isArray(d.cardImages) && d.cardImages[idx]) ? d.cardImages[idx] : (px + c + '.png&w=150&output=png');
-        return '<div class="meta-card-slot" title="' + c + '"><img src="' + imgSrc + '" alt="' + c + '" referrerpolicy="no-referrer" decoding="async" onerror="window.handleCardImgErr(this,\'' + c + '\')"></div>';
-      }).join('') + '</div></div>').join('') + '</div>';
+  if (!sec.querySelector('[data-top-decks]')) {
+    sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Deck Meta Season</h2><div class="meta-decks-sub"></div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid" data-top-decks></div>';
+    if (typeof WintertimeDeckSearch !== 'undefined') {
+      metaDeckSearchView = WintertimeDeckSearch.mount(sec, { getDecks: () => CA.TOP_META_DECKS || [], renderDecks: renderMetaDeckCards });
+    }
+  }
+  sec.querySelector('.meta-decks-head .meta-decks-sub').textContent = 'Nguồn Top 10: RoyaleTrack Meta (cập nhật theo cache nguồn)' + syncTime;
+  sec.querySelector('[data-top-decks]').innerHTML = renderMetaDeckCards(decks);
+  metaDeckSearchView?.refresh();
 };
 renderMetaDecks();
 renderSummary = function(clan) {
