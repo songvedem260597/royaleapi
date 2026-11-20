@@ -1307,9 +1307,13 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
   background: var(--accent-soft);
   color: var(--accent);
 }
-.deck-search-bar input {
+.deck-search-field {
+  position: relative;
   flex: 1 1 15rem;
   min-width: 0;
+}
+.deck-search-bar input {
+  display: block;
   width: 100%;
   min-height: 44px;
   padding: 8px 12px;
@@ -1322,6 +1326,33 @@ tbody tr:hover { background: rgba(255, 255, 255, 0.028); }
 }
 .deck-search-bar input::placeholder { color: var(--text-3); }
 .deck-search-bar input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.deck-card-suggestions {
+  position: absolute;
+  z-index: 5;
+  inset: calc(100% + 6px) 0 auto;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid var(--border-3);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-card);
+}
+.deck-card-suggestions [role="option"] {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: var(--r-xs);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+.deck-card-suggestions [role="option"]:hover,
+.deck-card-suggestions [aria-selected="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 .deck-search-shortcuts { margin: 10px 0; }
 .deck-search-shortcuts button { cursor: pointer; min-height: 32px; }
 .deck-search-shortcuts button:hover { color: var(--accent); border-color: var(--accent-line); }
