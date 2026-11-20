@@ -90,13 +90,6 @@ const WintertimeDeckSearch = (() => {
     return { filters, matches };
   }
 
-  function royaleApiUrl(card) {
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(card || '')) return '';
-    const url = new URL('https://royaleapi.com/decks/popular');
-    url.search = new URLSearchParams({ time: '1d', sort: 'rating', inc: card, use_all_forms: 'true' });
-    return url.href;
-  }
-
   function mount(section, { getDecks, renderDecks }) {
     const top = section.querySelector('.meta-decks-grid');
     const controls = document.createElement('div');
@@ -113,7 +106,6 @@ const WintertimeDeckSearch = (() => {
             <input id="deck-search-query" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="deck-card-suggestions" enterkeyhint="search" placeholder="Nhập Lava, Balloon, Hog Rider 2.6…" maxlength="80" autocomplete="off" spellcheck="false">
             <ul id="deck-card-suggestions" class="deck-card-suggestions" role="listbox" aria-label="Gợi ý tên thẻ" hidden></ul>
           </div>
-          <a class="btn btn-ghost" data-search-link target="_blank" rel="noopener" hidden>Xem trên RoyaleAPI ↗</a>
         </div>
         <div class="deck-search-shortcuts" aria-label="Tìm nhanh">
           <button class="meta-pill" type="button" data-query="Lava">Lava</button>
@@ -129,7 +121,6 @@ const WintertimeDeckSearch = (() => {
     const list = controls.querySelector('[role="listbox"]');
     const grid = controls.querySelector('[data-search-results]');
     const status = controls.querySelector('[role="status"]');
-    const link = controls.querySelector('[data-search-link]');
     const modes = [...controls.querySelectorAll('[data-mode]')];
     let snapshot, loading = false, failed = false;
     let suggestions = [], active = -1;
@@ -178,17 +169,12 @@ const WintertimeDeckSearch = (() => {
     function refresh() {
       if (panel.hidden) return;
       const term = normalize(input.value);
-      const { filters, matches } = search(term, getDecks(), snapshot);
-      const url = filters.length === 1 ? royaleApiUrl(filters[0]) : '';
-      link.hidden = !url;
-      if (url) link.href = url;
-      else link.removeAttribute('href');
+      const { matches } = search(term, getDecks(), snapshot);
       grid.innerHTML = renderDecks(matches, { searchMode: true, images: snapshot?.images });
       const date = snapshot?.date?.split('-').reverse().join('/');
       status.textContent = !term ? 'Gõ tên deck hoặc thẻ chính, hoặc chọn một gợi ý bên trên.' :
         (matches.length ? matches.length + ' deck phù hợp' : 'Không có deck phù hợp trong dữ liệu hiện có') +
         (loading ? ' · Đang tải thêm deck…' : failed ? ' · Không tải được bộ deck lưu sẵn.' :
-          !matches.length && url ? ' · Bạn có thể xem thêm trên RoyaleAPI.' :
           date ? ' · Bao gồm dữ liệu RoyaleTrack lưu ngày ' + date + '.' : '.');
     }
 
@@ -270,7 +256,7 @@ const WintertimeDeckSearch = (() => {
     return { refresh };
   }
 
-  return { search, suggestCards, royaleApiUrl, mount };
+  return { search, suggestCards, mount };
 })();
 
 if (typeof module !== 'undefined' && module.exports) module.exports = WintertimeDeckSearch;

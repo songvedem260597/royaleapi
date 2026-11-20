@@ -3,9 +3,7 @@ Created via CodexPro Cloud Server
 
 Deck Meta search combines the site's current Top 10 with a dated
 [RoyaleTrack deck snapshot](https://royaletrack.com/en/decks), including
-Lava Hound and Balloon variants. Search metrics reflect the snapshot date,
-not RoyaleAPI's live 1-day ranking. The RoyaleAPI button opens that separate
-ranking for the matched card.
+Lava Hound and Balloon variants. Search metrics reflect the snapshot date.
 
 Autocomplete suggests up to three cards from the complete base-card roster,
 including Tower Troops. Evolution and Hero forms are grouped by their base card.

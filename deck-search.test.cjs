@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const { test } = require('node:test');
-const { search, suggestCards, royaleApiUrl } = require('./deck-search.js');
+const { search, suggestCards } = require('./deck-search.js');
 const catalog = require('./card-catalog.js');
 const snapshot = require('./deck-search-data.json');
 const liveDecks = require('./wintertime-data.json').topMetaDecks;
@@ -60,10 +61,12 @@ test('querying a deck title does not widen to all decks containing its main card
   assert.deepEqual(search('not a real deck', liveDecks, snapshot).matches, []);
 });
 
-test('RoyaleAPI links use its 1-day rating filter with the canonical card slug', () => {
-  assert.equal(royaleApiUrl('balloon'), 'https://royaleapi.com/decks/popular?time=1d&sort=rating&inc=balloon&use_all_forms=true');
-  assert.equal(new URL(royaleApiUrl('lava-hound')).searchParams.get('inc'), 'lava-hound');
-  assert.equal(royaleApiUrl('balloon&inc=hacked'), '');
+test('Deck Meta has no outbound results buttons and retains per-deck actions', () => {
+  const app = fs.readFileSync('app.js', 'utf8');
+  const search = fs.readFileSync('deck-search.js', 'utf8');
+  assert.doesNotMatch(app + search, /royaleapi\.com\/decks\/popular|data-search-link/);
+  assert.match(app, /Copy Deck/);
+  assert.match(app, /royaleapi\.com\/decks\/stats\//);
 });
 
 test('cached deck entries have eight cards, real game copy URLs and snapshot provenance', () => {
