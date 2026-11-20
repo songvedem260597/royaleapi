@@ -2081,6 +2081,10 @@ a.meta-pill-copy-deck:focus-visible {
   .hero-stats-unified > div:last-child { grid-column: auto; }
 }
 
+.hero-stats-unified > div:has(> :is(#kpi-clan-score, #kpi-war-trophies)) > :is(.kpi-label, strong) {
+  margin-inline-start: 6px;
+}
+
 /* Vietnam War rank: a quiet tenth KPI, with explicit snapshot attribution. */
 .hero-stats-unified .kpi-vietnam-war-rank #kpi-vietnam-war-rank {
   color: #DCC69A;
