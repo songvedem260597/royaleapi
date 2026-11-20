@@ -13,5 +13,5 @@ test('production domain uses existing working clan API proxy without changing ba
   assert.match(js,/location\.hostname === 'wintertime\.site'/);
   assert.match(js,/location\.hostname === 'www\.wintertime\.site'/);
   assert.match(js,/https:\/\/codexpro\.muatenmien\.store\/api\/royale-proxy\/clans\//);
-  assert.match(html,/app\.js\?v=20261120-deck-search-v1/);
+  assert.match(html,/app\.js\?v=20261121-meta-header-v1/);
 });

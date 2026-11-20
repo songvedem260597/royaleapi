@@ -763,8 +763,7 @@ function renderMetaDecks() {
   const sec = document.getElementById('meta-decks-section');
   const decks = CA.TOP_META_DECKS || [];
   if (!sec || !decks.length) return;
-  const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
-  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">?? Top 10 Deck Dang Meta (Top Ranked � 7 Ng�y)</h2><div class="meta-decks-sub">Ngu?n: RoyaleAPI TopRanked PvP � X?p theo Rating cao nh?t 7 ng�y qua</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">M? B?ng Meta RoyaleAPI ?</a></div><div class="meta-decks-grid">' +
+  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">?? Top 10 Deck Dang Meta (Top Ranked � 7 Ng�y)</h2><div class="meta-decks-sub">Ngu?n: RoyaleAPI TopRanked PvP � X?p theo Rating cao nh?t 7 ng�y qua</div></div></div><div class="meta-decks-grid">' +
     decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Chi ti?t ?</a></div></div><div class="meta-cards-row">' +
       d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="https://raw.githubusercontent.com/RoyaleAPI/cr-api-assets/master/cards-150/' + c + '.png" alt="' + c + '" loading="lazy"></div>').join('') + '</div></div>').join('') + '</div>';
 }
@@ -779,16 +778,13 @@ const mhTitle = document.querySelector('#meta-decks-section .meta-decks-title');
 if (mhTitle) mhTitle.textContent = '🔥 Top 10 Deck Đang Meta (Top Ranked · 7 Ngày)';
 const mhSub = document.querySelector('#meta-decks-section .meta-decks-sub');
 if (mhSub) mhSub.textContent = 'Nguồn: RoyaleAPI TopRanked PvP · Xếp theo Rating cao nhất 7 ngày qua';
-const mhBtn = document.querySelector('#meta-decks-section .meta-decks-head .btn');
-if (mhBtn) mhBtn.textContent = 'Mở Bảng Meta RoyaleAPI ↗';
 document.querySelectorAll('#meta-decks-section .meta-deck-badges a.meta-pill').forEach(a => { a.textContent = 'Chi tiết ↗'; });
 renderMetaDecks = function() {
   const sec = document.getElementById('meta-decks-section');
   const decks = CA.TOP_META_DECKS || [];
   if (!sec || !decks.length) return;
-  const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
   const cdn = 'https://cdns3.royaleapi.com/cdn-cgi/image/w=150,h=180,format=auto/static/img/cards/v11-a8e42334/';
-  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Đang Meta (Ultimate Champion · 7d Rating)</h2><div class="meta-decks-sub">Nguồn: RoyaleAPI Best Clash Royale Decks (7d · 1,027,925 Games · Sort by Rating)</div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid">' +
+  sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Top 10 Deck Đang Meta (Ultimate Champion · 7d Rating)</h2><div class="meta-decks-sub">Nguồn: RoyaleAPI Best Clash Royale Decks (7d · 1,027,925 Games · Sort by Rating)</div></div></div><div class="meta-decks-grid">' +
     decks.map(d => '<div class="meta-deck-card"><div class="meta-deck-top"><span class="meta-deck-name"><span class="meta-deck-rank">#' + d.rank + '</span>' + d.name + '</span><div class="meta-deck-badges"><span class="meta-pill">Rating ' + d.rating + '</span><span class="meta-pill">Usage ' + (d.usage || '1.0%') + '</span><span class="meta-pill meta-pill-win">Wins ' + d.win + '%</span><span class="meta-pill meta-pill-elixir">💧 ' + d.elixir + ' · Cycle ' + d.cycle + '</span><a class="meta-pill" href="https://royaleapi.com/decks/stats/' + d.cards.join(',') + '" target="_blank" rel="noopener">Deck Stats ↗</a></div></div><div class="meta-cards-row">' +
       d.cards.map(c => '<div class="meta-card-slot" title="' + c + '"><img src="' + cdn + c + '.png" alt="' + c + '" loading="lazy"></div>').join('') + '</div></div>').join('') + '</div>';
 };
@@ -978,10 +974,9 @@ renderMetaDecks = function() {
   const sec = document.getElementById('meta-decks-section');
   const decks = CA.TOP_META_DECKS || [];
   if (!sec) return;
-  const topUrl = 'https://royaleapi.com/decks/popular?time=7d&sort=rating&size=20&players=PvP&min_ranked_trophies=0&max_ranked_trophies=4400&min_elixir=1&max_elixir=9&evo=None&min_cycle_elixir=4&max_cycle_elixir=28&mode=detail&type=TopRanked&&&global_exclude=false';
   const syncTime = lastUpdated instanceof Date ? (' · Cập nhật ' + lastUpdated.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })) : '';
   if (!sec.querySelector('[data-top-decks]')) {
-    sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Deck Meta Season</h2><div class="meta-decks-sub"></div></div><a class="btn btn-ghost" href="' + topUrl + '" target="_blank" rel="noopener">Mở Bảng Meta RoyaleAPI ↗</a></div><div class="meta-decks-grid" data-top-decks></div>';
+    sec.innerHTML = '<div class="meta-decks-head"><div><h2 class="meta-decks-title">🔥 Deck Meta Season</h2><div class="meta-decks-sub"></div></div></div><div class="meta-decks-grid" data-top-decks></div>';
     if (typeof WintertimeDeckSearch !== 'undefined') {
       metaDeckSearchView = WintertimeDeckSearch.mount(sec, { getDecks: () => CA.TOP_META_DECKS || [], renderDecks: renderMetaDeckCards });
     }
