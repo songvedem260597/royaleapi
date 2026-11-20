@@ -2081,7 +2081,7 @@ a.meta-pill-copy-deck:focus-visible {
   .hero-stats-unified > div:last-child { grid-column: auto; }
 }
 
-.hero-stats-unified > div:has(> :is(#kpi-clan-score, #kpi-war-trophies)) > :is(.kpi-label, strong) {
+.hero-stats-unified > div > :is(.kpi-label, strong, .kpi-source) {
   margin-inline-start: 6px;
 }
 
